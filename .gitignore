@@ -1,4 +1,5 @@
-./Dependencies/
-./objectFiles/
+Dependencies/
+textures/
+objectFiles/
 *.dll
 *.bat
