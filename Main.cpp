@@ -12,6 +12,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "VertexArrayObj.h"
+#include "IndexBufferObj.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -84,6 +85,7 @@ int main(){
 	glBindVertexArray(0);
 	
 	VertexArrayObj vao0(vao,sizeof(indices)/sizeof(unsigned int));
+	IndexBufferObj ibo0(ibo);
 	
 	glm::mat4 model = glm::translate(glm::mat4(1.0f),glm::vec3(0.0,0.0,0.0));
 	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
@@ -104,9 +106,11 @@ int main(){
 		shader0.setUniformMat4f("u_projection",projection);
 		shader0.setUniformMat4f("u_model",model);
 		vao0.bind();//bind the vao
+		ibo0.bind();
 		texture0.bind();//bind the texture
 		glDrawElements(GL_TRIANGLES,vao0.getVertexCount(),GL_UNSIGNED_INT,0);
 		vao0.unbind();
+		ibo0.unbind();
 		texture0.unbind();
 		
 		windowObj.swapBuffers();
