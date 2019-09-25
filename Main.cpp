@@ -61,6 +61,59 @@ int main(){
 		50.0f, 50.0f, 1.0f, 1.0f, 0.5f, 0.5f,
 		-50.0f, 50.0f, 0.0f, 1.0f, -0.5f, 0.5f
 	};
+	float vertices_50[] = {
+		-50.0f, -50.0f, 
+		50.0f, -50.0f, 
+		50.0f, 50.0f, 
+		-50.0f, 50.0f
+	};
+	
+	float uv_coords[] = {
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+		1.0f, 1.0f,
+		0.0f,1.0f
+	};
+	
+	float vertices_05[] = {
+		-0.5f,-0.5f,
+		0.5f,-0.5f,
+		0.5f,0.5f,
+		-0.5f,0.5f
+	};
+	
+	unsigned int vao, ibo;
+	unsigned int vbo1,vbo2;
+	
+	VertexArrayObj vao0;
+	
+	vao0.addFloatBufferData(vertices_05,sizeof(vertices_05),GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
+	vao0.addFloatBufferData(uv_coords,sizeof(uv_coords),GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
+	
+	/*
+	glGenBuffers(1,&vbo1);
+	glBindBuffer(GL_ARRAY_BUFFER,vbo1);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(vertices_05),&vertices_05,GL_STATIC_DRAW);
+	glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE,2*sizeof(float),(void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+	
+	glGenBuffers(1,&vbo2);
+	glBindBuffer(GL_ARRAY_BUFFER,vbo2);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(uv_coords),&uv_coords,GL_STATIC_DRAW);
+	glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,2*sizeof(float),(void*)0);
+	glEnableVertexAttribArray(1);
+
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+	*/
+	
+	
+	vbo1 = 0;
+	vbo2 = 0;
+	
+	vao0.unbind();
+	
 		
 	unsigned int indices[] = {
 		0, 1, 2,
@@ -68,24 +121,18 @@ int main(){
 	};
 	
 	
-	unsigned int vbo, vao, ibo;
-	glGenVertexArrays(1,&vao);
-	glGenBuffers(1,&vbo);
-	glBindVertexArray(vao);
-	glBindBuffer(GL_ARRAY_BUFFER,vbo);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(data),&data,GL_STATIC_DRAW);
-	glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE,6*sizeof(float),(void*)(4 * sizeof(float)));
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,6*sizeof(float),(void*)(2 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	
+	
+	//indices data
+	vao0.bind();
 	
 	glGenBuffers(1,&ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),&indices,GL_STATIC_DRAW);
-	glBindVertexArray(0);
 	
-	VertexArrayObj vao0(vao,sizeof(indices)/sizeof(unsigned int));
-	IndexBufferObj ibo0(ibo);
+	vao0.unbind();
+	
+	IndexBufferObj ibo0(ibo,sizeof(indices)/sizeof(unsigned int));
 	
 	glm::mat4 model = glm::translate(glm::mat4(1.0f),glm::vec3(0.0,0.0,0.0));
 	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
@@ -108,7 +155,7 @@ int main(){
 		vao0.bind();//bind the vao
 		ibo0.bind();
 		texture0.bind();//bind the texture
-		glDrawElements(GL_TRIANGLES,vao0.getVertexCount(),GL_UNSIGNED_INT,0);
+		glDrawElements(GL_TRIANGLES,ibo0.getVertexCount(),GL_UNSIGNED_INT,0);
 		vao0.unbind();
 		ibo0.unbind();
 		texture0.unbind();
@@ -117,8 +164,6 @@ int main(){
 	}
 	
 	//cleanup
-	glDeleteVertexArrays(1,&vao);
-	glDeleteBuffers(1,&vbo);
 	glDeleteBuffers(1,&ibo);
 	
 	glfwTerminate();

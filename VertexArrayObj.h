@@ -1,16 +1,21 @@
 #include <GL/glew.h>
+#include <vector>
 
 class VertexArrayObj{
 private:
+	unsigned int m_attribCount;
 	unsigned int m_ID;
-	int m_vertexCount;
+
+	std::vector<unsigned int> m_bufferIDs;
+	
 	
 public:
-	VertexArrayObj(unsigned int vaoID, int vertexCount);
+	VertexArrayObj();
 	~VertexArrayObj();
 	
 	inline unsigned int getID() const {return m_ID;}
-	inline unsigned int getVertexCount() const {return m_vertexCount;}
+	
+	void addFloatBufferData(float data[], size_t byteSize, GLenum type, GLenum usage, int size, GLenum normalize);
 	
 	void bind() const;
 	void unbind() const;
