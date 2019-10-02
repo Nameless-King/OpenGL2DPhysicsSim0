@@ -78,7 +78,7 @@ void Shader::setUniformBool(const std::string &name, bool value) const{
 	glUniform1i(glGetUniformLocation(m_ID,name.c_str()),(int)value);
 }
 
-void Shader::setUniform1i(const std::string &name, int value) const{
+void Shader::setUniform1i(const std::string &name, int value) const{ 
 	glUniform1i(glGetUniformLocation(m_ID,name.c_str()),value);
 }
 

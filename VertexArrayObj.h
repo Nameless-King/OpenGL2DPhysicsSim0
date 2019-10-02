@@ -1,12 +1,14 @@
 #include <GL/glew.h>
-#include <vector>
+
+
+#include "VertexBufferObj.h"
 
 class VertexArrayObj{
 private:
 	unsigned int m_attribCount;
 	unsigned int m_ID;
 
-	std::vector<unsigned int> m_bufferIDs;
+	
 	
 	
 public:
@@ -15,7 +17,7 @@ public:
 	
 	inline unsigned int getID() const {return m_ID;}
 	
-	void addFloatBufferData(float data[], size_t byteSize, GLenum type, GLenum usage, int size, GLenum normalize);
+	void addFloatBuffer(const VertexBufferObj *vbo);
 	
 	void bind() const;
 	void unbind() const;

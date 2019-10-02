@@ -1,30 +1,42 @@
 #include "VertexArrayObj.h"
 
+#include <iostream>
+
 VertexArrayObj::VertexArrayObj():m_attribCount(0){
 	glGenVertexArrays(1,&m_ID);
-	bind();
+	
 }
 
 VertexArrayObj::~VertexArrayObj(){
-	for(unsigned int id : m_bufferIDs){
-		glDeleteBuffers(1,&id);
-	}
+	
 	glDeleteVertexArrays(1,&m_ID);
 }
 
-void VertexArrayObj::addFloatBufferData(float data[],size_t byteSize,  GLenum type, GLenum usage, int size, GLenum normalize){
-	unsigned int vbo_ID;
+void VertexArrayObj::addFloatBuffer(const VertexBufferObj *vbo){
 	
+	bind();
+	vbo->bind();
 	
+	for(int i = 0;i<8;i++){
+	}
 	
-	glGenBuffers(1,&vbo_ID);
-	glBindBuffer(type,vbo_ID);
-	m_bufferIDs.push_back(vbo_ID);
-	glBufferData(type,byteSize,&data,usage);
-	glVertexAttribPointer(m_attribCount,size,GL_FLOAT,normalize,size*sizeof(float),(void*)0);
 	glEnableVertexAttribArray(m_attribCount);
 	
-	glBindBuffer(type,0);
+	glVertexAttribPointer(m_attribCount,
+		vbo->getSize(),
+		vbo->getDataType(),
+		vbo->getNormalize(),
+		sizeof(float)*vbo->getSize(),
+		(void*)0);
+	
+	
+	//Controls current index to place new attrib
+	m_attribCount+=1;
+	
+	
+	
+	vbo->unbind();
+	unbind();
 	
 	
 }

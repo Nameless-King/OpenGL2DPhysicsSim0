@@ -12,6 +12,7 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "VertexArrayObj.h"
+#include "VertexBufferObj.h"
 #include "IndexBufferObj.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -50,7 +51,9 @@ int main(){
 	//2-dkinematic
 	
 	Shader shader0("./shaders/shader0.vs","./shaders/shader0.fs");
-	shader0.setUniform1i("u_textureSampler",0);
+	
+	//shader0.setUniform1i("u_textureSampler",0);
+	
 	Texture texture0("./textures/block0.jpg");
 	
 	
@@ -83,14 +86,28 @@ int main(){
 	};
 	
 	unsigned int vao, ibo;
-	unsigned int vbo1,vbo2;
+	//unsigned int vbo1,vbo2;
 	
 	VertexArrayObj vao0;
 	
-	vao0.addFloatBufferData(vertices_05,sizeof(vertices_05),GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
-	vao0.addFloatBufferData(uv_coords,sizeof(uv_coords),GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
+	VertexBufferObj vbo0(vertices_05,sizeof(vertices_05),GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
+	VertexBufferObj vbo1(uv_coords,sizeof(uv_coords),GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
+	
+	vao0.addFloatBuffer(&vbo0);
+	
+	vao0.addFloatBuffer(&vbo1);
 	
 	/*
+	Improper implementation
+	vao0.addFloatBufferData(vertices_05,sizeof(uv_coords),GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
+	vao0.addFloatBufferData(uv_coords,sizeof(uv_coords),GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
+	*/
+	
+	
+	/*
+	
+	Code below is abstracted
+	
 	glGenBuffers(1,&vbo1);
 	glBindBuffer(GL_ARRAY_BUFFER,vbo1);
 	glBufferData(GL_ARRAY_BUFFER,sizeof(vertices_05),&vertices_05,GL_STATIC_DRAW);
@@ -109,10 +126,10 @@ int main(){
 	*/
 	
 	
-	vbo1 = 0;
-	vbo2 = 0;
+	//vbo1 = 0;
+	//vbo2 = 0;
 	
-	vao0.unbind();
+	//vao0.unbind();
 	
 		
 	unsigned int indices[] = {
@@ -156,6 +173,7 @@ int main(){
 		ibo0.bind();
 		texture0.bind();//bind the texture
 		glDrawElements(GL_TRIANGLES,ibo0.getVertexCount(),GL_UNSIGNED_INT,0);
+		
 		vao0.unbind();
 		ibo0.unbind();
 		texture0.unbind();
