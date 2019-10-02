@@ -14,6 +14,7 @@
 #include "VertexArrayObj.h"
 #include "VertexBufferObj.h"
 #include "IndexBufferObj.h"
+#include "Object.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -97,6 +98,8 @@ int main(){
 	
 	vao0.addFloatBuffer(&vbo1);
 	
+	
+	
 	/*
 	Improper implementation
 	vao0.addFloatBufferData(vertices_05,sizeof(uv_coords),GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
@@ -153,8 +156,16 @@ int main(){
 	
 	glm::mat4 model = glm::translate(glm::mat4(1.0f),glm::vec3(0.0,0.0,0.0));
 	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
-	glm::mat4 projection = glm::ortho(-1.0f,1.0f,1.0f,-1.0f,-1.0f,1.0f);
+	glm::mat4 projection = glm::ortho(-1.0f,1.0f,-1.0f,1.0f,-1.0f,1.0f);
 	
+	VertexArrayObj vao1;
+	
+	Object obj0(&vao0,
+		glm::vec3(0.0f,0.0f,0.0f),
+		glm::vec3(0.0f,0.0f,0.0f),
+		glm::vec3(1.0f,1.0f,1.0f));
+	
+	std::cout << glGetError() << std::endl;
 	
 	while(!windowObj.windowShouldClose()){
 		glfwPollEvents();
@@ -166,20 +177,23 @@ int main(){
 		//render
 		shader0.use();//bind shader
 		//set uniform shader variables
-		shader0.setUniformMat4f("u_view",view);
+		
 		shader0.setUniformMat4f("u_projection",projection);
-		shader0.setUniformMat4f("u_model",model);
-		vao0.bind();//bind the vao
+		shader0.setUniformMat4f("u_view",view);
+		shader0.setUniformMat4f("u_model",obj0.getModelMatrix());
+		obj0.getVAO()->bind();//bind the vao
 		ibo0.bind();
 		texture0.bind();//bind the texture
 		glDrawElements(GL_TRIANGLES,ibo0.getVertexCount(),GL_UNSIGNED_INT,0);
 		
-		vao0.unbind();
+		obj0.getVAO()->unbind();
 		ibo0.unbind();
 		texture0.unbind();
 		
 		windowObj.swapBuffers();
 	}
+	
+	std::cout << glGetError() << std::endl;
 	
 	//cleanup
 	glDeleteBuffers(1,&ibo);
