@@ -17,6 +17,10 @@
 #include "Object.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void input(GLFWwindow* window);
+
+int x_pos = 0;
+int y_pos = 0;
 
 int main(){
 	
@@ -172,7 +176,7 @@ int main(){
 		glClearColor(0.0f,1.0f,0.0f,1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		
+		input(windowObj.getWindow());
 		
 		//render
 		shader0.use();//bind shader
@@ -209,4 +213,18 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
+}
+
+void input(GLFWwindow* window){
+	if(glfwGetKey(window,GLFW_KEY_W)){
+		std::cout << "Key Pressed" << std::endl;
+	}else if(glfwGetKey(window,GLFW_KEY_S)){
+		
+	}
+	
+	if(glfwGetKey(window,GLFW_KEY_D)){
+		
+	}else if(glfwGetKey(window,GLFW_KEY_A)){
+		
+	}
 }
