@@ -4,6 +4,9 @@
 #include "./Dependencies/glm/glm.hpp"
 #include "./Dependencies/glm/gtc/matrix_transform.hpp"
 #include "./Dependencies/glm/gtc/type_ptr.hpp"
+#include "./Dependencies/imgui/imgui.h"
+#include "./Dependencies/imgui/imgui_impl_glfw.h"
+#include "./Dependencies/imgui/imgui_impl_opengl3.h"
 
 #include <iostream>
 #include <string>
@@ -41,7 +44,19 @@ int main(){
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	std::cout << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 	
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	//(void)io;
 	
+	ImGui::StyleColorsDark();
+	
+	ImGui_ImplGlfw_InitForOpenGL(windowObj.getWindow(),true);
+	ImGui_ImplOpenGL3_Init("#version 130");
+	
+	bool show_demo_window = true;
+	bool show_another_window = false;
+	ImVec4 clear_color = ImVec4(0.45f,0.55f,0.60f,1.00f);
 	
 	//enable default opengl parameters and funcs
 	glEnable(GL_BLEND);
@@ -169,14 +184,52 @@ int main(){
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(1.0f,1.0f,1.0f));
 	
-	std::cout << glGetError() << std::endl;
+	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
 	while(!windowObj.windowShouldClose()){
 		glfwPollEvents();
-		glClearColor(0.0f,1.0f,0.0f,1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		
 		
 		input(windowObj.getWindow());
+		
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		
+		if(show_demo_window)
+			ImGui::ShowDemoWindow(&show_demo_window);
+		
+		{
+			static float f = 0.0f;
+			static int counter = 0;
+			ImGui::Begin("Hello, World!");
+			
+			ImGui::Text("This is some useful text.");
+			ImGui::Checkbox("Demo Window",&show_demo_window);
+			ImGui::Checkbox("Another Window",&show_another_window);
+			ImGui::SliderFloat("float",&f,0.0f,1.0f);
+			ImGui::ColorEdit3("clear color",(float*)&clear_color);
+			if(ImGui::Button("Button"))
+				counter++;
+			ImGui::SameLine();
+			ImGui::Text("counter = %d",counter);
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::End();
+		}
+		
+		if(show_another_window){
+			ImGui::Begin("Another Window",&show_another_window);
+			ImGui::Text("Hello from another window!");
+			if(ImGui::Button("Close Me"))
+				show_another_window = false;
+			ImGui::End();
+		}
+		
+		
+		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
+		glClear(GL_COLOR_BUFFER_BIT);
+		
+		
 		
 		//render
 		shader0.use();//bind shader
@@ -194,10 +247,13 @@ int main(){
 		ibo0.unbind();
 		texture0.unbind();
 		
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		
 		windowObj.swapBuffers();
 	}
 	
-	std::cout << glGetError() << std::endl;
+	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
 	//cleanup
 	glDeleteBuffers(1,&ibo);

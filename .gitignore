@@ -4,3 +4,5 @@ objectFiles/
 *.dll
 *.bat
 *.exe
+*.ini
+
