@@ -1,6 +1,6 @@
 #include "Window.h"
 
-Window::Window(int width, int height, const std::string& title): m_width(width), m_height(height), m_title(title){
+Window::Window(int width, int height, const std::string& title): m_width(width), m_height(height),  m_sizeChanged(false), m_title(title){
 	
 	if(!glfwInit()){
 		std::cout << "Error glfwInit" << std::endl;
@@ -19,6 +19,17 @@ Window::Window(int width, int height, const std::string& title): m_width(width),
 	
 	glfwMakeContextCurrent(m_window);
 	glfwSwapInterval(1);
+	
+	m_projection = glm::ortho(
+		-(m_width/2.0f),
+		(m_width/2.0f),
+		-(m_height/2.0f),
+		(m_height/2.0f),
+		-1.0f,
+		1.0f
+	);
+	
+	
 }
 
 Window::~Window(){
@@ -35,4 +46,25 @@ void Window::swapBuffers(){
 
 void Window::setFramebufferSizeCallback(void(*callback)(GLFWwindow*,int,int)){
 	glfwSetFramebufferSizeCallback(m_window,callback);
+}
+
+glm::mat4 Window::getProjectionMatrix(){
+	if(m_sizeChanged){
+		m_projection = glm::ortho(
+			-(m_width/2.0f),
+			(m_width/2.0f),
+			-(m_height/2.0f),
+			(m_height/2.0f),
+			-1.0f,
+			1.0f
+		);
+		m_sizeChanged = false;
+	}
+	return m_projection;
+}
+
+void Window::resize(int width,int height){
+	m_width = width;
+	m_height = height;
+	m_sizeChanged = true;
 }

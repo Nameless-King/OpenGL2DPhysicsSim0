@@ -19,16 +19,24 @@
 #include "IndexBufferObj.h"
 #include "Object.h"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
 void input(GLFWwindow* window);
+void framebuffer_size_callback(GLFWwindow* window,int width,int height);
 
 int x_pos = 0;
 int y_pos = 0;
 
+int WIDTH = 800;
+int HEIGHT = 600;
+
+Window windowObj(WIDTH, HEIGHT,"Hello,World");
+
+
 int main(){
 	
 	
-	Window windowObj(800,600,"Hello, World!");
+	
+	
 	if(windowObj.getWindow() == NULL){
 		return EXIT_FAILURE;
 	}
@@ -98,6 +106,7 @@ int main(){
 		0.0f,1.0f
 	};
 	
+	//TODO : Delete
 	float vertices_05[] = {
 		-0.5f,-0.5f,
 		0.5f,-0.5f,
@@ -110,7 +119,7 @@ int main(){
 	
 	VertexArrayObj vao0;
 	
-	VertexBufferObj vbo0(vertices_05,sizeof(vertices_05),GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
+	VertexBufferObj vbo0(vertices_50,sizeof(vertices_50),GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
 	VertexBufferObj vbo1(uv_coords,sizeof(uv_coords),GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
 	
 	vao0.addFloatBuffer(&vbo0);
@@ -120,6 +129,8 @@ int main(){
 	
 	
 	/*
+	TODO : Delete
+	
 	Improper implementation
 	vao0.addFloatBufferData(vertices_05,sizeof(uv_coords),GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
 	vao0.addFloatBufferData(uv_coords,sizeof(uv_coords),GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
@@ -127,6 +138,8 @@ int main(){
 	
 	
 	/*
+	
+	TODO : Delete
 	
 	Code below is abstracted
 	
@@ -148,10 +161,6 @@ int main(){
 	*/
 	
 	
-	//vbo1 = 0;
-	//vbo2 = 0;
-	
-	//vao0.unbind();
 	
 		
 	unsigned int indices[] = {
@@ -175,14 +184,16 @@ int main(){
 	
 	glm::mat4 model = glm::translate(glm::mat4(1.0f),glm::vec3(0.0,0.0,0.0));
 	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
-	glm::mat4 projection = glm::ortho(-1.0f,1.0f,-1.0f,1.0f,-1.0f,1.0f);
+	
+	
 	
 	VertexArrayObj vao1;
 	
 	Object obj0(&vao0,
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(0.0f,0.0f,0.0f),
-		glm::vec3(1.0f,1.0f,1.0f));
+		glm::vec3(1.0f,1.0f,1.0f)
+	);
 	
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
@@ -235,7 +246,7 @@ int main(){
 		shader0.use();//bind shader
 		//set uniform shader variables
 		
-		shader0.setUniformMat4f("u_projection",projection);
+		shader0.setUniformMat4f("u_projection",windowObj.getProjectionMatrix());
 		shader0.setUniformMat4f("u_view",view);
 		shader0.setUniformMat4f("u_model",obj0.getModelMatrix());
 		obj0.getVAO()->bind();//bind the vao
@@ -264,13 +275,6 @@ int main(){
 	
 }
 	
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	// make sure the viewport matches the new window dimensions; note that width and 
-	// height will be significantly larger than specified on retina displays.
-	glViewport(0, 0, width, height);
-}
-
 void input(GLFWwindow* window){
 	if(glfwGetKey(window,GLFW_KEY_W)){
 		std::cout << "Key Pressed" << std::endl;
@@ -283,4 +287,12 @@ void input(GLFWwindow* window){
 	}else if(glfwGetKey(window,GLFW_KEY_A)){
 		
 	}
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	// make sure the viewport matches the new window dimensions; note that width and 
+	// height will be significantly larger than specified on retina displays.
+	glViewport(0, 0, width, height);
+	windowObj.resize(width,height);
 }
