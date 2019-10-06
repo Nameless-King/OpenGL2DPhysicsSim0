@@ -41,6 +41,21 @@ void VertexArrayObj::addFloatBuffer(const VertexBufferObj *vbo){
 	
 }
 
+void VertexArrayObj::addIndexBuffer(const IndexBufferObj *ibo){
+	bind();
+	ibo->bind();
+	
+	glBufferData(
+		GL_ELEMENT_ARRAY_BUFFER,
+		ibo->getByteSize(),
+		ibo->getData(),
+		GL_STATIC_DRAW
+	);
+	
+	ibo->unbind();
+	unbind();
+}
+
 void VertexArrayObj::bind() const{
 	glBindVertexArray(m_ID);
 }

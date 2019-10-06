@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 
 #include "VertexBufferObj.h"
+#include "IndexBufferObj.h"
 
 class VertexArrayObj{
 private:
@@ -19,6 +20,7 @@ public:
 	inline unsigned int getID() const {return m_ID;}
 	
 	void addFloatBuffer(const VertexBufferObj *vbo);
+	void addIndexBuffer(const IndexBufferObj *ibo);
 	
 	void bind() const;
 	void unbind() const;

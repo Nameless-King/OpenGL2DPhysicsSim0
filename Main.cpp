@@ -169,27 +169,21 @@ int main(){
 	};
 	
 	
+	IndexBufferObj ibo0(sizeof(indices)/sizeof(unsigned int),indices,sizeof(indices));
+
+	vao0.addIndexBuffer(&ibo0);
 	
 	
-	//indices data
-	vao0.bind();
-	
-	glGenBuffers(1,&ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),&indices,GL_STATIC_DRAW);
-	
-	vao0.unbind();
-	
-	IndexBufferObj ibo0(ibo,sizeof(indices)/sizeof(unsigned int));
 	
 	glm::mat4 model = glm::translate(glm::mat4(1.0f),glm::vec3(0.0,0.0,0.0));
 	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
 	
 	
 	
-	VertexArrayObj vao1;
 	
-	obj0 = Object(&vao0,
+	
+	obj0 = Object(
+		&vao0,
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(1.0f,1.0f,1.0f)

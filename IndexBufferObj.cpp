@@ -1,7 +1,11 @@
 #include "IndexBufferObj.h"
 #include <GL/glew.h>
 
-IndexBufferObj::IndexBufferObj(unsigned int iboID,unsigned vertexCount):m_ID(iboID),m_vertexCount(vertexCount){
+IndexBufferObj::IndexBufferObj(unsigned vertexCount,const void *data,size_t byteSize)
+	:m_vertexCount(vertexCount),
+	m_data(data),
+	m_byteSize(byteSize){
+	glGenBuffers(1,&m_ID);
 }
 
 IndexBufferObj::~IndexBufferObj(){
