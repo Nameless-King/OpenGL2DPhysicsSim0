@@ -30,7 +30,9 @@ int WIDTH = 800;
 int HEIGHT = 600;
 
 Window windowObj(WIDTH, HEIGHT,"Hello,World");
+
 Object obj0;
+Object obj1;
 
 int main(){
 	
@@ -69,6 +71,9 @@ int main(){
 	//enable default opengl parameters and funcs
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
 	//separate classes for each scene with gui options
 	//add classes to control panel gui obj 
@@ -93,10 +98,10 @@ int main(){
 		-50.0f, 50.0f, 0.0f, 1.0f, -0.5f, 0.5f
 	};
 	float vertices_50[] = {
-		-50.0f, -50.0f, 
-		50.0f, -50.0f, 
-		50.0f, 50.0f, 
-		-50.0f, 50.0f
+		-25.0f, -25.0f, 
+		25.0f, -25.0f, 
+		25.0f, 25.0f, 
+		-25.0f, 25.0f
 	};
 	
 	float uv_coords[] = {
@@ -106,12 +111,9 @@ int main(){
 		0.0f,1.0f
 	};
 	
-	//TODO : Delete
-	float vertices_05[] = {
-		-0.5f,-0.5f,
-		0.5f,-0.5f,
-		0.5f,0.5f,
-		-0.5f,0.5f
+	unsigned int indices[] = {
+		0, 1, 2,
+		2, 3, 0
 	};
 	
 	unsigned int vao, ibo;
@@ -126,47 +128,6 @@ int main(){
 	
 	vao0.addFloatBuffer(&vbo1);
 	
-	
-	
-	/*
-	TODO : Delete
-	
-	Improper implementation
-	vao0.addFloatBufferData(vertices_05,sizeof(uv_coords),GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
-	vao0.addFloatBufferData(uv_coords,sizeof(uv_coords),GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
-	*/
-	
-	
-	/*
-	
-	TODO : Delete
-	
-	Code below is abstracted
-	
-	glGenBuffers(1,&vbo1);
-	glBindBuffer(GL_ARRAY_BUFFER,vbo1);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(vertices_05),&vertices_05,GL_STATIC_DRAW);
-	glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE,2*sizeof(float),(void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER,0);
-	
-	glGenBuffers(1,&vbo2);
-	glBindBuffer(GL_ARRAY_BUFFER,vbo2);
-	glBufferData(GL_ARRAY_BUFFER,sizeof(uv_coords),&uv_coords,GL_STATIC_DRAW);
-	glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,2*sizeof(float),(void*)0);
-	glEnableVertexAttribArray(1);
-
-	glBindBuffer(GL_ARRAY_BUFFER,0);
-	*/
-	
-	
-	
-		
-	unsigned int indices[] = {
-		0, 1, 2,
-		2, 3, 0
-	};
 	
 	
 	IndexBufferObj ibo0(sizeof(indices)/sizeof(unsigned int),indices,sizeof(indices));
@@ -185,6 +146,13 @@ int main(){
 	obj0 = Object(
 		&vao0,
 		glm::vec3(0.0f,0.0f,0.0f),
+		glm::vec3(0.0f,0.0f,0.0f),
+		glm::vec3(1.0f,1.0f,1.0f)
+	);
+	
+	obj1 = Object(
+		&vao0,
+		glm::vec3(60.0f,0.0f,0.0f),
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
@@ -241,12 +209,20 @@ int main(){
 		shader0.use();//bind shader
 		//set uniform shader variables
 		
-		shader0.setUniformMat4f("u_projection",windowObj.getProjectionMatrix());
-		shader0.setUniformMat4f("u_view",view);
-		shader0.setUniformMat4f("u_model",obj0.getModelMatrix());
+		
 		obj0.getVAO()->bind();//bind the vao
 		ibo0.bind();
 		texture0.bind();//bind the texture
+		
+		shader0.setUniformMat4f("u_projection",windowObj.getProjectionMatrix());
+		shader0.setUniformMat4f("u_view",view);
+		
+		shader0.setUniformMat4f("u_model",obj0.getModelMatrix());
+		
+		glDrawElements(GL_TRIANGLES,ibo0.getVertexCount(),GL_UNSIGNED_INT,0);
+		
+		shader0.setUniformMat4f("u_model",obj1.getModelMatrix());
+		
 		glDrawElements(GL_TRIANGLES,ibo0.getVertexCount(),GL_UNSIGNED_INT,0);
 		
 		obj0.getVAO()->unbind();
