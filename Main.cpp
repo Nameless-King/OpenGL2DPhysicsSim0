@@ -30,7 +30,7 @@ int WIDTH = 800;
 int HEIGHT = 600;
 
 Window windowObj(WIDTH, HEIGHT,"Hello,World");
-
+Object obj0;
 
 int main(){
 	
@@ -189,7 +189,7 @@ int main(){
 	
 	VertexArrayObj vao1;
 	
-	Object obj0(&vao0,
+	obj0 = Object(&vao0,
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(1.0f,1.0f,1.0f)
@@ -225,6 +225,7 @@ int main(){
 			ImGui::SameLine();
 			ImGui::Text("counter = %d",counter);
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::Text("Application delta time %.3f",ImGui::GetIO().DeltaTime);
 			ImGui::End();
 		}
 		
@@ -276,17 +277,21 @@ int main(){
 }
 	
 void input(GLFWwindow* window){
+	
+	glm::vec3 currentPos = obj0.getPos();
+	
 	if(glfwGetKey(window,GLFW_KEY_W)){
-		std::cout << "Key Pressed" << std::endl;
+		currentPos.y += 1.0f;
 	}else if(glfwGetKey(window,GLFW_KEY_S)){
-		
+		currentPos.y -= 1.0f;
 	}
 	
 	if(glfwGetKey(window,GLFW_KEY_D)){
-		
+		currentPos.x += 1.0f;
 	}else if(glfwGetKey(window,GLFW_KEY_A)){
-		
+		currentPos.x -= 1.0f;
 	}
+	obj0.setPos(currentPos.x,currentPos.y,currentPos.z);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

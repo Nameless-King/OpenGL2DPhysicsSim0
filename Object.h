@@ -12,15 +12,19 @@ private:
 	glm::vec3 m_rotation;
 	glm::vec3 m_scale;
 public:
+	Object();
 	Object(VertexArrayObj *vao,glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 	~Object();
 	
 	
 	VertexArrayObj* getVAO() const {return m_pvao;}
 	glm::mat4 getModelMatrix();
-	void updatePos(float xPos, float yPos, float zPos);
-	void updateRot(float xRot, float yRot, float zRot);
-	void updateScl(float xScl, float yScl, float zScl);
+	void setPos(float xPos, float yPos, float zPos);
+	void setRot(float xRot, float yRot, float zRot);
+	void setScl(float xScl, float yScl, float zScl);
+	glm::vec3 getPos();
+	glm::vec3 getRot();
+	glm::vec3 getScl();
 	
 	
 	
