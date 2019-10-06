@@ -11,3 +11,17 @@ glm::mat4 Object::getModelMatrix(){
 	model = glm::translate(model,m_position);
 	return model;
 }
+
+
+void Object::updatePos(float xPos, float yPos, float zPos){
+	m_position = glm::vec3(xPos,yPos,zPos);
+}
+
+void Object::updateRot(float xRot, float yRot, float zRot){
+	m_rotation = glm::vec3(xRot, yRot, zRot);
+}
+
+void Object::updateScl(float xScl, float yScl, float zScl){
+	m_scale = glm::vec3(xScl,yScl,zScl);
+}
+

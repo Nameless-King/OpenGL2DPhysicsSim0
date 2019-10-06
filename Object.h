@@ -18,6 +18,9 @@ public:
 	
 	VertexArrayObj* getVAO() const {return m_pvao;}
 	glm::mat4 getModelMatrix();
+	void updatePos(float xPos, float yPos, float zPos);
+	void updateRot(float xRot, float yRot, float zRot);
+	void updateScl(float xScl, float yScl, float zScl);
 	
 	
 	
