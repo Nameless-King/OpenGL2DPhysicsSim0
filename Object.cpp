@@ -1,14 +1,13 @@
 #include "Object.h"
 
 Object::Object():
-	m_pvao(nullptr),
 	m_position(glm::vec3(0.0f,0.0f,0.0f)),
 	m_rotation(glm::vec3(0.0f,0.0f,0.0f)),
 	m_scale(glm::vec3(1.0f,1.0f,1.0f)){
 	}
 
-Object::Object(VertexArrayObj *vao, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
-	m_pvao(vao),m_position(position),m_rotation(rotation),m_scale(scale){
+Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
+	m_position(position),m_rotation(rotation),m_scale(scale){
 	}
 	
 Object::~Object(){}

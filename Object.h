@@ -7,17 +7,17 @@
 
 class Object{
 private:
-	VertexArrayObj *m_pvao;
+	
 	glm::vec3 m_position;
 	glm::vec3 m_rotation;
 	glm::vec3 m_scale;
 public:
 	Object();
-	Object(VertexArrayObj *vao,glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
+	Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 	~Object();
 	
 	
-	VertexArrayObj* getVAO() const {return m_pvao;}
+	
 	glm::mat4 getModelMatrix();
 	void setPos(float xPos, float yPos, float zPos);
 	void setRot(float xRot, float yRot, float zRot);

@@ -18,6 +18,7 @@
 #include "VertexBufferObj.h"
 #include "IndexBufferObj.h"
 #include "Object.h"
+#include "Renderer.h"
 
 
 void input(GLFWwindow* window);
@@ -140,18 +141,16 @@ int main(){
 	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
 	
 	
-	
+	Renderer renderer(&vao0);
 	
 	
 	obj0 = Object(
-		&vao0,
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
 	
 	obj1 = Object(
-		&vao0,
 		glm::vec3(60.0f,0.0f,0.0f),
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(1.0f,1.0f,1.0f)
@@ -210,24 +209,26 @@ int main(){
 		//set uniform shader variables
 		
 		
-		obj0.getVAO()->bind();//bind the vao
-		ibo0.bind();
-		texture0.bind();//bind the texture
+		renderer.start();
+		
+		texture0.bind();
 		
 		shader0.setUniformMat4f("u_projection",windowObj.getProjectionMatrix());
 		shader0.setUniformMat4f("u_view",view);
 		
 		shader0.setUniformMat4f("u_model",obj0.getModelMatrix());
 		
-		glDrawElements(GL_TRIANGLES,ibo0.getVertexCount(),GL_UNSIGNED_INT,0);
+		renderer.renderObject();
 		
 		shader0.setUniformMat4f("u_model",obj1.getModelMatrix());
 		
-		glDrawElements(GL_TRIANGLES,ibo0.getVertexCount(),GL_UNSIGNED_INT,0);
+		renderer.renderObject();
 		
-		obj0.getVAO()->unbind();
-		ibo0.unbind();
 		texture0.unbind();
+		
+		vao0.unbind();
+		vao0.getIndexBuffer()->unbind();
+		
 		
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

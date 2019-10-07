@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-VertexArrayObj::VertexArrayObj():m_attribCount(0){
+VertexArrayObj::VertexArrayObj():m_attribCount(0),m_pibo(nullptr){
 	glGenVertexArrays(1,&m_ID);
 	
 }
@@ -54,6 +54,8 @@ void VertexArrayObj::addIndexBuffer(const IndexBufferObj *ibo){
 	
 	ibo->unbind();
 	unbind();
+	
+	m_pibo = ibo;
 }
 
 void VertexArrayObj::bind() const{
