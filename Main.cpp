@@ -24,9 +24,6 @@
 void input(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
 
-int x_pos = 0;
-int y_pos = 0;
-
 int WIDTH = 800;
 int HEIGHT = 600;
 
@@ -52,8 +49,6 @@ int main(){
 		return EXIT_FAILURE	;
 	}
 	
-	std::cout << glGetString(GL_VERSION) << std::endl;
-	std::cout << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 	
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -117,22 +112,16 @@ int main(){
 		2, 3, 0
 	};
 	
-	unsigned int vao, ibo;
-	//unsigned int vbo1,vbo2;
-	
 	VertexArrayObj vao0;
 	
 	VertexBufferObj vbo0(vertices_50,sizeof(vertices_50),GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
 	VertexBufferObj vbo1(uv_coords,sizeof(uv_coords),GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
-	
 	vao0.addFloatBuffer(&vbo0);
-	
 	vao0.addFloatBuffer(&vbo1);
 	
 	
 	
 	IndexBufferObj ibo0(sizeof(indices)/sizeof(unsigned int),indices,sizeof(indices));
-
 	vao0.addIndexBuffer(&ibo0);
 	
 	
@@ -233,12 +222,7 @@ int main(){
 	}
 	
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
-	
-	//cleanup
-	glDeleteBuffers(1,&ibo);
-	
-	glfwTerminate();
-	
+		
 	return 0;
 	
 }
