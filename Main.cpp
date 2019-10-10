@@ -202,32 +202,28 @@ int main(){
 		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		
-		
-		//render
-		shader0.use();//bind shader
-		//set uniform shader variables
-		
-		
-		renderer.start();
-		
-		texture0.bind();
-		
-		shader0.setUniformMat4f("u_projection",windowObj.getProjectionMatrix());
-		shader0.setUniformMat4f("u_view",view);
-		
-		shader0.setUniformMat4f("u_model",obj0.getModelMatrix());
-		
-		renderer.renderObject();
-		
-		shader0.setUniformMat4f("u_model",obj1.getModelMatrix());
-		
-		renderer.renderObject();
-		
-		texture0.unbind();
-		
-		vao0.unbind();
-		vao0.getIndexBuffer()->unbind();
+		{
+			renderer.start();
+			
+			shader0.use();
+			
+			texture0.bind();
+			
+			shader0.setUniformMat4f("u_projection",windowObj.getProjectionMatrix());
+			shader0.setUniformMat4f("u_view",view);
+			
+			shader0.setUniformMat4f("u_model",obj0.getModelMatrix());
+			
+			renderer.renderObject();
+			
+			shader0.setUniformMat4f("u_model",obj1.getModelMatrix());
+			
+			renderer.renderObject();
+			
+			texture0.unbind();
+			
+			renderer.end();
+		}
 		
 		
 		ImGui::Render();
