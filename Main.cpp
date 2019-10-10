@@ -19,6 +19,7 @@
 #include "IndexBufferObj.h"
 #include "Object.h"
 #include "Renderer.h"
+#include "GUIControlPanel.h"
 
 
 void input(GLFWwindow* window);
@@ -49,17 +50,8 @@ int main(){
 		return EXIT_FAILURE	;
 	}
 	
-	
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	//(void)io;
-	
-	ImGui::StyleColorsDark();
-	
-	ImGui_ImplGlfw_InitForOpenGL(windowObj.getWindow(),true);
-	ImGui_ImplOpenGL3_Init("#version 130");
-	
+	GUIControlPanel::init(windowObj.getWindow(),true);
+		
 	bool show_demo_window = true;
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(0.45f,0.55f,0.60f,1.00f);
@@ -150,12 +142,9 @@ int main(){
 	while(!windowObj.windowShouldClose()){
 		glfwPollEvents();
 		
-		
 		input(windowObj.getWindow());
 		
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+		GUIControlPanel::start();
 		
 		if(show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
@@ -187,7 +176,6 @@ int main(){
 			ImGui::End();
 		}
 		
-		
 		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
@@ -215,8 +203,7 @@ int main(){
 		}
 		
 		
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		GUIControlPanel::finalize();
 		
 		windowObj.swapBuffers();
 	}
