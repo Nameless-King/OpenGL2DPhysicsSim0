@@ -10,6 +10,7 @@ private:
 	const void *m_data;
 	
 public:
+	IndexBufferObj();
 	IndexBufferObj(unsigned int vertexCount,const void *data,size_t byteSize);
 	~IndexBufferObj();
 	

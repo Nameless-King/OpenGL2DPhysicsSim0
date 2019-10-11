@@ -19,6 +19,7 @@
 #include "IndexBufferObj.h"
 #include "Object.h"
 #include "Renderer.h"
+#include "StaticRenderer.h"
 #include "GUIControlPanel.h"
 
 
@@ -75,16 +76,10 @@ int main(){
 	
 	//shader0.setUniform1i("u_textureSampler",0);
 	
-	Texture texture0("./textures/block0.jpg");
+	Texture texture0("./textures/rectangle.png");
 	
 	
-	float data[] = {
-		//large coords  uv coords    small coords
-		-50.0f, -50.0f, 0.0f, 0.0f, -0.5f, -0.5f,
-		50.0f, -50.0f, 1.0f, 0.0f, 0.5f, -0.5f,
-		50.0f, 50.0f, 1.0f, 1.0f, 0.5f, 0.5f,
-		-50.0f, 50.0f, 0.0f, 1.0f, -0.5f, 0.5f
-	};
+	
 	float vertices_50[] = {
 		-25.0f, -25.0f, 
 		25.0f, -25.0f, 
@@ -103,6 +98,8 @@ int main(){
 		0, 1, 2,
 		2, 3, 0
 	};
+	
+	StaticRenderer::init();
 	
 	VertexArrayObj vao0;
 	
@@ -180,7 +177,8 @@ int main(){
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		{
-			renderer.start();
+			StaticRenderer::bind();
+			//renderer.start();
 			
 			shader0.use();
 			
@@ -191,15 +189,18 @@ int main(){
 			
 			shader0.setUniformMat4f("u_model",obj0.getModelMatrix());
 			
-			renderer.renderObject();
+			StaticRenderer::renderObject();
+			//renderer.renderObject();
 			
 			shader0.setUniformMat4f("u_model",obj1.getModelMatrix());
 			
-			renderer.renderObject();
+			StaticRenderer::renderObject();
+			//renderer.renderObject();
 			
 			texture0.unbind();
 			
-			renderer.end();
+			StaticRenderer::unbind();
+			//renderer.end();
 		}
 		
 		
@@ -208,6 +209,7 @@ int main(){
 		windowObj.swapBuffers();
 	}
 	
+	StaticRenderer::destroy();
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 		
 	return 0;
@@ -215,6 +217,10 @@ int main(){
 }
 	
 void input(GLFWwindow* window){
+	
+	if(glfwGetKey(window,GLFW_KEY_ESCAPE)){
+		glfwSetWindowShouldClose(window,true);
+	}
 	
 	glm::vec3 currentPos = obj0.getPos();
 	

@@ -13,6 +13,7 @@ private:
 	unsigned int m_size;
 	GLenum m_normalize;
 public:
+	VertexBufferObj();
 	VertexBufferObj(const void *data, size_t byteSize,GLenum dataType, GLenum type, GLenum usage, unsigned int size, GLenum normalize);
 	~VertexBufferObj();
 	

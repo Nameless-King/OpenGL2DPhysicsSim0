@@ -1,6 +1,8 @@
 #include "IndexBufferObj.h"
 #include <GL/glew.h>
 
+IndexBufferObj::IndexBufferObj():m_vertexCount(0),m_data(nullptr),m_byteSize(0){}
+
 IndexBufferObj::IndexBufferObj(unsigned vertexCount,const void *data,size_t byteSize)
 	:m_vertexCount(vertexCount),
 	m_data(data),
