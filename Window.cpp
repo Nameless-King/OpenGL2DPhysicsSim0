@@ -68,3 +68,7 @@ void Window::resize(int width,int height){
 	m_height = height;
 	m_sizeChanged = true;
 }
+
+void Window::pollEvents(){
+	glfwPollEvents();
+}

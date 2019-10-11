@@ -3,11 +3,17 @@
 Object::Object():
 	m_position(glm::vec3(0.0f,0.0f,0.0f)),
 	m_rotation(glm::vec3(0.0f,0.0f,0.0f)),
-	m_scale(glm::vec3(1.0f,1.0f,1.0f)){
+	m_scale(glm::vec3(1.0f,1.0f,1.0f)),
+	m_vertices(nullptr),
+	m_bb(AABB()){
 	}
 
 Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
-	m_position(position),m_rotation(rotation),m_scale(scale){
+	m_position(position),
+	m_rotation(rotation),
+	m_scale(scale),
+	m_vertices(nullptr),
+	m_bb(AABB()){
 	}
 	
 Object::~Object(){}
@@ -29,6 +35,14 @@ void Object::setRot(float xRot, float yRot, float zRot){
 
 void Object::setScl(float xScl, float yScl, float zScl){
 	m_scale = glm::vec3(xScl,yScl,zScl);
+}
+
+void Object::addVertices(const float vertices[]){
+	m_vertices = vertices;
+}
+
+void Object::createAABB(){
+	m_bb = AABB(&m_position,&m_scale,m_vertices);
 }
 
 glm::vec3 Object::getPos(){

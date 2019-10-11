@@ -4,6 +4,7 @@
 #include "./Dependencies/glm/glm.hpp"
 #include "./Dependencies/glm/gtc/matrix_transform.hpp"
 #include "./Dependencies/glm/gtc/type_ptr.hpp"
+
 #include "./Dependencies/imgui/imgui.h"
 #include "./Dependencies/imgui/imgui_impl_glfw.h"
 #include "./Dependencies/imgui/imgui_impl_opengl3.h"
@@ -21,6 +22,7 @@
 #include "Renderer.h"
 #include "StaticRenderer.h"
 #include "GUIControlPanel.h"
+#include "AABB.h"
 
 
 void input(GLFWwindow* window);
@@ -109,10 +111,7 @@ int main(){
 	vao0.addIndexBuffer(&ibo0);
 	*/
 	
-	
-	glm::mat4 model = glm::translate(glm::mat4(1.0f),glm::vec3(0.0,0.0,0.0));
 	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
-	
 	
 	//Renderer renderer(&vao0);
 	
@@ -129,12 +128,23 @@ int main(){
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
 	
+	obj0.addVertices(vertices_50);
+	obj0.createAABB();
+	
+	obj1.addVertices(vertices_50);
+	obj1.createAABB();
+	
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
 	while(!windowObj.windowShouldClose()){
-		glfwPollEvents();
+		windowObj.pollEvents();
 		
 		input(windowObj.getWindow());
+		Collision objCol = AABB::getCollision(obj0.getBoundingBox(),obj1.getBoundingBox());
+		if(objCol.colliding){
+			std::cout << "Intersecting!" << std::endl;
+			std::cout << objCol.distance.x <<","<<objCol.distance.y<< std::endl;
+		}
 		
 		GUIControlPanel::start();
 		

@@ -28,6 +28,7 @@ public:
 	int getWidth() const { return m_width;}
 	int getHeight() const {return m_height;}
 	void resize(int width, int height);
+	void pollEvents();
 	glm::mat4 getProjectionMatrix();
 	
 };

@@ -1,13 +1,16 @@
 #pragma once
 
 #include "VertexArrayObj.h"
+#include "AABB.h"
+
 #include "./Dependencies/glm/glm.hpp"
 #include "./Dependencies/glm/gtc/matrix_transform.hpp"
 #include "./Dependencies/glm/gtc/type_ptr.hpp"
 
 class Object{
 private:
-	
+	const float* m_vertices;
+	AABB m_bb;
 	glm::vec3 m_position;
 	glm::vec3 m_rotation;
 	glm::vec3 m_scale;
@@ -22,9 +25,12 @@ public:
 	void setPos(float xPos, float yPos, float zPos);
 	void setRot(float xRot, float yRot, float zRot);
 	void setScl(float xScl, float yScl, float zScl);
+	void addVertices(const float vertices[]);
+	void createAABB();
 	glm::vec3 getPos();
 	glm::vec3 getRot();
 	glm::vec3 getScl();
+	inline AABB getBoundingBox() const {return m_bb;}
 	
 	
 	
