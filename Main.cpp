@@ -72,13 +72,8 @@ int main(){
 	//1-d kinematic
 	//2-dkinematic
 	
-	Shader shader0("./shaders/shader0.vs","./shaders/shader0.fs");
-	
-	//shader0.setUniform1i("u_textureSampler",0);
-	
+	Shader shader0("./shaders/shader0.vs","./shaders/shader0.fs");	
 	Texture texture0("./textures/rectangle.png");
-	
-	
 	
 	float vertices_50[] = {
 		-25.0f, -25.0f, 
@@ -101,7 +96,7 @@ int main(){
 	
 	StaticRenderer::init();
 	
-	VertexArrayObj vao0;
+	/*VertexArrayObj vao0;
 	
 	VertexBufferObj vbo0(vertices_50,sizeof(vertices_50),GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
 	VertexBufferObj vbo1(uv_coords,sizeof(uv_coords),GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
@@ -112,14 +107,14 @@ int main(){
 	
 	IndexBufferObj ibo0(sizeof(indices)/sizeof(unsigned int),indices,sizeof(indices));
 	vao0.addIndexBuffer(&ibo0);
-	
+	*/
 	
 	
 	glm::mat4 model = glm::translate(glm::mat4(1.0f),glm::vec3(0.0,0.0,0.0));
 	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
 	
 	
-	Renderer renderer(&vao0);
+	//Renderer renderer(&vao0);
 	
 	
 	obj0 = Object(
