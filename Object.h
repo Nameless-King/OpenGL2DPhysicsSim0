@@ -26,7 +26,7 @@ public:
 	void setRot(float xRot, float yRot, float zRot);
 	void setScl(float xScl, float yScl, float zScl);
 	void addVertices(const float vertices[]);
-	void createAABB();
+	void createAABB(BBType type);
 	glm::vec3 getPos();
 	glm::vec3 getRot();
 	glm::vec3 getScl();

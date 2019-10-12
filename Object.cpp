@@ -41,8 +41,8 @@ void Object::addVertices(const float vertices[]){
 	m_vertices = vertices;
 }
 
-void Object::createAABB(){
-	m_bb = AABB(&m_position,&m_scale,m_vertices);
+void Object::createAABB(BBType type){
+	m_bb = AABB(&m_position,&m_scale,m_vertices,type);
 }
 
 glm::vec3 Object::getPos(){

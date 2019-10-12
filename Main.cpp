@@ -75,7 +75,7 @@ int main(){
 	//2-dkinematic
 	
 	Shader shader0("./shaders/shader0.vs","./shaders/shader0.fs");	
-	Texture texture0("./textures/rectangle.png");
+	Texture texture0("./textures/circle.png");
 	
 	float vertices_50[] = {
 		-25.0f, -25.0f, 
@@ -129,10 +129,10 @@ int main(){
 	);
 	
 	obj0.addVertices(vertices_50);
-	obj0.createAABB();
+	obj0.createAABB(BBType::Circle);
 	
 	obj1.addVertices(vertices_50);
-	obj1.createAABB();
+	obj1.createAABB(BBType::Circle);
 	
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
