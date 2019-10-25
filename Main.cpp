@@ -23,18 +23,19 @@
 #include "StaticRenderer.h"
 #include "GUIControlPanel.h"
 #include "AABB.h"
+#include "Physics2D.h"
 
 
 void input(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
+void updatePos(Object* obj);
 
 int WIDTH = 800;
 int HEIGHT = 600;
 
 Window windowObj(WIDTH, HEIGHT,"Hello,World");
 
-Object obj0;
-Object obj1;
+Object obj0, obj1;
 
 int main(){
 	
@@ -116,6 +117,7 @@ int main(){
 	//Renderer renderer(&vao0);
 	
 	
+	
 	obj0 = Object(
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(0.0f,0.0f,0.0f),
@@ -130,21 +132,37 @@ int main(){
 	
 	obj0.addVertices(vertices_50);
 	obj0.createAABB(BBType::Circle);
+	obj0.setAcceleration(1.0f);
+	obj0.setRestitution(0);
+	obj0.setMass(50.0f);
 	
 	obj1.addVertices(vertices_50);
 	obj1.createAABB(BBType::Circle);
+	obj1.setRestitution(0);
+	obj1.setMass(5.0f);
 	
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
 	while(!windowObj.windowShouldClose()){
 		windowObj.pollEvents();
 		
+		obj0.setVelocity(0.0f,0.0f);
+		obj1.setVelocity(0.0f,0.0f);
+		
+		
 		input(windowObj.getWindow());
+		
 		Collision objCol = AABB::getCollision(obj0.getBoundingBox(),obj1.getBoundingBox());
+	
 		if(objCol.colliding){
-			std::cout << "Intersecting!" << std::endl;
-			std::cout << objCol.distance.x <<","<<objCol.distance.y<< std::endl;
+			Physics2D::resolveCollision(&obj0,&obj1,objCol);
+			Physics2D::positionalCorrection(&obj0,&obj1,objCol);
 		}
+		
+		//updatePos(&obj0);
+		updatePos(&obj1);
+		
+		
 		
 		GUIControlPanel::start();
 		
@@ -154,6 +172,7 @@ int main(){
 		{
 			static float f = 0.0f;
 			static int counter = 0;
+			static float speed = 1.0f;
 			ImGui::Begin("Hello, World!");
 			
 			ImGui::Text("This is some useful text.");
@@ -165,8 +184,11 @@ int main(){
 				counter++;
 			ImGui::SameLine();
 			ImGui::Text("counter = %d",counter);
+			ImGui::SliderFloat("speed",&speed,0.1f,100.0f);
+			if(ImGui::Button("Apply Speed"))
+				obj0.setAcceleration(speed*100.0f);
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			ImGui::Text("Application delta time %.3f",ImGui::GetIO().DeltaTime);
+			ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
 			ImGui::End();
 		}
 		
@@ -228,19 +250,29 @@ void input(GLFWwindow* window){
 	}
 	
 	glm::vec3 currentPos = obj0.getPos();
+	//get dt then calculate velocity and calculate position
+	float dt = ImGui::GetIO().DeltaTime;
+	float vel = obj0.getAcceleration() * dt;
+	obj0.setVelocity(vel,vel);
+	float pos = vel * dt;
 	
 	if(glfwGetKey(window,GLFW_KEY_W)){
-		currentPos.y += 1.0f;
+		currentPos.y += pos;
 	}else if(glfwGetKey(window,GLFW_KEY_S)){
-		currentPos.y -= 1.0f;
+		currentPos.y -= pos;
 	}
 	
 	if(glfwGetKey(window,GLFW_KEY_D)){
-		currentPos.x += 1.0f;
+		currentPos.x += pos;
 	}else if(glfwGetKey(window,GLFW_KEY_A)){
-		currentPos.x -= 1.0f;
+		currentPos.x -= pos;
 	}
-	obj0.setPos(currentPos.x,currentPos.y,currentPos.z);
+	obj0.setPos(currentPos.x,currentPos.y,0.0f);
+}
+
+void updatePos(Object* obj){
+	glm::vec2 resultingPosition = glm::vec2(obj->getPos().x,obj->getPos().y) + obj->getVelocity();
+	obj->setPos(resultingPosition.x,resultingPosition.y,0.0f);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

@@ -1,11 +1,17 @@
-#include "Object.h"
+#include "./Object.h"
+
+
 
 Object::Object():
 	m_position(glm::vec3(0.0f,0.0f,0.0f)),
 	m_rotation(glm::vec3(0.0f,0.0f,0.0f)),
 	m_scale(glm::vec3(1.0f,1.0f,1.0f)),
 	m_vertices(nullptr),
-	m_bb(AABB()){
+	m_bb(AABB()),
+	m_accel(0),
+	m_restitution(0),
+	m_mass(0),
+	m_velocity(glm::vec2(0.0f,0.0f)){
 	}
 
 Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
@@ -13,7 +19,11 @@ Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
 	m_rotation(rotation),
 	m_scale(scale),
 	m_vertices(nullptr),
-	m_bb(AABB()){
+	m_bb(AABB()),
+	m_accel(0),
+	m_restitution(0),
+	m_mass(0),
+	m_velocity(glm::vec2(0.0f,0.0f)){
 	}
 	
 Object::~Object(){}
@@ -24,6 +34,9 @@ glm::mat4 Object::getModelMatrix(){
 	return model;
 }
 
+void Object::setVelocity(float xVel, float yVel){
+	m_velocity = glm::vec2(xVel,yVel);
+}
 
 void Object::setPos(float xPos, float yPos, float zPos){
 	m_position = glm::vec3(xPos,yPos,zPos);
@@ -35,6 +48,18 @@ void Object::setRot(float xRot, float yRot, float zRot){
 
 void Object::setScl(float xScl, float yScl, float zScl){
 	m_scale = glm::vec3(xScl,yScl,zScl);
+}
+
+void Object::setAcceleration(float accel){
+	m_accel = accel;
+}
+
+void Object::setRestitution(float restitution){
+	m_restitution = restitution;
+}
+
+void Object::setMass(float mass){
+	m_mass = mass;
 }
 
 void Object::addVertices(const float vertices[]){

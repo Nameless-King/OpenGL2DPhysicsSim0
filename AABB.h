@@ -1,14 +1,21 @@
-#pragma once
+#ifndef AABB_H_
+#define AABB_H_
 
 #include <cmath>
+#include <algorithm> //for std::min(a,b)
+#include <iostream>
 
 #include "./Dependencies/glm/glm.hpp"
 #include "./Dependencies/glm/gtc/matrix_transform.hpp"
 #include "./Dependencies/glm/gtc/type_ptr.hpp"
 
+
 struct Collision{
 	bool colliding;
 	glm::vec2 distance;
+	glm::vec2 collisionNormal;
+	//glm::vec3 penetrationDepth;
+	float penetrationDepth;
 };
 
 enum BBType{
@@ -29,8 +36,11 @@ public:
 	~AABB();
 	
 	static Collision getCollision(AABB box1, AABB box2);
-	const glm::vec3 getCenter() const { return *m_center;}
+	
+	const glm::vec2 getCenter() const { return glm::vec2(m_center->x,m_center->y);}
 	const glm::vec2 getHalfExtents() const {return m_halfExtent;}
 	const int getBBType() const {return m_bbType;}
 };
+
+#endif
 	
