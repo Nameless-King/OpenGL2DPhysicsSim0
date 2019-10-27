@@ -35,7 +35,7 @@ int HEIGHT = 600;
 
 Window windowObj(WIDTH, HEIGHT,"Hello,World");
 
-Object obj0, obj1;
+Object obj0, obj1, obj2;
 
 int main(){
 	
@@ -129,6 +129,13 @@ int main(){
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
+
+	obj2 = Object(
+		glm::vec3(0.0f,60.0f,0.0f),
+		glm::vec3(0.0f,0.0f,0.0f),
+		glm::vec3(1.0f,1.0f,1.0f)
+	);
+
 	
 	obj0.addVertices(vertices_50);
 	obj0.createAABB(BBType::Circle);
@@ -141,6 +148,11 @@ int main(){
 	obj1.setRestitution(0);
 	obj1.setMass(5.0f);
 	
+	obj2.addVertices(vertices_50);
+	obj2.createAABB(BBType::Circle);
+	obj2.setRestitution(0);
+	obj2.setMass(5.0f);
+
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
 	while(!windowObj.windowShouldClose()){
@@ -148,20 +160,32 @@ int main(){
 		
 		obj0.setVelocity(0.0f,0.0f);
 		obj1.setVelocity(0.0f,0.0f);
-		
+		obj2.setVelocity(0.0f,0.0f);	
 		
 		input(windowObj.getWindow());
 		
-		Collision objCol = AABB::getCollision(obj0.getBoundingBox(),obj1.getBoundingBox());
-	
-		if(objCol.colliding){
-			Physics2D::resolveCollision(&obj0,&obj1,objCol);
-			Physics2D::positionalCorrection(&obj0,&obj1,objCol);
+		Collision obj01Col = AABB::getCollision(obj0.getBoundingBox(),obj1.getBoundingBox());
+		Collision obj02Col = AABB::getCollision(obj0.getBoundingBox(),obj2.getBoundingBox());
+		Collision obj12Col = AABB::getCollision(obj1.getBoundingBox(),obj2.getBoundingBox());
+
+		if(obj01Col.colliding){
+			Physics2D::resolveCollision(&obj0,&obj1,obj01Col);
+			Physics2D::positionalCorrection(&obj0,&obj1,obj01Col);
+		}
+		
+		if(obj02Col.colliding){
+			Physics2D::resolveCollision(&obj0,&obj2,obj02Col);
+			Physics2D::positionalCorrection(&obj0,&obj2,obj02Col);
+		}
+
+		if(obj12Col.colliding){
+			Physics2D::resolveCollision(&obj1,&obj2,obj12Col);
+			Physics2D::positionalCorrection(&obj1,&obj2,obj12Col);
 		}
 		
 		//updatePos(&obj0);
 		updatePos(&obj1);
-		
+		updatePos(&obj2);
 		
 		
 		GUIControlPanel::start();
@@ -224,6 +248,11 @@ int main(){
 			StaticRenderer::renderObject();
 			//renderer.renderObject();
 			
+			shader0.setUniformMat4f("u_model",obj2.getModelMatrix());
+
+			StaticRenderer::renderObject();
+			//renderer.renderObject();
+
 			texture0.unbind();
 			
 			StaticRenderer::unbind();
