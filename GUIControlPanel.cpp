@@ -16,7 +16,17 @@ void GUIControlPanel::start(){
 	ImGui::NewFrame();
 }
 
+void GUIControlPanel::renderMenu(){
+	ImGui::Begin("Scene(s)");
+	listScene(NULL);
+	ImGui::End();
+}
+
 void GUIControlPanel::finalize(){
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void GUIControlPanel::listScene(Scene* scene){
+	
 }

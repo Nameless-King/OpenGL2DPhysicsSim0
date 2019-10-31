@@ -154,8 +154,13 @@ int main(){
 	obj2.setMass(5.0f);
 
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
+	bool useGravity = false;
+	static float speed = 1.0f;
+	float gravity = 1.0f;
 	
 	while(!windowObj.windowShouldClose()){
+		
+		
 		windowObj.pollEvents();
 		
 		obj0.setVelocity(0.0f,0.0f);
@@ -183,10 +188,39 @@ int main(){
 			Physics2D::positionalCorrection(&obj1,&obj2,obj12Col);
 		}
 		
+		//find out what these do (forgot)
 		//updatePos(&obj0);
-		updatePos(&obj1);
-		updatePos(&obj2);
+		//updatePos(&obj1);
+		//updatePos(&obj2);
 		
+		
+		
+		
+		if(useGravity){
+			float newY = obj0.getPos().y - gravity;
+			
+			if(newY>-300.0f + obj0.getBoundingBox().getHalfExtents().y){
+				obj0.setPos(obj0.getPos().x,newY,obj0.getPos().z);
+			}else{
+				obj0.setPos(obj0.getPos().x,-300.0f + obj0.getBoundingBox().getHalfExtents().y,obj0.getPos().z);
+			}
+			
+			newY = obj1.getPos().y - gravity;
+			
+			if(newY>-300.0f + obj1.getBoundingBox().getHalfExtents().y){
+				obj1.setPos(obj1.getPos().x,newY,obj1.getPos().z);
+			}else{
+				obj1.setPos(obj1.getPos().x,-300.0f + obj1.getBoundingBox().getHalfExtents().y,obj1.getPos().z);
+			}
+			
+			newY = obj2.getPos().y - gravity;
+			
+			if(newY>-300.0f + obj2.getBoundingBox().getHalfExtents().y){
+				obj2.setPos(obj2.getPos().x,newY,obj2.getPos().z);
+			}else{
+				obj2.setPos(obj2.getPos().x,-300.0f + obj2.getBoundingBox().getHalfExtents().y,obj2.getPos().z);
+			}
+		}
 		
 		GUIControlPanel::start();
 		
@@ -194,23 +228,25 @@ int main(){
 			ImGui::ShowDemoWindow(&show_demo_window);
 		
 		{
-			static float f = 0.0f;
+			
 			static int counter = 0;
-			static float speed = 1.0f;
+			
 			ImGui::Begin("Hello, World!");
 			
 			ImGui::Text("This is some useful text.");
 			ImGui::Checkbox("Demo Window",&show_demo_window);
 			ImGui::Checkbox("Another Window",&show_another_window);
-			ImGui::SliderFloat("float",&f,0.0f,1.0f);
+		
 			ImGui::ColorEdit3("clear color",(float*)&clear_color);
 			if(ImGui::Button("Button"))
 				counter++;
 			ImGui::SameLine();
 			ImGui::Text("counter = %d",counter);
-			ImGui::SliderFloat("speed",&speed,0.1f,100.0f);
+			ImGui::SliderFloat("speed",&speed,0.1f,1000.0f);
 			if(ImGui::Button("Apply Speed"))
 				obj0.setAcceleration(speed*100.0f);
+			ImGui::Checkbox("Use Gravity",&useGravity);
+			ImGui::SliderFloat("Gravity",&gravity,0.1f,1.0f);
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
 			ImGui::End();
