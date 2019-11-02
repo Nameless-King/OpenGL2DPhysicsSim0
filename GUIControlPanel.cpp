@@ -1,5 +1,7 @@
 #include "./GuiControlPanel.h"
 
+static std::vector<Scene*> scenes;
+
 void GUIControlPanel::init(GLFWwindow* window, bool installCallbacks){
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -18,8 +20,14 @@ void GUIControlPanel::start(){
 
 void GUIControlPanel::renderMenu(){
 	ImGui::Begin("Scene(s)");
-	listScene(NULL);
+	for(int i = 0;i<scenes.size();i++){
+		listScene(scenes[i]);
+	}
 	ImGui::End();
+}
+
+void GUIControlPanel::registerScene(Scene* scene){
+	scenes.push_back(scene);
 }
 
 void GUIControlPanel::finalize(){
@@ -31,4 +39,5 @@ void GUIControlPanel::listScene(Scene* scene){
 	if(!scene){
 		ImGui::Text("Nan");
 	}
+	ImGui::Text(scene->getSceneTitle().c_str());
 }

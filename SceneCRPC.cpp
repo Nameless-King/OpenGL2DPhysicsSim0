@@ -120,8 +120,9 @@ void SceneCRPC::setActive(bool active){
 
 void SceneCRPC::renderGUI(){
 	ImGui::Begin(m_title.c_str());
-	ImGui::SliderFloat("speed",&m_speed,0.1f,1000.0f);
-	m_player->setAcceleration(m_speed*100.0f);
+	ImGui::SliderFloat("speed",&m_speed,0.01f,1000.0f);
+	float multiplier = 1.0f;
+	m_player->setAcceleration(m_speed*multiplier);
 	ImGui::Checkbox("Use Gravity",&m_useGravity);
 	ImGui::SliderFloat("Gravity",&m_gravity,0.1f,1.0f);
 	ImGui::End();
@@ -130,9 +131,12 @@ void SceneCRPC::renderGUI(){
 void SceneCRPC::input(Window* window){
 	glm::vec3 currentPos = m_player->getPos();
 	float dt = ImGui::GetIO().DeltaTime;
+
 	float vel = m_player->getAcceleration()*dt;
+
 	m_player->setVelocity(vel,vel);
-	float pos = vel * dt;
+	float pos = vel;
+
 	
 	if(glfwGetKey(window->getWindow(),GLFW_KEY_W)){
 		currentPos.y += pos;

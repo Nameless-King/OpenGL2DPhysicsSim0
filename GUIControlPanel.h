@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 #include <string>
+#include <vector>
 
 #include "./Scene.h"
 #include "./Window.h"
@@ -11,11 +12,12 @@
 #include "./Dependencies/imgui/imgui_impl_opengl3.h"
 
 class GUIControlPanel{
-private:
-	static void listScene(Scene* scene);
 public:
 	static void init(GLFWwindow* window, bool installCallbacks);
 	static void start();
+	static void registerScene(Scene* scene);
 	static void renderMenu();
 	static void finalize();
+private:
+	static void listScene(Scene* scene);
 };

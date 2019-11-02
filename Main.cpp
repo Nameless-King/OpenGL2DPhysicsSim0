@@ -25,6 +25,7 @@
 #include "AABB.h"
 #include "Physics2D.h"
 #include "SceneCRPC.h"
+#include "SceneExample.h"
 
 void input(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
@@ -35,12 +36,7 @@ int HEIGHT = 600;
 
 Window windowObj(WIDTH, HEIGHT,"Hello,World");
 
-Object obj0, obj1, obj2;
-
 int main(){
-	
-	
-	
 	
 	if(windowObj.getWindow() == NULL){
 		return EXIT_FAILURE;
@@ -102,48 +98,13 @@ int main(){
 	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
 	
 	SceneCRPC scene0(&shader0,&texture0,vertices_50);
+	SceneExample scene1(&shader0,&texture0,vertices_50);
 	
-	obj0 = Object(
-		glm::vec3(0.0f,0.0f,0.0f),
-		glm::vec3(0.0f,0.0f,0.0f),
-		glm::vec3(1.0f,1.0f,1.0f)
-	);
+	GUIControlPanel::registerScene(&scene0);
+	GUIControlPanel::registerScene(&scene1);
 	
-	obj1 = Object(
-		glm::vec3(60.0f,0.0f,0.0f),
-		glm::vec3(0.0f,0.0f,0.0f),
-		glm::vec3(1.0f,1.0f,1.0f)
-	);
-
-	obj2 = Object(
-		glm::vec3(0.0f,60.0f,0.0f),
-		glm::vec3(0.0f,0.0f,0.0f),
-		glm::vec3(1.0f,1.0f,1.0f)
-	);
-
-	
-	obj0.addVertices(vertices_50);
-	obj0.createAABB(BBType::Circle);
-	obj0.setAcceleration(1.0f);
-	obj0.setRestitution(0);
-	obj0.setMass(50.0f);
-	
-	obj1.addVertices(vertices_50);
-	obj1.createAABB(BBType::Circle);
-	obj1.setRestitution(0);
-	obj1.setMass(5.0f);
-	
-	obj2.addVertices(vertices_50);
-	obj2.createAABB(BBType::Circle);
-	obj2.setRestitution(0);
-	obj2.setMass(5.0f);
 
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
-	bool useGravity = false;
-	static float speed = 1.0f;
-	float gravity = 1.0f;
-	
-	
 	
 	while(!windowObj.windowShouldClose()){
 		
@@ -151,6 +112,7 @@ int main(){
 		windowObj.pollEvents();
 		
 		scene0.update(&windowObj);
+		//scene1.update(&windowObj);
 		
 		GUIControlPanel::start();
 		
@@ -186,11 +148,13 @@ int main(){
 		}
 		
 		scene0.renderGUI();
+		//scene1.renderGUI();
 		
 		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		scene0.render(&windowObj);
+		//scene1.render(&windowObj);
 		
 		GUIControlPanel::finalize();
 		
@@ -202,39 +166,7 @@ int main(){
 		
 	return 0;
 	
-}
-	
-void input(GLFWwindow* window){
-	
-	if(glfwGetKey(window,GLFW_KEY_ESCAPE)){
-		glfwSetWindowShouldClose(window,true);
-	}
-	
-	glm::vec3 currentPos = obj0.getPos();
-	//get dt then calculate velocity and calculate position
-	float dt = ImGui::GetIO().DeltaTime;
-	float vel = obj0.getAcceleration() * dt;
-	obj0.setVelocity(vel,vel);
-	float pos = vel * dt;
-	
-	if(glfwGetKey(window,GLFW_KEY_W)){
-		currentPos.y += pos;
-	}else if(glfwGetKey(window,GLFW_KEY_S)){
-		currentPos.y -= pos;
-	}
-	
-	if(glfwGetKey(window,GLFW_KEY_D)){
-		currentPos.x += pos;
-	}else if(glfwGetKey(window,GLFW_KEY_A)){
-		currentPos.x -= pos;
-	}
-	obj0.setPos(currentPos.x,currentPos.y,0.0f);
-}
-
-void updatePos(Object* obj){
-	glm::vec2 resultingPosition = glm::vec2(obj->getPos().x,obj->getPos().y) + obj->getVelocity();
-	obj->setPos(resultingPosition.x,resultingPosition.y,0.0f);
-}
+}	
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
