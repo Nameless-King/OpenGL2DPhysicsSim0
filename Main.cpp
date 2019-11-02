@@ -99,22 +99,7 @@ int main(){
 	
 	StaticRenderer::init();
 	
-	/*VertexArrayObj vao0;
-	
-	VertexBufferObj vbo0(vertices_50,sizeof(vertices_50),GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
-	VertexBufferObj vbo1(uv_coords,sizeof(uv_coords),GL_FLOAT,GL_ARRAY_BUFFER,GL_STATIC_DRAW,2,GL_FALSE);
-	vao0.addFloatBuffer(&vbo0);
-	vao0.addFloatBuffer(&vbo1);
-	
-	
-	
-	IndexBufferObj ibo0(sizeof(indices)/sizeof(unsigned int),indices,sizeof(indices));
-	vao0.addIndexBuffer(&ibo0);
-	*/
-	
 	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
-	
-	//Renderer renderer(&vao0);
 	
 	SceneCRPC scene0(&shader0,&texture0,vertices_50);
 	
@@ -166,66 +151,6 @@ int main(){
 		windowObj.pollEvents();
 		
 		scene0.update(&windowObj);
-		/*
-		obj0.setVelocity(0.0f,0.0f);
-		obj1.setVelocity(0.0f,0.0f);
-		obj2.setVelocity(0.0f,0.0f);	
-		
-		input(windowObj.getWindow());
-		
-		Collision obj01Col = AABB::getCollision(obj0.getBoundingBox(),obj1.getBoundingBox());
-		Collision obj02Col = AABB::getCollision(obj0.getBoundingBox(),obj2.getBoundingBox());
-		Collision obj12Col = AABB::getCollision(obj1.getBoundingBox(),obj2.getBoundingBox());
-
-		if(obj01Col.colliding){
-			Physics2D::resolveCollision(&obj0,&obj1,obj01Col);
-			Physics2D::positionalCorrection(&obj0,&obj1,obj01Col);
-		}
-		
-		if(obj02Col.colliding){
-			Physics2D::resolveCollision(&obj0,&obj2,obj02Col);
-			Physics2D::positionalCorrection(&obj0,&obj2,obj02Col);
-		}
-
-		if(obj12Col.colliding){
-			Physics2D::resolveCollision(&obj1,&obj2,obj12Col);
-			Physics2D::positionalCorrection(&obj1,&obj2,obj12Col);
-		}
-		
-		//find out what these do (forgot)
-		//updatePos(&obj0);
-		//updatePos(&obj1);
-		//updatePos(&obj2);
-		
-		
-		
-		
-		if(useGravity){
-			float newY = obj0.getPos().y - gravity;
-			
-			if(newY>-300.0f + obj0.getBoundingBox().getHalfExtents().y){
-				obj0.setPos(obj0.getPos().x,newY,obj0.getPos().z);
-			}else{
-				obj0.setPos(obj0.getPos().x,-300.0f + obj0.getBoundingBox().getHalfExtents().y,obj0.getPos().z);
-			}
-			
-			newY = obj1.getPos().y - gravity;
-			
-			if(newY>-300.0f + obj1.getBoundingBox().getHalfExtents().y){
-				obj1.setPos(obj1.getPos().x,newY,obj1.getPos().z);
-			}else{
-				obj1.setPos(obj1.getPos().x,-300.0f + obj1.getBoundingBox().getHalfExtents().y,obj1.getPos().z);
-			}
-			
-			newY = obj2.getPos().y - gravity;
-			
-			if(newY>-300.0f + obj2.getBoundingBox().getHalfExtents().y){
-				obj2.setPos(obj2.getPos().x,newY,obj2.getPos().z);
-			}else{
-				obj2.setPos(obj2.getPos().x,-300.0f + obj2.getBoundingBox().getHalfExtents().y,obj2.getPos().z);
-			}
-		}
-		*/
 		
 		GUIControlPanel::start();
 		
@@ -247,11 +172,6 @@ int main(){
 				counter++;
 			ImGui::SameLine();
 			ImGui::Text("counter = %d",counter);
-			//ImGui::SliderFloat("speed",&speed,0.1f,1000.0f);
-			//if(ImGui::Button("Apply Speed"))
-			//	obj0.setAcceleration(speed*100.0f);
-			//ImGui::Checkbox("Use Gravity",&useGravity);
-			//ImGui::SliderFloat("Gravity",&gravity,0.1f,1.0f);
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
 			ImGui::End();
@@ -269,40 +189,6 @@ int main(){
 		
 		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
-		
-		/*
-		{
-			StaticRenderer::bind();
-			//renderer.start();
-			
-			shader0.use();
-			
-			texture0.bind();
-			
-			shader0.setUniformMat4f("u_projection",windowObj.getProjectionMatrix());
-			shader0.setUniformMat4f("u_view",view);
-			
-			shader0.setUniformMat4f("u_model",obj0.getModelMatrix());
-			
-			StaticRenderer::renderObject();
-			//renderer.renderObject();
-			
-			shader0.setUniformMat4f("u_model",obj1.getModelMatrix());
-			
-			StaticRenderer::renderObject();
-			//renderer.renderObject();
-			
-			shader0.setUniformMat4f("u_model",obj2.getModelMatrix());
-
-			StaticRenderer::renderObject();
-			//renderer.renderObject();
-
-			texture0.unbind();
-			
-			StaticRenderer::unbind();
-			//renderer.end();
-		}
-		*/
 		
 		scene0.render(&windowObj);
 		
