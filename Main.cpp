@@ -111,8 +111,9 @@ int main(){
 		
 		windowObj.pollEvents();
 		
-		scene0.update(&windowObj);
+		//scene0.update(&windowObj);
 		//scene1.update(&windowObj);
+		GUIControlPanel::updateCurrentScene(&windowObj);
 		
 		GUIControlPanel::start();
 		
@@ -147,14 +148,16 @@ int main(){
 			ImGui::End();
 		}
 		
-		scene0.renderGUI();
+		//scene0.renderGUI();
 		//scene1.renderGUI();
+		GUIControlPanel::renderCurrentSceneGUI();
 		
 		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		scene0.render(&windowObj);
+		//scene0.render(&windowObj);
 		//scene1.render(&windowObj);
+		GUIControlPanel::renderCurrentScene(&windowObj);
 		
 		GUIControlPanel::finalize();
 		

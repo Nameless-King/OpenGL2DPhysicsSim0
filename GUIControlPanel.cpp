@@ -1,6 +1,7 @@
 #include "./GuiControlPanel.h"
 
 static std::vector<Scene*> scenes;
+static int currentScene = -1;
 
 void GUIControlPanel::init(GLFWwindow* window, bool installCallbacks){
 	IMGUI_CHECKVERSION();
@@ -20,8 +21,9 @@ void GUIControlPanel::start(){
 
 void GUIControlPanel::renderMenu(){
 	ImGui::Begin("Scene(s)");
+	ImGui::RadioButton("NAN",&currentScene,-1);
 	for(int i = 0;i<scenes.size();i++){
-		listScene(scenes[i]);
+		listScene(scenes[i],i);
 	}
 	ImGui::End();
 }
@@ -35,9 +37,29 @@ void GUIControlPanel::finalize(){
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void GUIControlPanel::listScene(Scene* scene){
+void GUIControlPanel::listScene(Scene* scene,int sceneIndex){
 	if(!scene){
-		ImGui::Text("Nan");
+		ImGui::RadioButton("NAN",&currentScene,sceneIndex);
 	}
-	ImGui::Text(scene->getSceneTitle().c_str());
+	ImGui::RadioButton(scene->getSceneTitle().c_str(),&currentScene,sceneIndex);
+}
+
+void GUIControlPanel::updateCurrentScene(Window* window){
+	if(currentScene!=-1){
+		scenes[currentScene]->update(window);
+	}
+	
+}
+
+void GUIControlPanel::renderCurrentSceneGUI(){
+	if(currentScene!=-1){
+		scenes[currentScene]->renderGUI();
+	}
+	
+}
+
+void GUIControlPanel::renderCurrentScene(Window* window){
+	if(currentScene!=-1){
+		scenes[currentScene]->render(window);
+	}
 }

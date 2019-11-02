@@ -18,6 +18,9 @@ public:
 	static void registerScene(Scene* scene);
 	static void renderMenu();
 	static void finalize();
+	static void updateCurrentScene(Window* window);
+	static void renderCurrentSceneGUI();
+	static void renderCurrentScene(Window* window);
 private:
-	static void listScene(Scene* scene);
+	static void listScene(Scene* scene,int sceneIndex);
 };
