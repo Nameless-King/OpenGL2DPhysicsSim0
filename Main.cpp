@@ -24,7 +24,7 @@
 #include "GUIControlPanel.h"
 #include "AABB.h"
 #include "Physics2D.h"
-
+#include "SceneCRPC.h"
 
 void input(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
@@ -116,7 +116,7 @@ int main(){
 	
 	//Renderer renderer(&vao0);
 	
-	
+	Scene scene0 = SceneCRPC(&shader0,&texture0,vertices_50);
 	
 	obj0 = Object(
 		glm::vec3(0.0f,0.0f,0.0f),
@@ -162,6 +162,8 @@ int main(){
 		
 		
 		windowObj.pollEvents();
+		
+		scene0.update(&windowObj);
 		
 		obj0.setVelocity(0.0f,0.0f);
 		obj1.setVelocity(0.0f,0.0f);
@@ -228,7 +230,7 @@ int main(){
 			ImGui::ShowDemoWindow(&show_demo_window);
 		
 		{
-			
+			GUIControlPanel::renderMenu();
 			static int counter = 0;
 			
 			ImGui::Begin("Hello, World!");
@@ -259,6 +261,8 @@ int main(){
 				show_another_window = false;
 			ImGui::End();
 		}
+		
+		scene0.renderGUI();
 		
 		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -294,7 +298,7 @@ int main(){
 			StaticRenderer::unbind();
 			//renderer.end();
 		}
-		
+		scene0.render(&windowObj);
 		
 		GUIControlPanel::finalize();
 		

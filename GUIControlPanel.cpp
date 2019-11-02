@@ -28,5 +28,7 @@ void GUIControlPanel::finalize(){
 }
 
 void GUIControlPanel::listScene(Scene* scene){
-	
+	if(!scene){
+		ImGui::Text("Nan");
+	}
 }

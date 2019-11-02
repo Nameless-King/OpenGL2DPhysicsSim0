@@ -4,6 +4,7 @@
 #include <string>
 
 #include "./Scene.h"
+#include "./Window.h"
 
 #include "./Dependencies/imgui/imgui.h"
 #include "./Dependencies/imgui/imgui_impl_glfw.h"

@@ -1,9 +1,13 @@
 #pragma once
 
+#include "./Window.h"
+
 class Scene{
 public:
-	virtual void render() = 0;
-	virtual std::string getSceneTitle() = 0;
-	virtual bool isActive() = 0;
-	virtual bool setActive() = 0;
+	virtual void render(Window* window);
+	virtual void update(Window* window);
+	virtual void renderGUI();
+	virtual std::string getSceneTitle();
+	virtual bool isActive();
+	virtual void setActive(bool active);
 };
