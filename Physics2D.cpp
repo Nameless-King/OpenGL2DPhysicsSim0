@@ -45,7 +45,8 @@ void Physics2D::positionalCorrection(Object* a, Object* b,Collision collision){
 	
 	//(collision.penetrationDepth/(1.0/a->getMass() + 1.0/b->getMass())*percent) * collision.collisionNormal;
 	
-	
+	assert(a->getMass() != 0);
+	assert(b->getMass() != 0);
 
 	glm::vec2 correctionA = a->getBoundingBox().getCenter();
 	float inverseA = (1.0f/a->getMass());

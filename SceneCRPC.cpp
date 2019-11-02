@@ -27,7 +27,7 @@ SceneCRPC::SceneCRPC(Shader* shader, Texture* texture,const float vertices[]):
 	));
 	
 	m_objs.push_back(new Object(
-		glm::vec3(0.0f,0.0f,0.0f),
+		glm::vec3(1.0f,0.0f,0.0f),
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(1.0f,1.0f,1.0f)
 	));
@@ -44,6 +44,8 @@ SceneCRPC::SceneCRPC(Shader* shader, Texture* texture,const float vertices[]):
 	m_objs[1]->setMass(5.0f);
 	
 	m_player = m_objs[0];
+	
+	
 }
 
 SceneCRPC::~SceneCRPC(){
@@ -74,17 +76,29 @@ void SceneCRPC::render(Window* window){
 }
 
 void SceneCRPC::update(Window* window){
+	
+	
 	m_objs[0]->setVelocity(0.0f,0.0f);
 	m_objs[1]->setVelocity(0.0f,0.0f);
 	
 	input(window);
 	
+	
+	
 	Collision obj01Col = AABB::getCollision(m_objs[0]->getBoundingBox(),m_objs[1]->getBoundingBox());
+	
+	
 	
 	if(obj01Col.colliding){
 		Physics2D::resolveCollision(m_objs[0],m_objs[1],obj01Col);
 		Physics2D::positionalCorrection(m_objs[0],m_objs[1],obj01Col);
 	}
+	
+
+	
+	//ignore these, placed to try and fix nan vector bug, didn't work
+	//updatePos(m_objs[0]);
+	//updatePos(m_objs[1]);
 	
 	if(m_useGravity){
 		for(int i = 0;i<m_objs.size();i++){
@@ -97,6 +111,7 @@ void SceneCRPC::update(Window* window){
 			}
 		}
 	}
+
 }
 
 void SceneCRPC::setActive(bool active){
@@ -106,8 +121,7 @@ void SceneCRPC::setActive(bool active){
 void SceneCRPC::renderGUI(){
 	ImGui::Begin(m_title.c_str());
 	ImGui::SliderFloat("speed",&m_speed,0.1f,1000.0f);
-	if(ImGui::Button("Apply Speed"));
-		m_player->setAcceleration(m_speed*100.0f);
+	m_player->setAcceleration(m_speed*100.0f);
 	ImGui::Checkbox("Use Gravity",&m_useGravity);
 	ImGui::SliderFloat("Gravity",&m_gravity,0.1f,1.0f);
 	ImGui::End();
@@ -133,4 +147,23 @@ void SceneCRPC::input(Window* window){
 	}
 	
 	m_player->setPos(currentPos.x,currentPos.y,currentPos.z);
+}
+
+std::string SceneCRPC::getSceneTitle() const {
+	return m_title;
+}
+
+bool SceneCRPC::isActive() const {
+	return m_active;
+}
+
+void SceneCRPC::posCheck(){
+	std::cout << m_player->getPos().x << " " << m_player->getPos().y << " " << m_player->getPos().z << std::endl;
+	std::cout << m_player->getRot().x << " " << m_player->getRot().y << " " << m_player->getRot().z << std::endl;
+	std::cout << m_player->getScl().x << " " << m_player->getScl().y << " " << m_player->getScl().z << std::endl;
+}
+
+void SceneCRPC::updatePos(Object* obj){
+	glm::vec2 resultingPosition = glm::vec2(obj->getPos().x,obj->getPos().y) + obj->getVelocity();
+	obj->setPos(resultingPosition.x,resultingPosition.y,0.0f);
 }

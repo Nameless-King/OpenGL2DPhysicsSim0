@@ -4,6 +4,7 @@
 #include <cmath>
 #include <algorithm> //for std::min(a,b)
 #include <iostream>
+#include <assert.h>
 
 #include "./Dependencies/glm/glm.hpp"
 #include "./Dependencies/glm/gtc/matrix_transform.hpp"

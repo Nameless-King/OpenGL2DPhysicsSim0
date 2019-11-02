@@ -4,6 +4,7 @@
 #include <cmath>
 #include <algorithm>
 #include <iostream>
+#include <assert.h>
 
 #include "./Object.h"
 #include "./AABB.h"

@@ -116,7 +116,7 @@ int main(){
 	
 	//Renderer renderer(&vao0);
 	
-	Scene scene0 = SceneCRPC(&shader0,&texture0,vertices_50);
+	SceneCRPC scene0(&shader0,&texture0,vertices_50);
 	
 	obj0 = Object(
 		glm::vec3(0.0f,0.0f,0.0f),
@@ -158,13 +158,15 @@ int main(){
 	static float speed = 1.0f;
 	float gravity = 1.0f;
 	
+	
+	
 	while(!windowObj.windowShouldClose()){
 		
 		
 		windowObj.pollEvents();
 		
 		scene0.update(&windowObj);
-		
+		/*
 		obj0.setVelocity(0.0f,0.0f);
 		obj1.setVelocity(0.0f,0.0f);
 		obj2.setVelocity(0.0f,0.0f);	
@@ -223,6 +225,7 @@ int main(){
 				obj2.setPos(obj2.getPos().x,-300.0f + obj2.getBoundingBox().getHalfExtents().y,obj2.getPos().z);
 			}
 		}
+		*/
 		
 		GUIControlPanel::start();
 		
@@ -244,11 +247,11 @@ int main(){
 				counter++;
 			ImGui::SameLine();
 			ImGui::Text("counter = %d",counter);
-			ImGui::SliderFloat("speed",&speed,0.1f,1000.0f);
-			if(ImGui::Button("Apply Speed"))
-				obj0.setAcceleration(speed*100.0f);
-			ImGui::Checkbox("Use Gravity",&useGravity);
-			ImGui::SliderFloat("Gravity",&gravity,0.1f,1.0f);
+			//ImGui::SliderFloat("speed",&speed,0.1f,1000.0f);
+			//if(ImGui::Button("Apply Speed"))
+			//	obj0.setAcceleration(speed*100.0f);
+			//ImGui::Checkbox("Use Gravity",&useGravity);
+			//ImGui::SliderFloat("Gravity",&gravity,0.1f,1.0f);
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
 			ImGui::End();
@@ -267,6 +270,7 @@ int main(){
 		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
+		/*
 		{
 			StaticRenderer::bind();
 			//renderer.start();
@@ -298,6 +302,8 @@ int main(){
 			StaticRenderer::unbind();
 			//renderer.end();
 		}
+		*/
+		
 		scene0.render(&windowObj);
 		
 		GUIControlPanel::finalize();

@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 #include "./AABB.h"
 #include "./Object.h"
@@ -37,13 +38,14 @@ class SceneCRPC : public Scene{
 		SceneCRPC();
 		SceneCRPC(Shader* shader, Texture* texture, const float vertices[]);
 		~SceneCRPC();
-		inline std::string getSceneTitle() const { return m_title;}
-		inline bool isActive() const {return m_active;}
+		std::string getSceneTitle()const;
+		bool isActive()const;
 		void render(Window* window);
 		void update(Window* window);
 		void setActive(bool active);
-	
-	private:
 		void renderGUI();
+		void posCheck();
+	private:
 		void input(Window* window);
+		void updatePos(Object* obj);
 };
