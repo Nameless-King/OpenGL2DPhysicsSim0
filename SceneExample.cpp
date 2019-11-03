@@ -59,7 +59,7 @@ void SceneExample::setActive(bool active){
 
 void SceneExample::renderGUI(){
 	ImGui::Begin(m_title.c_str());
-	ImGui::SliderFloat("speed",&m_speed,0.01f,1000.0f);
+	ImGui::SliderFloat("speed",&m_speed,0.01f,100000.0f);
 	m_player->setAcceleration(m_speed);
 	ImGui::End();
 }
@@ -70,7 +70,7 @@ void SceneExample::input(Window* window){
 	
 	float vel = m_player->getAcceleration()*dt;
 	m_player->setVelocity(vel,vel);
-	float pos = vel;
+	float pos = vel*dt;
 	
 	if(glfwGetKey(window->getWindow(),GLFW_KEY_W)){
 		currentPos.y += pos;

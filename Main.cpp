@@ -24,8 +24,11 @@
 #include "GUIControlPanel.h"
 #include "AABB.h"
 #include "Physics2D.h"
-#include "SceneCRPC.h"
+
 #include "SceneExample.h"
+#include "SceneCRPC.h"
+#include "SceneIntegrator.h"
+
 
 void input(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
@@ -99,10 +102,11 @@ int main(){
 	
 	SceneCRPC scene0(&shader0,&texture0,vertices_50);
 	SceneExample scene1(&shader0,&texture0,vertices_50);
+	SceneIntegrator scene2(&shader0,&texture0,vertices_50);
 	
-	GUIControlPanel::registerScene(&scene0);
 	GUIControlPanel::registerScene(&scene1);
-	
+	GUIControlPanel::registerScene(&scene0);
+	GUIControlPanel::registerScene(&scene2);
 
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
@@ -111,8 +115,7 @@ int main(){
 		
 		windowObj.pollEvents();
 		
-		//scene0.update(&windowObj);
-		//scene1.update(&windowObj);
+
 		GUIControlPanel::updateCurrentScene(&windowObj);
 		
 		GUIControlPanel::start();
@@ -147,16 +150,13 @@ int main(){
 				show_another_window = false;
 			ImGui::End();
 		}
-		
-		//scene0.renderGUI();
-		//scene1.renderGUI();
+
 		GUIControlPanel::renderCurrentSceneGUI();
 		
 		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		//scene0.render(&windowObj);
-		//scene1.render(&windowObj);
+
 		GUIControlPanel::renderCurrentScene(&windowObj);
 		
 		GUIControlPanel::finalize();

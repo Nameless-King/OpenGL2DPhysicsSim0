@@ -1,5 +1,7 @@
 #include "./Physics2D.h"
 
+const static glm::vec2 gravity(0.0f,-9.8f);
+
 void Physics2D::resolveCollision(Object* a, Object* b, Collision collision){
 
 	
@@ -68,3 +70,24 @@ void Physics2D::positionalCorrection(Object* a, Object* b,Collision collision){
 	b->setPos(correctionB.x,correctionB.y,0.0f);
 }
 
+glm::vec2 Physics2D::getGravity(){
+	return gravity;
+}
+
+void Physics2D::updatePos(Object* obj){
+	glm::vec2 objPos(obj->getPos().x,obj->getPos().y);
+	RigidBody2D* objRb = obj->getRigidBody2D();
+	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
+	glm::vec2 objAcl(objRb->getAcceleration()->x,objRb->getAcceleration()->y);
+	float dt = ImGui::GetIO().DeltaTime;
+	
+	objVel += dt*objAcl;
+	objPos += dt*objVel;
+	//not needed, the resulting value will by much too low to make a difference
+	//objPos += dt*dt*0.5f*objRb->getAcceleration();
+	
+	objRb->setVelocity(objVel.x,objVel.y);
+	obj->setPos(objPos.x,objPos.y);
+	
+	
+}

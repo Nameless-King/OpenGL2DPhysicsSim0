@@ -5,6 +5,7 @@
 
 #include "./VertexArrayObj.h"
 #include "./AABB.h"
+#include "./RigidBody2D.h"
 
 #include "./Dependencies/glm/glm.hpp"
 #include "./Dependencies/glm/gtc/matrix_transform.hpp"
@@ -16,6 +17,7 @@ class Object{
 private:
 	const float* m_vertices;
 	AABB m_bb;
+	RigidBody2D* m_rb;
 	glm::vec3 m_position;
 	glm::vec3 m_rotation;
 	glm::vec3 m_scale;
@@ -28,18 +30,19 @@ public:
 	Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 	~Object();
 	
-	
-	
 	glm::mat4 getModelMatrix();
 	
 	void setVelocity(float xVel,float yVel);
 	void setPos(float xPos, float yPos, float zPos);
+	void setPos(float xPos, float yPos);
 	void setRot(float xRot, float yRot, float zRot);
 	void setScl(float xScl, float yScl, float zScl);
 	
 	void setAcceleration(float accel);
 	void setRestitution(float restitution);
 	void setMass(float mass);
+	
+	void addRigidBody2D(RigidBody2D* rb);
 	
 	void addVertices(const float vertices[]);
 	
@@ -50,6 +53,7 @@ public:
 	glm::vec3 getScl();
 	
 	inline AABB getBoundingBox() const {return m_bb;}
+	inline RigidBody2D* getRigidBody2D() const {return m_rb;}
 	
 	inline float getAcceleration() const {return m_accel;}
 	inline float getMass() const {return m_mass;}
