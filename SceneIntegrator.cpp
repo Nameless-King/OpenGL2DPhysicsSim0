@@ -26,7 +26,7 @@ SceneIntegrator::SceneIntegrator(Shader* shader, Texture* texture, const float v
 		m_player->createAABB(BBType::Circle);
 		
 		RigidBody2D* rbPlayer = new RigidBody2D(5.0f);
-		
+		rbPlayer->setDamping(1.0f);
 		
 		m_player->addRigidBody2D(rbPlayer);
 }
@@ -66,8 +66,11 @@ void SceneIntegrator::update(Window* window){
 }
 
 void SceneIntegrator::renderGUI(){
+	float damping = m_player->getRigidBody2D()->getDamping();
 	ImGui::Begin(m_title.c_str());
-	ImGui::SliderFloat("acceleration",&m_accVal,10.0f,200.0f);
+	ImGui::SliderFloat("acceleration",&m_accVal,10.0f,150.0f);
+	ImGui::SliderFloat("damping",&damping,0.0f,1.0f);
+	m_player->getRigidBody2D()->setDamping(damping);
 	ImGui::End();
 }
 

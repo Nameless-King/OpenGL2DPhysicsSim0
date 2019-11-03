@@ -1,10 +1,10 @@
 #include "StaticRenderer.h"
 
 const float StaticRenderer::s_vertices[] = {
-	-25.0f,-25.0f,
-	25.0f,-25.0f,
-	25.0f,25.0f,
-	-25.0f,25.0f
+	-10.0f,-10.0f,
+	10.0f,-10.0f,
+	10.0f,10.0f,
+	-10.0f,10.0f
 };
 	
 const float StaticRenderer::s_uvCoords[] = {
@@ -38,6 +38,18 @@ void StaticRenderer::init(){
 	s_vao->addIndexBuffer(s_pibo);
 	
 	
+}
+
+const float* StaticRenderer::getVertices(){
+	return s_vertices;
+}
+
+const float* StaticRenderer::getUVCoords(){
+	return s_uvCoords;
+}
+
+const unsigned int* StaticRenderer::getIndices(){
+	return s_indices;
 }
 
 void StaticRenderer::bind(){

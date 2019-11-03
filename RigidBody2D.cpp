@@ -23,6 +23,10 @@ void RigidBody2D::setMass(float mass){
 	m_mass = mass;
 }
 
+void RigidBody2D::setDamping(float damping){
+	m_damping = damping;
+}
+
 void RigidBody2D::setAcceleration(float ax, float ay){
 	m_acceleration->x = ax;
 	m_acceleration->y = ay;

@@ -74,6 +74,8 @@ glm::vec2 Physics2D::getGravity(){
 	return gravity;
 }
 
+
+//Take not that the higher acceleration becomes to more unstable the physics
 void Physics2D::updatePos(Object* obj){
 	glm::vec2 objPos(obj->getPos().x,obj->getPos().y);
 	RigidBody2D* objRb = obj->getRigidBody2D();
@@ -81,13 +83,18 @@ void Physics2D::updatePos(Object* obj){
 	glm::vec2 objAcl(objRb->getAcceleration()->x,objRb->getAcceleration()->y);
 	float dt = ImGui::GetIO().DeltaTime;
 	
+	//update velocity
 	objVel += dt*objAcl;
+	
+	//damp velocity (like slowing it down to simulate drag)
+	objVel *= pow(objRb->getDamping(), dt);
+	
+	//update position
 	objPos += dt*objVel;
+	
 	//not needed, the resulting value will by much too low to make a difference
 	//objPos += dt*dt*0.5f*objRb->getAcceleration();
 	
 	objRb->setVelocity(objVel.x,objVel.y);
 	obj->setPos(objPos.x,objPos.y);
-	
-	
 }

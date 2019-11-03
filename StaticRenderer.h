@@ -20,6 +20,9 @@ private:
 	static const unsigned int s_indices[];
 	
 public:
+	static const float* getVertices();
+	static const float* getUVCoords();
+	static const unsigned int* getIndices();
 	static void init();
 	static void bind();
 	static void renderObject();

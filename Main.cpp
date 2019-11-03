@@ -75,33 +75,14 @@ int main(){
 	
 	Shader shader0("./shaders/shader0.vs","./shaders/shader0.fs");	
 	Texture texture0("./textures/circle.png");
-	
-	float vertices_50[] = {
-		-25.0f, -25.0f, 
-		25.0f, -25.0f, 
-		25.0f, 25.0f, 
-		-25.0f, 25.0f
-	};
-	
-	float uv_coords[] = {
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		1.0f, 1.0f,
-		0.0f,1.0f
-	};
-	
-	unsigned int indices[] = {
-		0, 1, 2,
-		2, 3, 0
-	};
-	
+		
 	StaticRenderer::init();
 	
 	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
 	
-	SceneCRPC scene0(&shader0,&texture0,vertices_50);
-	SceneExample scene1(&shader0,&texture0,vertices_50);
-	SceneIntegrator scene2(&shader0,&texture0,vertices_50);
+	SceneCRPC scene0(&shader0,&texture0,StaticRenderer::getVertices());
+	SceneExample scene1(&shader0,&texture0,StaticRenderer::getVertices());
+	SceneIntegrator scene2(&shader0,&texture0,StaticRenderer::getVertices());
 	
 	GUIControlPanel::registerScene(&scene1);
 	GUIControlPanel::registerScene(&scene0);
