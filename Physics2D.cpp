@@ -80,13 +80,26 @@ void Physics2D::updatePos(Object* obj){
 	glm::vec2 objPos(obj->getPos().x,obj->getPos().y);
 	RigidBody2D* objRb = obj->getRigidBody2D();
 	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
+	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
 	glm::vec2 objAcl(objRb->getAcceleration()->x,objRb->getAcceleration()->y);
 	float dt = ImGui::GetIO().DeltaTime;
+	
+	objAcl += objRb->getInverseMass() * objSigmaForce;
 	
 	//update velocity
 	objVel += dt*objAcl;
 	
 	//damp velocity (like slowing it down to simulate drag)
+	/*NOTE:
+		-Taking the power of floats is large in computation time
+		especially as the number of objects increase
+		-Taking the power below is just to make the damping frame rate independent
+			(prevent spikes in damping with variable framerate)
+		-if trying to simulate many objects it is ok to ommit
+		the power and just multiply velocity by the drag
+		-though the smaller the damping value the more visible the spikes are
+		when framerate dependent
+	*/
 	objVel *= pow(objRb->getDamping(), dt);
 	
 	//update position
@@ -95,6 +108,7 @@ void Physics2D::updatePos(Object* obj){
 	//not needed, the resulting value will by much too low to make a difference
 	//objPos += dt*dt*0.5f*objRb->getAcceleration();
 	
+	//objRb->setAcceleration(objAcl.x,objAcl.y);
 	objRb->setVelocity(objVel.x,objVel.y);
 	obj->setPos(objPos.x,objPos.y);
 }

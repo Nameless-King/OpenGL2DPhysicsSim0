@@ -5,6 +5,11 @@ const float StaticRenderer::s_vertices[] = {
 	10.0f,-10.0f,
 	10.0f,10.0f,
 	-10.0f,10.0f
+	
+	/*-0.5f,-0.5f,
+	0.5f,-0.5f,
+	0.5f,0.5f,
+	-0.5f,0.5f*/
 };
 	
 const float StaticRenderer::s_uvCoords[] = {

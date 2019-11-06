@@ -25,7 +25,7 @@ class SceneIntegrator : public Scene{
 	private:
 		std::string m_title;
 		bool m_active;
-		float m_accVal;
+		float m_force;
 		Shader* m_shader;
 		Texture* m_texture;
 		Object* m_player;

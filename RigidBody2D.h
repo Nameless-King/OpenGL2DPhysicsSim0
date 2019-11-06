@@ -7,6 +7,7 @@
 
 class RigidBody2D{
 	private:
+		glm::vec2* m_sigmaForce;
 		glm::vec2* m_velocity;
 		glm::vec2* m_acceleration;
 		float m_damping; //0 to stop, 1 to never, 0.995 ok
@@ -16,6 +17,9 @@ class RigidBody2D{
 		RigidBody2D();
 		RigidBody2D(float mass);
 		~RigidBody2D();
+		void addForce(float fx,float fy);
+		void addForce(glm::vec2 force);
+		void setForce(float fx,float fy);
 		void setMass(float mass);
 		void setDamping(float damping);
 		void setAcceleration(float ax, float ay);
@@ -25,5 +29,6 @@ class RigidBody2D{
 		inline float getDamping() { return m_damping;}
 		inline glm::vec2* getVelocity() const {return m_velocity;}
 		inline glm::vec2* getAcceleration() const {return m_acceleration;}
+		inline glm::vec2* getSigmaForce() const {return m_sigmaForce;}
 
 };

@@ -3,7 +3,7 @@
 SceneIntegrator::SceneIntegrator():
 	m_title("SceneIntegrator"),
 	m_active(false),
-	m_accVal(50.05f),
+	m_force(50.05f),
 	m_shader(NULL),
 	m_texture(NULL),
 	m_player(NULL){
@@ -12,7 +12,7 @@ SceneIntegrator::SceneIntegrator():
 SceneIntegrator::SceneIntegrator(Shader* shader, Texture* texture, const float vertices[]):
 	m_title("SceneIntegrator"),
 	m_active(false),
-	m_accVal(50.0f),
+	m_force(50.0f),
 	m_shader(shader),
 	m_texture(texture){
 		
@@ -67,10 +67,13 @@ void SceneIntegrator::update(Window* window){
 
 void SceneIntegrator::renderGUI(){
 	float damping = m_player->getRigidBody2D()->getDamping();
+	float mass = m_player->getRigidBody2D()->getMass();
 	ImGui::Begin(m_title.c_str());
-	ImGui::SliderFloat("acceleration",&m_accVal,10.0f,150.0f);
+	ImGui::SliderFloat("mass",&mass,1.0f,50.0f);
+	ImGui::SliderFloat("force",&m_force,10.0f,150.0f);
 	ImGui::SliderFloat("damping",&damping,0.0f,1.0f);
 	m_player->getRigidBody2D()->setDamping(damping);
+	m_player->getRigidBody2D()->setMass(mass);
 	ImGui::End();
 }
 
@@ -79,21 +82,23 @@ void SceneIntegrator::setActive(bool active){
 }
 
 void SceneIntegrator::input(Window* window){
-	glm::vec2 acceleration(0.0f,0.0f);
+	glm::vec2 force(0.0f,0.0f);
 	
 	if(glfwGetKey(window->getWindow(),GLFW_KEY_W)){
-		acceleration.y = m_accVal;
+		force.y = m_force;
 	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_S)){
-		acceleration.y = -m_accVal;
+		force.y = -m_force;
 	}
 	
 	if(glfwGetKey(window->getWindow(),GLFW_KEY_D)){
-		acceleration.x = m_accVal;
+		force.x = m_force;
 	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_A)){
-		acceleration.x = -m_accVal;
+		force.x = -m_force;
 	}
 	
-	m_player->getRigidBody2D()->setAcceleration(acceleration.x,acceleration.y);
+
+	
+	m_player->getRigidBody2D()->setForce(force.x,force.y);
 	
 	
 }
