@@ -46,8 +46,6 @@ int main(){
 	}
 	windowObj.setFramebufferSizeCallback(framebuffer_size_callback);
 	
-
-	
 	if(glewInit() != GLEW_OK){
 		std::cout << "Error glewInit" <<std::endl;
 		return EXIT_FAILURE	;
@@ -91,10 +89,12 @@ int main(){
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
 	bool yes = true;
+	float zoom = 1.0f;
 	while(!windowObj.windowShouldClose()){
 		
 		
 		windowObj.pollEvents();
+		input(windowObj.getWindow());
 		
 
 		GUIControlPanel::updateCurrentScene(&windowObj);
@@ -105,7 +105,11 @@ int main(){
 	
 		ImGui::ShowDemoWindow(&yes);
 		
+		
 		ImGui::Begin("Stats");
+		if(ImGui::SliderFloat("Zoom",&zoom,1.0f,5.0f)){
+			windowObj.zoom(zoom);
+		}
 		ImGui::ColorEdit3("clear color",(float*)&clear_color);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
@@ -135,6 +139,12 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
-	glViewport(0, 0, width, height);
+	glViewport(0, 0,width,height);
 	windowObj.resize(width,height);
+}
+
+void input(GLFWwindow* window){
+	if(glfwGetKey(window,GLFW_KEY_ESCAPE)){
+		
+	}
 }

@@ -1,6 +1,6 @@
 #include "Window.h"
 
-Window::Window(int width, int height, const std::string& title): m_width(width), m_height(height),  m_sizeChanged(false), m_title(title){
+Window::Window(int width, int height, const std::string& title): m_width(width), m_height(height),  m_sizeChanged(false), m_title(title),m_zoom(1.0f){
 	
 	if(!glfwInit()){
 		std::cout << "Error glfwInit" << std::endl;
@@ -50,17 +50,30 @@ void Window::setFramebufferSizeCallback(void(*callback)(GLFWwindow*,int,int)){
 
 glm::mat4 Window::getProjectionMatrix(){
 	if(m_sizeChanged){
+		/*m_projection = glm::ortho(
+			-(m_width/100.0f),
+			(m_width/100.0f),
+			-(m_height/100.0f),
+			(m_height/100.0f),
+			-1.0f,
+			1.0f
+		);*/
 		m_projection = glm::ortho(
-			-(m_width/2.0f),
-			(m_width/2.0f),
-			-(m_height/2.0f),
-			(m_height/2.0f),
+			-(m_width/(m_zoom*2.0f)),
+			(m_width/(m_zoom*2.0f)),
+			-(m_height/(m_zoom*2.0f)),
+			(m_height/(m_zoom*2.0f)),
 			-1.0f,
 			1.0f
 		);
 		m_sizeChanged = false;
 	}
 	return m_projection;
+}
+
+void Window::zoom(float zoom){
+	m_zoom = zoom;
+	m_sizeChanged = true;
 }
 
 void Window::resize(int width,int height){
