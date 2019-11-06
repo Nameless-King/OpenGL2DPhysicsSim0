@@ -29,6 +29,7 @@ public:
 	void zoom(float zoom);
 	int getWidth() const { return m_width;}
 	int getHeight() const {return m_height;}
+	inline float getZoom() const {return m_zoom;}
 	void resize(int width, int height);
 	void pollEvents();
 	glm::mat4 getProjectionMatrix();

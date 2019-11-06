@@ -89,7 +89,7 @@ int main(){
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
 	bool yes = true;
-	float zoom = 1.0f;
+	int zoom = 1.0f;
 	while(!windowObj.windowShouldClose()){
 		
 		
@@ -107,9 +107,15 @@ int main(){
 		
 		
 		ImGui::Begin("Stats");
-		if(ImGui::SliderFloat("Zoom",&zoom,1.0f,5.0f)){
-			windowObj.zoom(zoom);
+		if(ImGui::SliderInt("Zoom",&zoom,1,6)){
+			windowObj.zoom(zoom/1.0f);
 		}
+		ImGui::Text("Application Domain [%.3f,%.3f]",
+			-(windowObj.getWidth()/(2.0f*windowObj.getZoom())),
+			(windowObj.getWidth()/(2.0f*windowObj.getZoom())));
+		ImGui::Text("Applicaiton Range 	[%.3f,%.3f]",
+			-(windowObj.getHeight()/(2.0f*windowObj.getZoom())),
+			(windowObj.getHeight()/(2.0f*windowObj.getZoom())));
 		ImGui::ColorEdit3("clear color",(float*)&clear_color);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
