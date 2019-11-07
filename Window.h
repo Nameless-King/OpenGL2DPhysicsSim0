@@ -24,6 +24,7 @@ public:
 	
 	GLFWwindow* getWindow() const {return m_window;}
 	int windowShouldClose();
+	void closeWindow();
 	void swapBuffers();
 	void setFramebufferSizeCallback(void(*callback)(GLFWwindow*,int,int));
 	void zoom(float zoom);

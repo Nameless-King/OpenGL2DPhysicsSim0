@@ -105,7 +105,6 @@ int main(){
 	
 		ImGui::ShowDemoWindow(&yes);
 		
-		
 		ImGui::Begin("Stats");
 		if(ImGui::SliderInt("Zoom",&zoom,1,6)){
 			windowObj.zoom(zoom/1.0f);
@@ -151,6 +150,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void input(GLFWwindow* window){
 	if(glfwGetKey(window,GLFW_KEY_ESCAPE)){
-		
+		windowObj.closeWindow();
 	}
 }

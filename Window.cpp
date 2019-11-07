@@ -40,6 +40,10 @@ int Window::windowShouldClose(){
 	return glfwWindowShouldClose(m_window);
 }
 
+void Window::closeWindow(){
+	glfwSetWindowShouldClose(m_window,true);
+}
+
 void Window::swapBuffers(){
 	glfwSwapBuffers(m_window);
 }
