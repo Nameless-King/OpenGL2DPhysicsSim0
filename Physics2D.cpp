@@ -1,6 +1,7 @@
 #include "./Physics2D.h"
 
-const static glm::vec2 gravity(0.0f,-9.8f);
+const static glm::vec2 gravity(0.0f,-10.0f);
+const float Physics2D::G = 100.0f;
 
 void Physics2D::resolveCollision(Object* a, Object* b, Collision collision){
 
@@ -74,7 +75,7 @@ glm::vec2 Physics2D::getGravity(){
 	return gravity;
 }
 
-
+//Integrator of the physics engine
 //Take not that the higher acceleration becomes to more unstable the physics
 void Physics2D::updatePos(Object* obj){
 	glm::vec2 objPos(obj->getPos().x,obj->getPos().y);
@@ -111,4 +112,32 @@ void Physics2D::updatePos(Object* obj){
 	//objRb->setAcceleration(objAcl.x,objAcl.y);
 	objRb->setVelocity(objVel.x,objVel.y);
 	obj->setPos(objPos.x,objPos.y);
+}
+
+void Physics2D::integrator2(Object* obj){
+	//refer to updatePos for more comments
+	glm::vec2 objPos(obj->getPos().x,obj->getPos().y);
+	RigidBody2D* objRb = obj->getRigidBody2D();
+	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
+	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
+	glm::vec2 objAcl(objRb->getAcceleration()->x,objRb->getAcceleration()->y);
+	float dt = ImGui::GetIO().DeltaTime;
+	
+	objAcl += objRb->getInverseMass() * objSigmaForce;
+	
+	objVel += dt*objAcl;
+	
+	objVel *= pow(objRb->getDamping(), dt);
+	
+	objPos += dt*objVel;
+	
+	objRb->setVelocity(objVel.x,objVel.y);
+	obj->setPos(objPos.x,objPos.y);
+	
+	objRb->zeroForce();
+
+}
+
+void Physics2D::gravitate(glm::vec2 dir, float mag, Object* obj){
+	obj->getRigidBody2D()->addForce(mag*dir);
 }

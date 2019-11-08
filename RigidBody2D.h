@@ -20,6 +20,7 @@ class RigidBody2D{
 		void addForce(float fx,float fy);
 		void addForce(glm::vec2 force);
 		void setForce(float fx,float fy);
+		void zeroForce();
 		void setMass(float mass);
 		void setDamping(float damping);
 		void setAcceleration(float ax, float ay);

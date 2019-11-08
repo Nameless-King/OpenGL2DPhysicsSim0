@@ -36,6 +36,11 @@ void RigidBody2D::setForce(float fx,float fy){
 	m_sigmaForce->y = fy;
 }
 
+void RigidBody2D::zeroForce(){
+	m_sigmaForce->x = 0.0f;
+	m_sigmaForce->y = 0.0f;
+}
+
 void RigidBody2D::setMass(float mass){
 	m_mass = mass;
 }

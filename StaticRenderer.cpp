@@ -1,10 +1,15 @@
 #include "StaticRenderer.h"
 
 const float StaticRenderer::s_vertices[] = {
-	-10.0f,-10.0f,
+	/*-10.0f,-10.0f,
 	10.0f,-10.0f,
 	10.0f,10.0f,
-	-10.0f,10.0f
+	-10.0f,10.0f*/
+	
+	-5.0f,-5.0f,
+	5.0f,-5.0f,
+	5.0f,5.0f,
+	-5.0f,5.0f
 	
 	/*-0.5f,-0.5f,
 	0.5f,-0.5f,

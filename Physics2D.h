@@ -19,10 +19,14 @@
 
 class Physics2D{
 public:
+	static const float G;
+
 	static void resolveCollision(Object* a, Object* b, Collision collision);
 	static void positionalCorrection(Object* a, Object* b,Collision collision);
 	static glm::vec2 getGravity();
 	static void updatePos(Object* obj);
+	static void integrator2(Object* obj);
+	static void gravitate(glm::vec2 dir,float mag,Object* obj);
 };
 
 #endif

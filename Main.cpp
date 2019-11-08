@@ -28,6 +28,7 @@
 #include "SceneExample.h"
 #include "SceneCRPC.h"
 #include "SceneIntegrator.h"
+#include "SceneForces.h"
 
 
 void input(GLFWwindow* window);
@@ -81,10 +82,12 @@ int main(){
 	SceneCRPC scene0(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneExample scene1(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneIntegrator scene2(&shader0,&texture0,StaticRenderer::getVertices());
+	SceneForces scene3(&shader0, &texture0, StaticRenderer::getVertices());
 	
 	GUIControlPanel::registerScene(&scene1);
 	GUIControlPanel::registerScene(&scene0);
 	GUIControlPanel::registerScene(&scene2);
+	GUIControlPanel::registerScene(&scene3);
 
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	

@@ -3,7 +3,7 @@
 SceneIntegrator::SceneIntegrator():
 	m_title("SceneIntegrator"),
 	m_active(false),
-	m_force(50.05f),
+	m_force(50.0f),
 	m_shader(NULL),
 	m_texture(NULL),
 	m_player(NULL){
