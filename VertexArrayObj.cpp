@@ -17,8 +17,7 @@ void VertexArrayObj::addFloatBuffer(const VertexBufferObj *vbo){
 	bind();
 	vbo->bind();
 	
-	for(int i = 0;i<8;i++){
-	}
+	
 	
 	glEnableVertexAttribArray(m_attribCount);
 	

@@ -29,6 +29,7 @@
 #include "SceneCRPC.h"
 #include "SceneIntegrator.h"
 #include "SceneForces.h"
+#include "SceneParticle.h"
 
 void input(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
@@ -80,6 +81,8 @@ int main(){
 	//2-dkinematic
 	
 	Shader shader0("./shaders/shader0.vs","./shaders/shader0.fs");	
+	Shader shaderPoint("./shaders/shaderPoint.vs","./shaders/shaderPoint.fs");
+	
 	Texture texture0("./textures/circle.png");
 		
 	StaticRenderer::init();
@@ -90,11 +93,13 @@ int main(){
 	SceneExample scene1(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneIntegrator scene2(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneForces scene3(&shader0, &texture0, StaticRenderer::getVertices());
+	SceneParticle scene4(&shaderPoint);
 	
 	GUIControlPanel::registerScene(&scene1);
 	GUIControlPanel::registerScene(&scene0);
 	GUIControlPanel::registerScene(&scene2);
 	GUIControlPanel::registerScene(&scene3);
+	GUIControlPanel::registerScene(&scene4);
 
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
