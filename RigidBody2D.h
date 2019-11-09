@@ -31,5 +31,6 @@ class RigidBody2D{
 		inline glm::vec2* getVelocity() const {return m_velocity;}
 		inline glm::vec2* getAcceleration() const {return m_acceleration;}
 		inline glm::vec2* getSigmaForce() const {return m_sigmaForce;}
+		void getVelocity(glm::vec2& vel);
 
 };

@@ -30,10 +30,11 @@
 #include "SceneIntegrator.h"
 #include "SceneForces.h"
 
-
 void input(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
 void updatePos(Object* obj);
+void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+	GLsizei length, const GLchar* message, const void* userParam);
 
 int WIDTH = 800;
 int HEIGHT = 600;
@@ -51,6 +52,12 @@ int main(){
 		std::cout << "Error glewInit" <<std::endl;
 		return EXIT_FAILURE	;
 	}
+	
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(MessageCallback,0);
+	
+
+	
 	
 	GUIControlPanel::init(windowObj.getWindow(),true);
 		
@@ -94,8 +101,6 @@ int main(){
 	bool yes = true;
 	int zoom = 1.0f;
 	while(!windowObj.windowShouldClose()){
-		
-		
 		windowObj.pollEvents();
 		input(windowObj.getWindow());
 		
@@ -128,10 +133,15 @@ int main(){
 		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
+		
+		
+		
 
 		GUIControlPanel::renderCurrentScene(&windowObj);
 		
 		GUIControlPanel::finalize();
+		
+		
 		
 		windowObj.swapBuffers();
 	}
@@ -155,4 +165,13 @@ void input(GLFWwindow* window){
 	if(glfwGetKey(window,GLFW_KEY_ESCAPE)){
 		windowObj.closeWindow();
 	}
+}
+
+void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+	GLsizei length, const GLchar* message, const void* userParam){
+	
+	 fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+           ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
+            type, severity, message );
+	
 }

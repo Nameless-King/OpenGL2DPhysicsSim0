@@ -67,7 +67,7 @@ void SceneForces::update(Window* window){
 	if(m_useGravity){
 		Physics2D::gravitate(glm::vec2(0.0f,-1.0f),Physics2D::G * m_player->getRigidBody2D()->getMass(),m_player);
 	}
-	Physics2D::integrator2(m_player);
+	Physics2D::integrator2(m_player,ImGui::GetIO().DeltaTime);
 }
 
 void SceneForces::setActive(bool active){

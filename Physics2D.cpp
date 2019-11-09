@@ -85,7 +85,7 @@ void Physics2D::updatePos(Object* obj){
 	glm::vec2 objAcl(objRb->getAcceleration()->x,objRb->getAcceleration()->y);
 	float dt = ImGui::GetIO().DeltaTime;
 	
-	objAcl += objRb->getInverseMass() * objSigmaForce;
+	objAcl = objRb->getInverseMass() * objSigmaForce;
 	
 	//update velocity
 	objVel += dt*objAcl;
@@ -114,14 +114,14 @@ void Physics2D::updatePos(Object* obj){
 	obj->setPos(objPos.x,objPos.y);
 }
 
-void Physics2D::integrator2(Object* obj){
+void Physics2D::integrator2(Object* obj, float dt){
 	//refer to updatePos for more comments
 	glm::vec2 objPos(obj->getPos().x,obj->getPos().y);
 	RigidBody2D* objRb = obj->getRigidBody2D();
 	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
 	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
 	glm::vec2 objAcl(objRb->getAcceleration()->x,objRb->getAcceleration()->y);
-	float dt = ImGui::GetIO().DeltaTime;
+	
 	
 	objAcl += objRb->getInverseMass() * objSigmaForce;
 	

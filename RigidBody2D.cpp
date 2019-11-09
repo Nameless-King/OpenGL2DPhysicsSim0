@@ -58,3 +58,7 @@ void RigidBody2D::setVelocity(float vx, float vy){
 	m_velocity->x = vx;
 	m_velocity->y = vy;
 }
+
+void RigidBody2D::getVelocity(glm::vec2& vel){
+	vel = *m_velocity;
+}
