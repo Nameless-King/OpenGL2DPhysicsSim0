@@ -12,6 +12,7 @@
 #include "./Dependencies/imgui/imgui_impl_opengl3.h"
 
 #include <string>
+#include <vector>
 
 #include "./Particle.h"
 #include "./Scene.h"
@@ -23,7 +24,7 @@ class SceneParticle : public Scene{
 	private:
 		std::string m_title;
 		Shader* m_shader;
-		Particle* m_particle;
+		std::vector<Particle*> m_particles;
 		bool m_active;
 	
 	public:

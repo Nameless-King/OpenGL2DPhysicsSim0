@@ -21,7 +21,7 @@ class Particle{
 		[0 1 dy] * [x,y,0] = [x+dx,y+dy,0]
 		[0 0  1]
 		*/
-		glm::mat3 getModelMatrix();
+		glm::mat4 getModelMatrix();
 		
 		void setPos(float xPos, float yPos);
 		void addRigidBody2D(RigidBody2D* rb);

@@ -8,7 +8,7 @@ Particle::~Particle(){
 	delete m_rb;
 }
 
-glm::mat3 Particle::getModelMatrix(){
+glm::mat4 Particle::getModelMatrix(){
 	//glm::mat3 model(1.0f);
 	
 	//float *pMatrix = (float*)glm::value_ptr(model);

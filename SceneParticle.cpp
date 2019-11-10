@@ -3,7 +3,6 @@
 SceneParticle::SceneParticle()
 	:m_title("SceneParticle")
 	,m_shader(NULL)
-	,m_particle(NULL)
 	,m_active(false){}
 	
 SceneParticle::SceneParticle(Shader* shader)
@@ -11,14 +10,23 @@ SceneParticle::SceneParticle(Shader* shader)
 	,m_shader(shader)
 	,m_active(false){
 		
-	m_particle = new Particle(glm::vec2(0.0f,0.0f));
-	RigidBody2D* rb = new RigidBody2D(5.0f);
-	rb->setDamping(1.0f);
-	m_particle->addRigidBody2D(rb);
+
+	for(int i = 0;i<100;i++){
+		for(int j = 0;j<20;j++){
+			m_particles.push_back(new Particle(glm::vec2(5.0f*i,5.0f*j)));
+			RigidBody2D* rb = new RigidBody2D(5.0f);
+			rb->setDamping(1.0f);
+			m_particles[i*10 + j]->addRigidBody2D(rb);
+		}
+	}
+	
 	}
 	
 SceneParticle::~SceneParticle(){
-	delete m_particle;
+
+	for(int i = 0;i<m_particles.size();i++){
+		//delete m_particles[i];
+	}
 }
 
 std::string SceneParticle::getSceneTitle() const{
@@ -37,9 +45,11 @@ void SceneParticle::render(Window* window){
 	m_shader->setUniformMat4f("u_projection",window->getProjectionMatrix());
 	m_shader->setUniformMat4f("u_view",glm::mat4(1.0f));
 	
-	m_shader->setUniformMat4f("u_model",m_particle->getModelMatrix());
-	
-	StaticRenderer::renderPoint();
+
+	for(int i = 0;i<m_particles.size();i++){
+		m_shader->setUniformMat4f("u_model",m_particles[i]->getModelMatrix());
+		StaticRenderer::renderPoint();
+	}
 	
 	StaticRenderer::unbindPoint();
 }
