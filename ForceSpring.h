@@ -14,6 +14,7 @@ class ForceSpring : public ForceGenerator{
 		float m_springConstant;
 		float m_restLength;
 	public:
+		ForceSpring();
 		ForceSpring(Object* other, float springConstant, float restLength);
 		virtual void updateForce(Object* object, float dt);
 };

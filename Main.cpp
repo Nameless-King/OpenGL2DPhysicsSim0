@@ -90,6 +90,7 @@ int main(){
 	SceneIntegrator scene2(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneForces scene3(&shader0, &texture0, StaticRenderer::getVertices());
 	SceneParticle scene4(&shaderPoint);
+
 	SceneForceGenerator scene5(&shader0, &texture0, StaticRenderer::getVertices());
 	
 	GUIControlPanel::registerScene(&scene1);

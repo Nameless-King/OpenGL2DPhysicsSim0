@@ -20,6 +20,8 @@
 #include "./StaticRenderer.h"
 #include "./Texture.h"
 #include "./Window.h"
+#include "./ForceGravity.h"
+#include "./ForceSpring.h"
 
 class SceneForceGenerator : public Scene{
 	private:
@@ -31,6 +33,8 @@ class SceneForceGenerator : public Scene{
 		Texture* m_texture;
 		Object* m_staticObj;
 		Object* m_hangingObj;
+		ForceGravity m_forceGravity;
+		ForceSpring m_forceSpring;
 		
 	public:
 		SceneForceGenerator();
@@ -43,4 +47,6 @@ class SceneForceGenerator : public Scene{
 		void update(Window* window);
 		void setActive(bool active);
 		void renderGUI();
+	private:
+		void input(Window* window);
 };
