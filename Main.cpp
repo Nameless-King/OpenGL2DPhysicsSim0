@@ -30,6 +30,7 @@
 #include "SceneIntegrator.h"
 #include "SceneForces.h"
 #include "SceneParticle.h"
+#include "SceneForceGenerator.h"
 
 void input(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
@@ -57,15 +58,10 @@ int main(){
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(MessageCallback,0);
 	
-
-	
-	
-	GUIControlPanel::init(windowObj.getWindow(),true);
-		
+	GUIControlPanel::init(windowObj.getWindow(),true);	
 
 	ImVec4 clear_color = ImVec4(0.45f,0.55f,0.60f,1.00f);
 	
-	//enable default opengl parameters and funcs
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	
@@ -94,12 +90,14 @@ int main(){
 	SceneIntegrator scene2(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneForces scene3(&shader0, &texture0, StaticRenderer::getVertices());
 	SceneParticle scene4(&shaderPoint);
+	SceneForceGenerator scene5(&shader0, &texture0, StaticRenderer::getVertices());
 	
 	GUIControlPanel::registerScene(&scene1);
 	GUIControlPanel::registerScene(&scene0);
 	GUIControlPanel::registerScene(&scene2);
 	GUIControlPanel::registerScene(&scene3);
 	GUIControlPanel::registerScene(&scene4);
+	GUIControlPanel::registerScene(&scene5);
 
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
@@ -108,16 +106,12 @@ int main(){
 	while(!windowObj.windowShouldClose()){
 		windowObj.pollEvents();
 		input(windowObj.getWindow());
-		
-
+	
 		GUIControlPanel::updateCurrentScene(&windowObj);
-		
 		GUIControlPanel::start();
-				
 		GUIControlPanel::renderMenu();
 	
 		ImGui::ShowDemoWindow(&yes);
-		
 		ImGui::Begin("Stats");
 		if(ImGui::SliderInt("Zoom",&zoom,1,6)){
 			windowObj.zoom(zoom/1.0f);
@@ -139,7 +133,6 @@ int main(){
 		glClear(GL_COLOR_BUFFER_BIT);	
 
 		GUIControlPanel::renderCurrentScene(&windowObj);
-		
 		GUIControlPanel::finalize();
 
 		windowObj.swapBuffers();

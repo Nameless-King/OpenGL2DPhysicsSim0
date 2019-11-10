@@ -102,3 +102,7 @@ glm::vec3 Object::getScl(){
 	return m_scale;
 }
 
+void Object::getPos(glm::vec2& pos){
+	pos = glm::vec2(m_position.x,m_position.y);
+}
+

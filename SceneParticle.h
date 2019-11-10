@@ -26,6 +26,7 @@ class SceneParticle : public Scene{
 		Shader* m_shader;
 		std::vector<Particle*> m_particles;
 		bool m_active;
+		unsigned int m_renderAmount;
 	
 	public:
 		SceneParticle();
