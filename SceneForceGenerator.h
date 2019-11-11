@@ -23,6 +23,7 @@
 #include "./ForceGravity.h"
 #include "./ForceSpring.h"
 #include "./ForceDrag.h"
+#include "./ForceBungee.h"
 
 class SceneForceGenerator : public Scene{
 	private:
@@ -37,6 +38,7 @@ class SceneForceGenerator : public Scene{
 		ForceGravity m_forceGravity;
 		ForceSpring m_forceSpring;
 		ForceDrag m_forceDrag;
+		ForceBungee m_forceBungee;
 		
 	public:
 		SceneForceGenerator();

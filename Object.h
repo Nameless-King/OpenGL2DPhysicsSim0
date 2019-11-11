@@ -62,6 +62,7 @@ public:
 	inline glm::vec2 getVelocity() {return m_velocity;}
 	
 	void getPos(glm::vec2& pos);
+	inline glm::vec2 getPos2() const {return glm::vec2(m_position.x,m_position.y);}
 	
 };
 

@@ -11,7 +11,8 @@ SceneForceGenerator::SceneForceGenerator():
 	m_hangingObj(NULL),
 	m_forceSpring(ForceSpring()),
 	m_forceGravity(ForceGravity(glm::vec2(0.0f,-10.0f))),
-	m_forceDrag(ForceDrag(1.0f,1.0f)){}
+	m_forceDrag(ForceDrag(1.0f,1.0f)),
+	m_forceBungee(ForceBungee()){}
 	
 SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const float vertices[]):
 	m_title("SceneForceGenerator"),
@@ -57,6 +58,10 @@ SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const
 	float k1 = 0.01f;
 	float k2 = 0.0001f;
 	m_forceDrag = ForceDrag(k1,k2);
+
+	float bkc = 0.1f;
+	float be = 2.0f;
+	m_forceBungee = ForceBungee(m_staticObj,bkc,be);
 };
 
 SceneForceGenerator::~SceneForceGenerator(){
@@ -94,9 +99,10 @@ void SceneForceGenerator::render(Window* window){
 
 void SceneForceGenerator::update(Window* window){
 	input(window);
-
+	
 	m_forceGravity.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
-	m_forceSpring.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
+	//m_forceSpring.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
+	m_forceBungee.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
 	m_forceDrag.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
 
 	Physics2D::integrator3(m_hangingObj,ImGui::GetIO().DeltaTime);
@@ -112,6 +118,8 @@ void SceneForceGenerator::renderGUI(){
 	float k2 = m_forceDrag.getK2();
 	float equilibrium = m_forceSpring.getEquilibrium();
 	float springConstant = m_forceSpring.getSpringConstant();
+	float bungeeEquilibrium = m_forceBungee.getEquilibrium();
+	float bungeeSpringConstant = m_forceBungee.getSpringConstant();
 
 	ImGui::Begin(m_title.c_str());
 	if(ImGui::DragFloat("Gravity", &gravity, 0.1f)){
@@ -128,6 +136,12 @@ void SceneForceGenerator::renderGUI(){
 	}
 	if(ImGui::DragFloat("Spring Constant (k)",&springConstant,0.01f)){
 		m_forceSpring.setSpringConstant(springConstant);
+	}
+	if(ImGui::DragFloat("Bungee Equilibrium",&bungeeEquilibrium,0.1f)){
+		m_forceBungee.setEquilibrium(bungeeEquilibrium);
+	}
+	if(ImGui::DragFloat("Bungee Spring Constant",&bungeeSpringConstant,0.01f)){
+		m_forceBungee.setSpringConstant(bungeeSpringConstant);
 	}
 	ImGui::End();
 }
