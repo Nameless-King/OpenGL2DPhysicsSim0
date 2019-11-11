@@ -141,3 +141,23 @@ void Physics2D::integrator2(Object* obj, float dt){
 void Physics2D::gravitate(glm::vec2 dir, float mag, Object* obj){
 	obj->getRigidBody2D()->addForce(mag*dir);
 }
+
+void Physics2D::integrator3(Object* obj, float dt){
+	//refer to updatePos for more comments
+	glm::vec2 objPos(obj->getPos().x,obj->getPos().y);
+	RigidBody2D* objRb = obj->getRigidBody2D();
+	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
+	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
+	glm::vec2 objAcl(objRb->getAcceleration()->x,objRb->getAcceleration()->y);
+	
+	objAcl += objRb->getInverseMass() * objSigmaForce;
+	
+	objVel += dt*objAcl;
+	
+	objPos += dt*objVel;
+	
+	objRb->setVelocity(objVel.x,objVel.y);
+	obj->setPos(objPos.x,objPos.y);
+	
+	objRb->zeroForce();
+}

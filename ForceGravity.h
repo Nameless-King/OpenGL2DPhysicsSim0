@@ -13,4 +13,6 @@ class ForceGravity: public ForceGenerator{
 	public:
 		ForceGravity(const glm::vec2& gravity);
 		virtual void updateForce(Object* obj,float duration);
+		void setGravity(float gx, float gy);
+		inline glm::vec2 getGravity() const {return m_gravity;}
 };

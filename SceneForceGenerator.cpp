@@ -10,7 +10,8 @@ SceneForceGenerator::SceneForceGenerator():
 	m_staticObj(NULL),
 	m_hangingObj(NULL),
 	m_forceSpring(ForceSpring()),
-	m_forceGravity(ForceGravity(glm::vec2(0.0f,-10.0f))){}
+	m_forceGravity(ForceGravity(glm::vec2(0.0f,-10.0f))),
+	m_forceDrag(ForceDrag(1.0f,1.0f)){}
 	
 SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const float vertices[]):
 	m_title("SceneForceGenerator"),
@@ -19,7 +20,7 @@ SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const
 	m_useGravity(false),
 	m_shader(shader),
 	m_texture(texture),
-	m_forceGravity(ForceGravity(glm::vec2(0.0f,-20.0f))){
+	m_forceGravity(ForceGravity(glm::vec2(0.0f,-100.0f))){
 			
 	m_staticObj = new Object(
 		glm::vec3(0.0f,0.0f,0.0f),
@@ -50,8 +51,12 @@ SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const
 	m_hangingObj->addRigidBody2D(rbHanging);
 
 	float kConstant = 0.1f;
-	float equilibrium = 20.0f;
+	float equilibrium = 2.0f;
 	m_forceSpring = ForceSpring(m_staticObj,kConstant,equilibrium);
+
+	float k1 = 0.01f;
+	float k2 = 0.0001f;
+	m_forceDrag = ForceDrag(k1,k2);
 };
 
 SceneForceGenerator::~SceneForceGenerator(){
@@ -92,8 +97,9 @@ void SceneForceGenerator::update(Window* window){
 
 	m_forceGravity.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
 	m_forceSpring.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
+	m_forceDrag.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
 
-	Physics2D::integrator2(m_hangingObj,ImGui::GetIO().DeltaTime);
+	Physics2D::integrator3(m_hangingObj,ImGui::GetIO().DeltaTime);
 }
 
 void SceneForceGenerator::setActive(bool active){
@@ -101,7 +107,28 @@ void SceneForceGenerator::setActive(bool active){
 }
 
 void SceneForceGenerator::renderGUI(){
+	float gravity = m_forceGravity.getGravity().y;
+	float k1 = m_forceDrag.getK1();
+	float k2 = m_forceDrag.getK2();
+	float equilibrium = m_forceSpring.getEquilibrium();
+	float springConstant = m_forceSpring.getSpringConstant();
+
 	ImGui::Begin(m_title.c_str());
+	if(ImGui::DragFloat("Gravity", &gravity, 0.1f)){
+		m_forceGravity.setGravity(0.0f,gravity);
+	}
+	if(ImGui::DragFloat("Drag constant 1 (k1)",&k1,0.001f)){
+		m_forceDrag.setK1(k1);
+	}
+	if(ImGui::DragFloat("Drag constant 2 (k2)",&k2,0.001f)){
+		m_forceDrag.setK2(k2);
+	}
+	if(ImGui::DragFloat("Equilibrium",&equilibrium,0.1f)){
+		m_forceSpring.setEquilibrium(equilibrium);
+	}
+	if(ImGui::DragFloat("Spring Constant (k)",&springConstant,0.01f)){
+		m_forceSpring.setSpringConstant(springConstant);
+	}
 	ImGui::End();
 }
 	

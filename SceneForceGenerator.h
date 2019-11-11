@@ -22,6 +22,7 @@
 #include "./Window.h"
 #include "./ForceGravity.h"
 #include "./ForceSpring.h"
+#include "./ForceDrag.h"
 
 class SceneForceGenerator : public Scene{
 	private:
@@ -35,6 +36,7 @@ class SceneForceGenerator : public Scene{
 		Object* m_hangingObj;
 		ForceGravity m_forceGravity;
 		ForceSpring m_forceSpring;
+		ForceDrag m_forceDrag;
 		
 	public:
 		SceneForceGenerator();
