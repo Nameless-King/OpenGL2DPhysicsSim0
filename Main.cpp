@@ -31,6 +31,7 @@
 #include "SceneForces.h"
 #include "SceneParticle.h"
 #include "SceneForceGenerator.h"
+#include "SceneBuoyantForce.h"
 
 void input(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
@@ -90,15 +91,16 @@ int main(){
 	SceneIntegrator scene2(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneForces scene3(&shader0, &texture0, StaticRenderer::getVertices());
 	SceneParticle scene4(&shaderPoint);
-
 	SceneForceGenerator scene5(&shader0, &texture0, StaticRenderer::getVertices());
-	
+	SceneBuoyantForce scene6(&shader0, &texture0 , StaticRenderer::getVertices());
+
 	GUIControlPanel::registerScene(&scene1);
 	GUIControlPanel::registerScene(&scene0);
 	GUIControlPanel::registerScene(&scene2);
 	GUIControlPanel::registerScene(&scene3);
 	GUIControlPanel::registerScene(&scene4);
 	GUIControlPanel::registerScene(&scene5);
+	GUIControlPanel::registerScene(&scene6);
 
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
