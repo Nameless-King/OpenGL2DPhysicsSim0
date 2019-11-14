@@ -39,6 +39,7 @@ class SceneForceGenerator : public Scene{
 		ForceSpring m_forceSpring;
 		ForceDrag m_forceDrag;
 		ForceBungee m_forceBungee;
+		int m_currentType;
 		
 	public:
 		SceneForceGenerator();

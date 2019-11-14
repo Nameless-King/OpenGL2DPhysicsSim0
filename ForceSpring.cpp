@@ -15,15 +15,15 @@ void ForceSpring::updateForce(Object* obj, float dt){
 	
 	obj->getPos(force);
 	
-	force -= glm::vec2(m_other->getPos().x,m_other->getPos().y);
-	
+	force -= m_other->getPos2();
+
 	float magnitude = glm::length(force);
-	magnitude = fabs(magnitude - m_equilibrium);
+	magnitude = magnitude - m_equilibrium;
+	
 	magnitude *= m_springConstant;
 	
-	
-	glm::normalize(force);
-	
+	force = glm::normalize(force);
+
 
 	force *= -magnitude;
 	obj->getRigidBody2D()->addForce(force);

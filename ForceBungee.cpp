@@ -13,12 +13,16 @@ void ForceBungee::updateForce(Object* object, float dt){
     force -= m_other->getPos2();
 
     float magnitude = glm::length(force);
-    if(magnitude <= m_equilibrium) return;
+    if(magnitude <= m_equilibrium) {
+        return;
+    }
+        
 
     magnitude = m_springConstant * (m_equilibrium - magnitude);
 
-    glm::normalize(force);
-    force *= -magnitude;
+    force = glm::normalize(force);
+    //if m_other is the object hanging on the bungee then maybe switch the sign of magnitude
+    force *= magnitude;
     object->getRigidBody2D()->addForce(force);
 }
 

@@ -14,7 +14,7 @@ def strip_extension(files):
 
 def compile_files(files,flags,times,last_compiled_time):
     names = strip_extension(files)
-
+    num_errors = 0
     for i in range(len(files)):
         if(last_compiled_time < os.path.getmtime(files[i])):
             current_cmd = "g++ "+flags+" -c -o '../objectFiles/"+names[i]+".o' '"+files[i]+"'"
@@ -26,6 +26,7 @@ def compile_files(files,flags,times,last_compiled_time):
             out = subprocess.Popen(["g++",flags,"-c","-o","../objectFiles/"+names[i]+".o",files[i]], stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
             stdout,stderr = out.communicate()
             if stdout != b'' or stderr != None:
+                num_errors += 1
                 print(stdout)
                 print(stderr)
                 print("\n[!!!]Fatal error when running command")
@@ -39,6 +40,7 @@ def compile_files(files,flags,times,last_compiled_time):
             print("[***] File [->]"+files[i]+"[<-]")
             print("[***]\tdoes not need to be recompiled.")
             print()
+    print("[***] Compilation finished with [->]"+str(num_errors)+"[<-] errors")
                 
 
 def create_dictionary(files):
