@@ -24,6 +24,7 @@
 #include "./ForceSpring.h"
 #include "./ForceDrag.h"
 #include "./ForceBungee.h"
+#include "./ForceFakeSpring.h"
 
 class SceneForceGenerator : public Scene{
 	private:
@@ -39,6 +40,7 @@ class SceneForceGenerator : public Scene{
 		ForceSpring m_forceSpring;
 		ForceDrag m_forceDrag;
 		ForceBungee m_forceBungee;
+		ForceFakeSpring m_forceFakeSpring;
 		int m_currentType;
 		
 	public:

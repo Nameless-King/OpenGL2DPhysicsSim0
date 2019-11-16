@@ -18,6 +18,7 @@
 #include "./Window.h"
 #include "./ForceBuoyancy.h"
 #include "./ForceGravity.h"
+#include "./ForceDrag.h"
 #include "./Physics2D.h"
 
 class SceneBuoyantForce : public Scene{
@@ -29,6 +30,7 @@ class SceneBuoyantForce : public Scene{
         Object* m_object;
         ForceBuoyancy m_forceBuoyancy;
         ForceGravity m_forceGravity;
+        ForceDrag m_forceDrag;
     
     public:
         SceneBuoyantForce();

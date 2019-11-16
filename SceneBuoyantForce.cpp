@@ -7,14 +7,16 @@ SceneBuoyantForce::SceneBuoyantForce():
     m_texture(NULL),
     m_object(NULL),
     m_forceBuoyancy(ForceBuoyancy()),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,0.0f))){}
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,0.0f))),
+    m_forceDrag(ForceDrag(1.0f,1.0f)){}
 
 SceneBuoyantForce::SceneBuoyantForce(Shader* shader, Texture* texture, const float vertices[]):
     m_title("SceneBuoyantForce"),
     m_active(false),
     m_shader(shader),
     m_texture(texture),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,-15.0f))){
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,-15.0f))),
+    m_forceDrag(ForceDrag(0.0f,0.05f)){
         m_object = new Object(
             glm::vec3(0.0f,10.0f,0.0f),
             glm::vec3(0.0f,0.0f,0.0f),
@@ -64,6 +66,7 @@ void SceneBuoyantForce::render(Window* window){
 void SceneBuoyantForce::update(Window* window){
     m_forceGravity.updateForce(m_object,ImGui::GetIO().DeltaTime);
     m_forceBuoyancy.updateForce(m_object,ImGui::GetIO().DeltaTime);
+    //m_forceDrag.updateForce(m_object,ImGui::GetIO().DeltaTime);
 
     Physics2D::integrator3(m_object,ImGui::GetIO().DeltaTime);
   
@@ -80,10 +83,14 @@ void SceneBuoyantForce::renderGUI(){
     float volume = m_forceBuoyancy.getVolume();
     float waterHeight = m_forceBuoyancy.getWaterHeight();
     float liquidDensity = m_forceBuoyancy.getLiquidDensity();
+    float k1 = m_forceDrag.getK1();
 
     ImGui::Begin(m_title.c_str());
     if(ImGui::DragFloat("Gravity",&gravity,0.5f)){
         m_forceGravity.setGravity(0.0f,gravity);
+    }
+    if(ImGui::DragFloat("K1",&k1,0.01f)){
+        m_forceDrag.setK1(k1);
     }
     if(ImGui::DragFloat("Max Depth",&maxDepth,1.0f)){
         m_forceBuoyancy.setMaxDepth(maxDepth);

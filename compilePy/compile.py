@@ -13,6 +13,7 @@ def strip_extension(files):
     return names
 
 def compile_files(files,flags,times,last_compiled_time):
+    terminated_files = []
     names = strip_extension(files)
     num_errors = 0
     num_compiled = 0
@@ -28,6 +29,7 @@ def compile_files(files,flags,times,last_compiled_time):
             stdout,stderr = out.communicate()
             if stdout != b'' or stderr != None:
                 num_errors += 1
+                terminated_files.append(files[i])
                 print(str(stdout).replace('\\n','\n'))
                 print(str(stderr).replace('\\n','\n'))
                 print("\n[!!!]Fatal error when running command")
@@ -45,6 +47,7 @@ def compile_files(files,flags,times,last_compiled_time):
     print("[***] Compilation finished.")
     print("[***] Errors Raised  [->]"+str(num_errors)+"[<-]")
     print("[***] Files Compiled [->]"+str(num_compiled)+"[<-]")
+    return terminated_files
                 
 
 def create_dictionary(files):
@@ -81,15 +84,21 @@ def main():
 
     last_compiled = 0
     with open("./cache.txt","r") as f:
-        last_compiled = float(f.read())
+        cache_in = f.read().split(",")
+        last_compiled = float(cache_in[0])
+        #last_terminated = cache_in[1:]
         if last_compiled == "":
             last_compiled = 0
 
     print("[***]Compiling Files")
-    compile_files(files_to_compile,flags,modified_times,last_compiled)
+    terminated_files = compile_files(files_to_compile,flags,modified_times,last_compiled)
 
     with open("./cache.txt","w") as f:
         f.write(str(time.time()))
+        for file in terminated_files:
+            f.write(","+file)
+       
+
 
 if __name__ == '__main__':
     main()

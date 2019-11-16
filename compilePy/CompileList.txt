@@ -34,6 +34,7 @@
 ../ForceAnchoredSpring.cpp
 ../ForceBungee.cpp
 ../ForceBuoyancy.cpp
+../ForceFakeSpring.cpp
 ../Particle.cpp
 
 COMPILER_FLAGS

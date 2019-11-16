@@ -13,6 +13,7 @@ SceneForceGenerator::SceneForceGenerator():
 	m_forceGravity(ForceGravity(glm::vec2(0.0f,-10.0f))),
 	m_forceDrag(ForceDrag(1.0f,1.0f)),
 	m_forceBungee(ForceBungee()),
+	m_forceFakeSpring(ForceFakeSpring()),
 	m_currentType(0){}
 	
 SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const float vertices[]):
@@ -23,7 +24,7 @@ SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const
 	m_shader(shader),
 	m_texture(texture),
 	m_forceGravity(ForceGravity(glm::vec2(0.0f,0.0f))),
-	m_currentType(0){
+	m_currentType(2){
 			
 	m_staticObj = new Object(
 		glm::vec3(0.0f,0.0f,0.0f),
@@ -64,6 +65,8 @@ SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const
 	float bkc = 100.0f;
 	float be = 100.0f;
 	m_forceBungee = ForceBungee(m_staticObj,bkc,be);
+
+	m_forceFakeSpring = ForceFakeSpring(m_staticObj,50.0f,0.05f);
 };
 
 SceneForceGenerator::~SceneForceGenerator(){
@@ -110,6 +113,9 @@ void SceneForceGenerator::update(Window* window){
 		case 1:
 			m_forceBungee.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
 			break;
+		case 2:
+			m_forceFakeSpring.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
+			break;
 		default:
 			break;
 	}
@@ -130,6 +136,8 @@ void SceneForceGenerator::renderGUI(){
 	float springConstant = m_forceSpring.getSpringConstant();
 	float bungeeEquilibrium = m_forceBungee.getEquilibrium();
 	float bungeeSpringConstant = m_forceBungee.getSpringConstant();
+	float stiffSpringConstant = m_forceFakeSpring.getSpringConstant();
+	float stiffDamping = m_forceFakeSpring.getDamping();
 	int currentType = m_currentType;
 
 	ImGui::Begin(m_title.c_str());
@@ -160,6 +168,14 @@ void SceneForceGenerator::renderGUI(){
 				m_forceBungee.setSpringConstant(bungeeSpringConstant);
 			}
 			break;
+		case 2:
+			if(ImGui::DragFloat("Spring Constant",&stiffSpringConstant,0.1f)){
+				m_forceFakeSpring.setSpringConstant(stiffSpringConstant);
+			}
+			if(ImGui::DragFloat("Damping",&stiffDamping,0.01f)){
+				m_forceFakeSpring.setDamping(stiffDamping);
+			}
+			break;
 		default:
 			break;
 	}
@@ -169,6 +185,8 @@ void SceneForceGenerator::renderGUI(){
 	ImGui::RadioButton("Spring",&currentType,0);
 	ImGui::SameLine();
 	ImGui::RadioButton("Bungee",&currentType,1);
+	ImGui::SameLine();
+	ImGui::RadioButton("Stiff Spring",&currentType,2);
 
 	if(m_currentType != currentType){
 		m_currentType = currentType;
