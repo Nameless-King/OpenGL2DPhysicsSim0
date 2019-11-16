@@ -15,32 +15,36 @@ def strip_extension(files):
 def compile_files(files,flags,times,last_compiled_time):
     names = strip_extension(files)
     num_errors = 0
+    num_compiled = 0
     for i in range(len(files)):
         if(last_compiled_time < os.path.getmtime(files[i])):
             current_cmd = "g++ "+flags+" -c -o '../objectFiles/"+names[i]+".o' '"+files[i]+"'"
             print()
-            print("[***] Compiling file [->]"+files[i]+"[<-]")
-            print("[***] Executing [->]"+current_cmd+"[<-]")
+            print("[***]Compiling file [->]"+files[i]+"[<-]")
+            print("[***]Executing [->]"+current_cmd+"[<-]")
             #could not get os.popen to work with current_cmd
             #cmd_out = os.popen(current_cmd)
             out = subprocess.Popen(["g++",flags,"-c","-o","../objectFiles/"+names[i]+".o",files[i]], stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
             stdout,stderr = out.communicate()
             if stdout != b'' or stderr != None:
                 num_errors += 1
-                print(stdout)
-                print(stderr)
+                print(str(stdout).replace('\\n','\n'))
+                print(str(stderr).replace('\\n','\n'))
                 print("\n[!!!]Fatal error when running command")
                 print("\t"+current_cmd)
                 input("\n[***]Enter to continue.\n")
             else:
+                num_compiled += 1
                 print("[***]Successfully exectued command.")
             print()
         else:
             print()
-            print("[***] File [->]"+files[i]+"[<-]")
+            print("[***]File [->]"+files[i]+"[<-]")
             print("[***]\tdoes not need to be recompiled.")
             print()
-    print("[***] Compilation finished with [->]"+str(num_errors)+"[<-] errors")
+    print("[***] Compilation finished.")
+    print("[***] Errors Raised  [->]"+str(num_errors)+"[<-]")
+    print("[***] Files Compiled [->]"+str(num_compiled)+"[<-]")
                 
 
 def create_dictionary(files):
@@ -81,6 +85,7 @@ def main():
         if last_compiled == "":
             last_compiled = 0
 
+    print("[***]Compiling Files")
     compile_files(files_to_compile,flags,modified_times,last_compiled)
 
     with open("./cache.txt","w") as f:
