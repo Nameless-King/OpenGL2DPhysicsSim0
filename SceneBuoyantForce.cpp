@@ -5,15 +5,18 @@ SceneBuoyantForce::SceneBuoyantForce():
     m_active(false),
     m_shader(NULL),
     m_texture(NULL),
-    m_object(NULL){}
+    m_object(NULL),
+    m_forceBuoyancy(ForceBuoyancy()),
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,0.0f))){}
 
 SceneBuoyantForce::SceneBuoyantForce(Shader* shader, Texture* texture, const float vertices[]):
     m_title("SceneBuoyantForce"),
     m_active(false),
     m_shader(shader),
-    m_texture(texture){
+    m_texture(texture),
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,-15.0f))){
         m_object = new Object(
-            glm::vec3(0.0f,0.0f,0.0f),
+            glm::vec3(0.0f,10.0f,0.0f),
             glm::vec3(0.0f,0.0f,0.0f),
             glm::vec3(1.0f,1.0f,1.0f)
         );
@@ -23,7 +26,9 @@ SceneBuoyantForce::SceneBuoyantForce(Shader* shader, Texture* texture, const flo
         RigidBody2D* rb = new RigidBody2D(5.0f);
         rb->setDamping(1.0f);
         m_object->addRigidBody2D(rb);
-        
+
+        m_forceBuoyancy = ForceBuoyancy(-50.0f,1.0f,0,750.0f);
+
 }
 
 SceneBuoyantForce::~SceneBuoyantForce(){
@@ -53,10 +58,15 @@ void SceneBuoyantForce::render(Window* window){
     m_texture->unbind();
 
     StaticRenderer::unbind();
+
 }
 
 void SceneBuoyantForce::update(Window* window){
+    m_forceGravity.updateForce(m_object,ImGui::GetIO().DeltaTime);
+    m_forceBuoyancy.updateForce(m_object,ImGui::GetIO().DeltaTime);
 
+    Physics2D::integrator3(m_object,ImGui::GetIO().DeltaTime);
+  
 }
 
 void SceneBuoyantForce::setActive(bool active){
@@ -64,8 +74,32 @@ void SceneBuoyantForce::setActive(bool active){
 }
 
 void SceneBuoyantForce::renderGUI(){
+    float gravity = m_forceGravity.getGravity().y;
+
+    float maxDepth = m_forceBuoyancy.getMaxDepth();
+    float volume = m_forceBuoyancy.getVolume();
+    float waterHeight = m_forceBuoyancy.getWaterHeight();
+    float liquidDensity = m_forceBuoyancy.getLiquidDensity();
+
     ImGui::Begin(m_title.c_str());
+    if(ImGui::DragFloat("Gravity",&gravity,0.5f)){
+        m_forceGravity.setGravity(0.0f,gravity);
+    }
+    if(ImGui::DragFloat("Max Depth",&maxDepth,1.0f)){
+        m_forceBuoyancy.setMaxDepth(maxDepth);
+    }
+    if(ImGui::DragFloat("Volume",&volume,0.5f)){
+        m_forceBuoyancy.setVolume(volume);
+    }
+    if(ImGui::DragFloat("Water Height",&waterHeight,0.5f)){
+        m_forceBuoyancy.setWaterHeight(waterHeight);
+    }
+    if(ImGui::DragFloat("Liquid Density",&liquidDensity,0.5f)){
+        m_forceBuoyancy.setLiquidDensity(liquidDensity);
+    }
+
     ImGui::End();
+    
 }
 
     

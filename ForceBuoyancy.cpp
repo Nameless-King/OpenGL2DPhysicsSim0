@@ -6,9 +6,35 @@ ForceBuoyancy::ForceBuoyancy():
     m_waterHeight(0),
     m_liquidDensity(0){}
 
-ForceBuoyancy::ForceBuoyancy(float maxDepth, float volume, float waterHeight, float liquidDensity){}
+ForceBuoyancy::ForceBuoyancy(float maxDepth, float volume, float waterHeight, float liquidDensity):
+    m_maxDepth(maxDepth),
+    m_volume(volume),
+    m_waterHeight(waterHeight),
+    m_liquidDensity(liquidDensity){}
 
-ForceBuoyancy::updateForce(Object* object, float dt){
+void ForceBuoyancy::updateForce(Object* object, float dt){
+    //calc the submersion depth
+    float depth = object->getPos().y;
+
+    //check if object is out of water
+    if(depth >= m_waterHeight + m_maxDepth){
+        return;
+    }
+
+    glm::vec3 force(0.0f,0.0f,0.0f);
+
+    //check if object is at maximum depth
+    if(depth <= m_waterHeight - m_maxDepth){
+        force.y = m_liquidDensity * m_volume;
+        object->getRigidBody2D()->addForce(force);
+        return;
+    }
+
+    //otherwise object is partly submerged
+    force.y = m_liquidDensity * m_volume * (depth - m_maxDepth - m_waterHeight) / 2.0f * m_maxDepth;
+    object->getRigidBody2D()->addForce(force);
+    return;
+
 
 }
 

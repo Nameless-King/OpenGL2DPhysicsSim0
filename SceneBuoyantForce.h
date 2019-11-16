@@ -16,6 +16,9 @@
 #include "./StaticRenderer.h"
 #include "./Texture.h"
 #include "./Window.h"
+#include "./ForceBuoyancy.h"
+#include "./ForceGravity.h"
+#include "./Physics2D.h"
 
 class SceneBuoyantForce : public Scene{
     private:
@@ -24,6 +27,8 @@ class SceneBuoyantForce : public Scene{
         Shader* m_shader;
         Texture* m_texture;
         Object* m_object;
+        ForceBuoyancy m_forceBuoyancy;
+        ForceGravity m_forceGravity;
     
     public:
         SceneBuoyantForce();

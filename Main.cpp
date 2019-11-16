@@ -129,7 +129,7 @@ int main(){
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
 		ImGui::End();
-		
+
 		GUIControlPanel::renderCurrentSceneGUI();
 		
 		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
