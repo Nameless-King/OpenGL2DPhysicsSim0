@@ -161,3 +161,7 @@ void Physics2D::integrator3(Object* obj, float dt){
 	
 	objRb->zeroForce();
 }
+
+void Physics2D::updatePos(Object* object, float dt){
+	object->getPos2() +=   dt * *(object->getRigidBody2D()->getVelocity());
+}

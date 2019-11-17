@@ -27,6 +27,7 @@
 ../SceneParticle.cpp
 ../SceneForceGenerator.cpp
 ../SceneBuoyantForce.cpp
+../SceneCollisions.cpp
 ../ForceDrag.cpp
 ../ForceGravity.cpp
 ../ForceRegistry.cpp
@@ -36,6 +37,7 @@
 ../ForceBuoyancy.cpp
 ../ForceFakeSpring.cpp
 ../Particle.cpp
+../ObjectContact.cpp
 
 COMPILER_FLAGS
 -std=c++17

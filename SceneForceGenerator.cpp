@@ -122,6 +122,10 @@ void SceneForceGenerator::update(Window* window){
 	m_forceDrag.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
 
 	Physics2D::integrator3(m_hangingObj,ImGui::GetIO().DeltaTime);
+
+	
+
+
 }
 
 void SceneForceGenerator::setActive(bool active){

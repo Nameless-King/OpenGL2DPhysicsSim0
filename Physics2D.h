@@ -27,6 +27,7 @@ public:
 	static void updatePos(Object* obj);
 	static void integrator2(Object* obj,float dt);
 	static void integrator3(Object* obj,float dt);
+	static void updatePos(Object* object, float dt);
 	static void gravitate(glm::vec2 dir,float mag,Object* obj);
 };
 

@@ -52,8 +52,12 @@ Collision AABB::getCollision(AABB box1, AABB box2){
 		//normalize vector
 		glm::vec2 distVector = box2.getCenter() - box1.getCenter();
 		float lengthDist = std::sqrt((collision.distance.x*collision.distance.x) + (collision.distance.y*collision.distance.y));
-		assert(lengthDist != 0);
-		collision.collisionNormal = glm::vec2(distVector.x/lengthDist,distVector.y/lengthDist);  
+		if(lengthDist!=0){
+			collision.collisionNormal = glm::vec2(distVector.x/lengthDist,distVector.y/lengthDist);
+		}else{
+			collision.collisionNormal = glm::vec2(1.0f,1.0f);
+		}
+		  
 	}
 
 	

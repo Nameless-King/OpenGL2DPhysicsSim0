@@ -25,6 +25,7 @@ class RigidBody2D{
 		void setDamping(float damping);
 		void setAcceleration(float ax, float ay);
 		void setVelocity(float vx, float vy);
+		void setVelocity(glm::vec2 vel);
 		inline float getMass() {return m_mass;}
 		inline float getInverseMass() {return 1.0f/m_mass;}
 		inline float getDamping() { return m_damping;}
