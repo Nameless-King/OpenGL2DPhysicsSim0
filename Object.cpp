@@ -55,6 +55,11 @@ void Object::setPos(float xPos, float yPos){
 	m_position = glm::vec3(xPos,yPos,m_position.z);
 }
 
+void Object::setPos(glm::vec2 pos){
+	m_position.x = pos.x;
+	m_position.y = pos.y;
+}
+
 void Object::setRot(float xRot, float yRot, float zRot){
 	m_rotation = glm::vec3(xRot, yRot, zRot);
 }

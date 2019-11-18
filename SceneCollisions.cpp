@@ -86,10 +86,12 @@ void SceneCollisions::update(Window* window){
         m_contactResolver.m_restitution = 1.0f;
         m_contactResolver.m_contactNormal = objCol.collisionNormal;
 
-        m_contactResolver.resolve(ImGui::GetIO().DeltaTime);
+        m_contactResolver.resolve(ImGui::GetIO().DeltaTime,objCol);
 
-        Physics2D::updatePos(m_other,ImGui::GetIO().DeltaTime);
-        Physics2D::updatePos(m_player,ImGui::GetIO().DeltaTime);
+        
+
+        //Physics2D::updatePos(m_other,ImGui::GetIO().DeltaTime);
+        //Physics2D::updatePos(m_player,ImGui::GetIO().DeltaTime);
     }
 }
 
@@ -126,6 +128,6 @@ void SceneCollisions::input(Window* window){
         force.x = -fforce;
     }
 
-    m_player->getRigidBody2D()->addForce(force);
-    //m_player->setPos(px,py);
+    //m_player->getRigidBody2D()->addForce(force);
+    m_player->setPos(px,py);
 }

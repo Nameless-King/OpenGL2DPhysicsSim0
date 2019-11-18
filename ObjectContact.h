@@ -5,6 +5,7 @@
 #include "./Dependencies/glm/gtc/matrix_transform.hpp"
 
 #include "./Object.h"
+#include "./AABB.h"
 
 class ObjectContact{
     public:
@@ -13,11 +14,12 @@ class ObjectContact{
         glm::vec2 m_contactNormal;
     public:
         //deals with contact resolution for both velocity and interpenetration
-        void resolve(float dt);
+        void resolve(float dt, Collision col);
     protected:
         //calculates closing velocity
         float calculateClosingVelocity() const;
     private:
         //calculates impulse
         void resolveVelocity(float dt);
+        void resolveInterpenetration(float dt, Collision col);
 };

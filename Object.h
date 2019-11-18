@@ -35,6 +35,7 @@ public:
 	void setVelocity(float xVel,float yVel);
 	void setPos(float xPos, float yPos, float zPos);
 	void setPos(float xPos, float yPos);
+	void setPos(glm::vec2 pos);
 	void setRot(float xRot, float yRot, float zRot);
 	void setScl(float xScl, float yScl, float zScl);
 	
