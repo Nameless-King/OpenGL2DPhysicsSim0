@@ -1,5 +1,7 @@
 #include "./SceneCollisions.h"
 
+static bool hasCollided = false;
+
 SceneCollisions::SceneCollisions():
     m_title("SceneCollisions"),
     m_active(false),
@@ -29,14 +31,14 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float v
     m_player->addRigidBody2D(rbPlayer);
 
     m_other = new Object(
-        glm::vec3(0.0f,20.0f,0.0f),
+        glm::vec3(-1.0f,20.0f,0.0f),
         glm::vec3(0.0f,0.0f,0.0f),
         glm::vec3(1.0f,1.0f,1.0f)
     );
     m_other->addVertices(vertices);
     m_other->createAABB(BBType::Circle);
 
-    RigidBody2D* rbOther = new RigidBody2D(5.0f);
+    RigidBody2D* rbOther = new RigidBody2D(100.0f);
     m_other->addRigidBody2D(rbOther);
 }
 
@@ -76,7 +78,13 @@ void SceneCollisions::render(Window* window){
 void SceneCollisions::update(Window* window){
     input(window);
 
+    if(!hasCollided){
+        m_player->getRigidBody2D()->addForce(glm::vec2(0.0f,5.0f));
+        m_other->getRigidBody2D()->addForce(glm::vec2(0.0f,-5.0f));
+    }
+
     Physics2D::integrator3(m_player,ImGui::GetIO().DeltaTime);
+    Physics2D::integrator3(m_other,ImGui::GetIO().DeltaTime);
 
     Collision objCol = AABB::getCollision(m_player->getBoundingBox(),m_other->getBoundingBox());
 
@@ -88,7 +96,7 @@ void SceneCollisions::update(Window* window){
 
         m_contactResolver.resolve(ImGui::GetIO().DeltaTime,objCol);
 
-        
+        hasCollided = true;
 
         //Physics2D::updatePos(m_other,ImGui::GetIO().DeltaTime);
         //Physics2D::updatePos(m_player,ImGui::GetIO().DeltaTime);
@@ -110,7 +118,7 @@ void SceneCollisions::input(Window* window){
     float speed = 1.0f;
 
     glm::vec2 force(0.0f,0.0f);
-    float fforce = 50.0f;
+    float fforce = 150.0f;
 
     if(glfwGetKey(window->getWindow(),GLFW_KEY_W)){
         py += speed;
@@ -128,6 +136,6 @@ void SceneCollisions::input(Window* window){
         force.x = -fforce;
     }
 
-    //m_player->getRigidBody2D()->addForce(force);
-    m_player->setPos(px,py);
+    m_player->getRigidBody2D()->addForce(force);
+    //m_player->setPos(px,py);
 }

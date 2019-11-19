@@ -33,8 +33,7 @@ std::string Shader::readShaderFile(const char* shaderPath){
 		
 		fileReader.close();
 		shaderCode = shaderStringStream.str();
-		std::cout << shaderCode << std::endl;
-		std::cin.get();
+
 	} catch (std::ifstream::failure e){
 		std::cout << "Error with reading shader file: " << shaderPath << std::endl;
 	}
