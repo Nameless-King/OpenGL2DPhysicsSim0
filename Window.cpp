@@ -54,19 +54,11 @@ void Window::setFramebufferSizeCallback(void(*callback)(GLFWwindow*,int,int)){
 
 glm::mat4 Window::getProjectionMatrix(){
 	if(m_sizeChanged){
-		/*m_projection = glm::ortho(
-			-(m_width/100.0f),
-			(m_width/100.0f),
-			-(m_height/100.0f),
-			(m_height/100.0f),
-			-1.0f,
-			1.0f
-		);*/
 		m_projection = glm::ortho(
-			-(m_width/(m_zoom*2.0f)),
-			(m_width/(m_zoom*2.0f)),
-			-(m_height/(m_zoom*2.0f)),
-			(m_height/(m_zoom*2.0f)),
+			-(m_width/(m_zoom)),
+			(m_width/(m_zoom)),
+			-(m_height/(m_zoom)),
+			(m_height/(m_zoom)),
 			-1.0f,
 			1.0f
 		);

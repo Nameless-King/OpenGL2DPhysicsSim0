@@ -1,7 +1,7 @@
 #include "./GuiControlPanel.h"
 
-static std::vector<Scene*> scenes;
-static int currentScene = -1;
+static std::vector<Scene*> s_scenes;
+static int s_currentScene = -1;
 
 void GUIControlPanel::init(GLFWwindow* window, bool installCallbacks){
 	IMGUI_CHECKVERSION();
@@ -21,15 +21,15 @@ void GUIControlPanel::start(){
 
 void GUIControlPanel::renderMenu(){
 	ImGui::Begin("Scene(s)");
-	ImGui::RadioButton("NAN",&currentScene,-1);
-	for(int i = 0;i<scenes.size();i++){
-		listScene(scenes[i],i);
+	ImGui::RadioButton("Default",&s_currentScene,-1);
+	for(int i = 0;i<s_scenes.size();i++){
+		listScene(s_scenes[i],i);
 	}
 	ImGui::End();
 }
 
 void GUIControlPanel::registerScene(Scene* scene){
-	scenes.push_back(scene);
+	s_scenes.push_back(scene);
 }
 
 void GUIControlPanel::finalize(){
@@ -39,27 +39,27 @@ void GUIControlPanel::finalize(){
 
 void GUIControlPanel::listScene(Scene* scene,int sceneIndex){
 	if(!scene){
-		ImGui::RadioButton("NAN",&currentScene,sceneIndex);
+		ImGui::RadioButton("Default",&s_currentScene,sceneIndex);
 	}
-	ImGui::RadioButton(scene->getSceneTitle().c_str(),&currentScene,sceneIndex);
+	ImGui::RadioButton(scene->getSceneTitle().c_str(),&s_currentScene,sceneIndex);
 }
 
 void GUIControlPanel::updateCurrentScene(Window* window){
-	if(currentScene!=-1){
-		scenes[currentScene]->update(window);
+	if(s_currentScene>=0){
+		s_scenes[s_currentScene]->update(window);
 	}
 	
 }
 
 void GUIControlPanel::renderCurrentSceneGUI(){
-	if(currentScene!=-1){
-		scenes[currentScene]->renderGUI();
+	if(s_currentScene>=0){
+		s_scenes[s_currentScene]->renderGUI();
 	}
 	
 }
 
 void GUIControlPanel::renderCurrentScene(Window* window){
-	if(currentScene!=-1){
-		scenes[currentScene]->render(window);
+	if(s_currentScene>=0){
+		s_scenes[s_currentScene]->render(window);
 	}
 }

@@ -24,6 +24,10 @@ public:
 	void setUniform1i(const std::string& name, int value) const;
 	void setUniform1f(const std::string& name, float value) const;
 	void setUniformMat4f(const std::string &name, const glm::mat4 &matrix) const;
+
+private:
+	const char* readShaderFile(const char* path);
+	unsigned int compileShaderCode(const char* sourceCode, GLenum shaderType);
 	
 		
 };

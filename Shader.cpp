@@ -1,69 +1,64 @@
 #include "Shader.h"
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath){
-	std::string vertexCode;
-	std::string fragmentCode;
-	std::ifstream vShaderFile;
-	std::ifstream fShaderFile;
-	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	
-	try{
-		vShaderFile.open(vertexPath);
-		fShaderFile.open(fragmentPath);
-		std::stringstream vShaderStream, fShaderStream;
-		
-		vShaderStream << vShaderFile.rdbuf();
-		fShaderStream << fShaderFile.rdbuf();
-		
-		vShaderFile.close();
-		fShaderFile.close();
-		
-		vertexCode = vShaderStream.str();
-		fragmentCode = fShaderStream.str();
-	} catch (std::ifstream::failure e){
-		std::cout << "error" << std::endl;
-	}
-	
-	const char* vShaderCode = vertexCode.c_str();
-	const char* fShaderCode = fragmentCode.c_str();
+	const char* vertexShaderCode = readShaderFile(vertexPath);
+	const char* fragmentShaderCode = readShaderFile(fragmentPath);
 	
 	unsigned int vertex, fragment;
 	int success;
 	
-	vertex = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex, 1, &vShaderCode, NULL);
-	glCompileShader(vertex);
-	glGetShaderiv(vertex, GL_COMPILE_STATUS,&success);
-	if(success == GL_FALSE){
-		int maxLength = 0;
-		glGetShaderiv(vertex,GL_INFO_LOG_LENGTH,&maxLength);
-		char* message = (char*)malloc(maxLength * sizeof(char));
-		glGetShaderInfoLog(vertex,maxLength,&maxLength,message);
-		std::cout << "ERROR SHADER VERTEX COMPILATION FAILED\n" << message << std::endl;
-		free(message);
-	}
-	
-	fragment = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment,1,&fShaderCode,NULL);
-	glCompileShader(fragment);
-	glGetShaderiv(fragment,GL_COMPILE_STATUS,&success);
-	if(success == GL_FALSE){
-		int maxLength = 0;
-		glGetShaderiv(fragment, GL_INFO_LOG_LENGTH,&maxLength);
-		char* message = (char*)malloc(maxLength*sizeof(char));
-		glGetShaderInfoLog(fragment,maxLength,&maxLength,message);
-		std::cout << "ERROR SHADER FRAGMENT COMPILATION FAILED\n"<< message<<std::endl;
-		free(message);
-	}
+	vertex = compileShaderCode(vertexShaderCode,GL_VERTEX_SHADER);
+	fragment = compileShaderCode(fragmentShaderCode,GL_FRAGMENT_SHADER);
 	
 	m_ID = glCreateProgram();
 	glAttachShader(m_ID,vertex);
 	glAttachShader(m_ID,fragment);
 	glLinkProgram(m_ID);
-	
+	//shaders are no longer needed when attached to shader program
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
+}
+
+const char* Shader::readShaderFile(const char* shaderPath){
+	std::string shaderCode;
+	std::ifstream fileReader;
+
+	fileReader.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	
+	try{
+		fileReader.open(shaderPath);
+
+		std::stringstream shaderStringStream;
+		shaderStringStream << fileReader.rdbuf();
+		
+		fileReader.close();
+		shaderCode = shaderStringStream.str();
+	} catch (std::ifstream::failure e){
+		std::cout << "Error with reading shader file: " << shaderPath << std::endl;
+	}
+	
+	return shaderCode.c_str();
+}
+
+unsigned int Shader::compileShaderCode(const char* sourceCode, GLenum shaderType){
+	int compileSuccess;
+	unsigned int shaderId;
+	
+	shaderId = glCreateShader(shaderType);
+	glShaderSource(shaderId, 1, &sourceCode, NULL);
+	glCompileShader(shaderId);
+	glGetShaderiv(shaderId, GL_COMPILE_STATUS,&compileSuccess);
+	if(compileSuccess == GL_FALSE){
+		int maxLength = 0;
+		glGetShaderiv(shaderId,GL_INFO_LOG_LENGTH,&maxLength);
+		char* message = (char*)malloc(maxLength * sizeof(char));
+		glGetShaderInfoLog(shaderId,maxLength,&maxLength,message);
+		std::cout << "ERROR SHADER COMPILATION FAILED\n" << message << std::endl;
+		std::cout << "SHADER TYPE: " << shaderType << std::endl;
+		free(message);
+	}
+
+	return shaderId;
 }
 
 Shader::~Shader(){

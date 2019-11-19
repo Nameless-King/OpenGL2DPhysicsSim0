@@ -40,8 +40,10 @@ void updatePos(Object* obj);
 void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar* message, const void* userParam);
 
-int WIDTH = 800;
-int HEIGHT = 600;
+const int WIDTH = 800;
+const int HEIGHT = 600;
+int zoom = 1.0f;
+bool shouldShowDemoWindow = true;
 
 Window windowObj(WIDTH, HEIGHT,"Hello,World");
 
@@ -69,14 +71,6 @@ int main(){
 	
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-
-	//separate classes for each scene with gui options
-	//add classes to control panel gui obj 
-	//	-main gui to switch between scenes
-	
-	//Kinds of sim scenes:
-	//1-d kinematic
-	//2-dkinematic
 	
 	Shader shader0("./shaders/shader0.vs","./shaders/shader0.fs");	
 	Shader shaderPoint("./shaders/shaderPoint.vs","./shaders/shaderPoint.fs");
@@ -84,8 +78,6 @@ int main(){
 	Texture texture0("./textures/circle.png");
 		
 	StaticRenderer::init();
-	
-	glm::mat4 view = glm::translate(glm::mat4(1.0f),glm::vec3(0,0,0));
 	
 	SceneCRPC scene0(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneExample scene1(&shader0,&texture0,StaticRenderer::getVertices());
@@ -107,8 +99,6 @@ int main(){
 
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
-	bool yes = true;
-	int zoom = 1.0f;
 	while(!windowObj.windowShouldClose()){
 		windowObj.pollEvents();
 		input(windowObj.getWindow());
@@ -117,17 +107,17 @@ int main(){
 		GUIControlPanel::start();
 		GUIControlPanel::renderMenu();
 	
-		ImGui::ShowDemoWindow(&yes);
+		ImGui::ShowDemoWindow(&shouldShowDemoWindow);
 		ImGui::Begin("Stats");
-		if(ImGui::SliderInt("Zoom",&zoom,1,6)){
-			windowObj.zoom(zoom/1.0f);
+		if(ImGui::SliderInt("Zoom",&zoom,1,12)){
+			windowObj.zoom(zoom);
 		}
 		ImGui::Text("Application Domain [%.3f,%.3f]",
-			-(windowObj.getWidth()/(2.0f*windowObj.getZoom())),
-			(windowObj.getWidth()/(2.0f*windowObj.getZoom())));
+			-(windowObj.getWidth()/(windowObj.getZoom())),
+			(windowObj.getWidth()/(windowObj.getZoom())));
 		ImGui::Text("Applicaiton Range 	[%.3f,%.3f]",
-			-(windowObj.getHeight()/(2.0f*windowObj.getZoom())),
-			(windowObj.getHeight()/(2.0f*windowObj.getZoom())));
+			-(windowObj.getHeight()/(windowObj.getZoom())),
+			(windowObj.getHeight()/(windowObj.getZoom())));
 		ImGui::ColorEdit3("clear color",(float*)&clear_color);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
@@ -171,5 +161,4 @@ void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 	 fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
            ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
             type, severity, message );
-	
 }
