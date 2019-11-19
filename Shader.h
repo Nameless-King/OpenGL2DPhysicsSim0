@@ -26,7 +26,7 @@ public:
 	void setUniformMat4f(const std::string &name, const glm::mat4 &matrix) const;
 
 private:
-	const char* readShaderFile(const char* path);
+	std::string readShaderFile(const char* path);
 	unsigned int compileShaderCode(const char* sourceCode, GLenum shaderType);
 	
 		

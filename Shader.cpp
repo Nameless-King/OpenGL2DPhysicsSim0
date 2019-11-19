@@ -1,14 +1,14 @@
 #include "Shader.h"
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath){
-	const char* vertexShaderCode = readShaderFile(vertexPath);
-	const char* fragmentShaderCode = readShaderFile(fragmentPath);
+	std::string vertexShaderCode = readShaderFile(vertexPath);
+	std::string fragmentShaderCode = readShaderFile(fragmentPath);
 	
 	unsigned int vertex, fragment;
 	int success;
 	
-	vertex = compileShaderCode(vertexShaderCode,GL_VERTEX_SHADER);
-	fragment = compileShaderCode(fragmentShaderCode,GL_FRAGMENT_SHADER);
+	vertex = compileShaderCode(vertexShaderCode.c_str(),GL_VERTEX_SHADER);
+	fragment = compileShaderCode(fragmentShaderCode.c_str(),GL_FRAGMENT_SHADER);
 	
 	m_ID = glCreateProgram();
 	glAttachShader(m_ID,vertex);
@@ -19,7 +19,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath){
 	glDeleteShader(fragment);
 }
 
-const char* Shader::readShaderFile(const char* shaderPath){
+std::string Shader::readShaderFile(const char* shaderPath){
 	std::string shaderCode;
 	std::ifstream fileReader;
 
@@ -33,11 +33,13 @@ const char* Shader::readShaderFile(const char* shaderPath){
 		
 		fileReader.close();
 		shaderCode = shaderStringStream.str();
+		std::cout << shaderCode << std::endl;
+		std::cin.get();
 	} catch (std::ifstream::failure e){
 		std::cout << "Error with reading shader file: " << shaderPath << std::endl;
 	}
 	
-	return shaderCode.c_str();
+	return shaderCode;
 }
 
 unsigned int Shader::compileShaderCode(const char* sourceCode, GLenum shaderType){
