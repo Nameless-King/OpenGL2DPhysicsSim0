@@ -2,6 +2,7 @@ import os
 import subprocess
 import re
 import time
+import sys
 
 def raise_exception(message):
     raise Exception(message)
@@ -12,13 +13,13 @@ def strip_extension(files):
         names.append(re.split("[/.(\x07)]",files[i])[-2])
     return names
 
-def compile_files(files,flags,times,last_compiled_time):
+def compile_files(files,flags,times,last_compiled_time,compile_type=""):
     terminated_files = []
     names = strip_extension(files)
     num_errors = 0
     num_compiled = 0
     for i in range(len(files)):
-        if(last_compiled_time < os.path.getmtime(files[i])):
+        if(compile_type == "--compile-all" or last_compiled_time < os.path.getmtime(files[i])):
             current_cmd = "g++ "+flags+" -c -o '../objectFiles/"+names[i]+".o' '"+files[i]+"'"
             print()
             print("[***]Compiling file [->]"+files[i]+"[<-]")
@@ -61,6 +62,10 @@ def create_dictionary(files):
     return last_modified_times
 
 def main():
+    compile_type = ""
+    if len(sys.argv) > 1:
+        compile_type = sys.argv[1]
+
     compile_list = "CompileList.txt"
 
     file_input = open(compile_list,"r")
@@ -91,7 +96,7 @@ def main():
             last_compiled = 0
 
     print("[***]Compiling Files")
-    terminated_files = compile_files(files_to_compile,flags,modified_times,last_compiled)
+    terminated_files = compile_files(files_to_compile,flags,modified_times,last_compiled,compile_type)
 
     with open("./cache.txt","w") as f:
         f.write(str(time.time()))

@@ -12,6 +12,7 @@
 #include "./Dependencies/imgui/imgui_impl_opengl3.h"
 
 #include <string>
+#include <vector>
 
 #include "./Object.h"
 #include "./Physics2D.h"
@@ -22,16 +23,19 @@
 #include "./Texture.h"
 #include "./Window.h"
 #include "./ObjectContact.h"
+#include "./ForceGravity.h"
 
 class SceneCollisions : public Scene {
     private:
         std::string m_title;
         bool m_active;
+        bool m_useGravity;
         Shader* m_shader;
         Texture* m_texture;
         Object* m_player;
-        Object* m_other;
+        std::vector<Object*> m_objects;
         ObjectContact m_contactResolver;
+        ForceGravity m_forceGravity;
 
     public:
         SceneCollisions();
@@ -46,6 +50,7 @@ class SceneCollisions : public Scene {
         void renderGUI();
     private:
         void input(Window* window);
+        void checkBounds();
 
 
 };
