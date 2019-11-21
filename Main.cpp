@@ -53,7 +53,8 @@ int main(){
 		return EXIT_FAILURE;
 	}
 	windowObj.setFramebufferSizeCallback(framebuffer_size_callback);
-	
+	windowObj.setClearColor(glm::vec4(0.9f,0.7f,0.7f,1.0f));
+
 	if(glewInit() != GLEW_OK){
 		std::cout << "Error glewInit" <<std::endl;
 		return EXIT_FAILURE	;
@@ -63,8 +64,6 @@ int main(){
 	glDebugMessageCallback(MessageCallback,0);
 	
 	GUIControlPanel::init(windowObj.getWindow(),true);	
-
-	ImVec4 clear_color = ImVec4(0.45f,0.55f,0.60f,1.00f);
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -79,8 +78,8 @@ int main(){
 		
 	StaticRenderer::init();
 	
-	SceneCRPC scene0(&shader0,&texture0,StaticRenderer::getVertices());
-	SceneExample scene1(&shader0,&texture0,StaticRenderer::getVertices());
+	//SceneCRPC scene0(&shader0,&texture0,StaticRenderer::getVertices());
+	//SceneExample scene1(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneIntegrator scene2(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneForces scene3(&shader0, &texture0, StaticRenderer::getVertices());
 	SceneParticle scene4(&shaderPoint);
@@ -88,8 +87,8 @@ int main(){
 	SceneBuoyantForce scene6(&shader0, &texture0 , StaticRenderer::getVertices());
 	SceneCollisions scene7(&shader0, &texture0, StaticRenderer::getVertices());
 
-	GUIControlPanel::registerScene(&scene1);
-	GUIControlPanel::registerScene(&scene0);
+	//GUIControlPanel::registerScene(&scene1);
+	//GUIControlPanel::registerScene(&scene0);
 	GUIControlPanel::registerScene(&scene2);
 	GUIControlPanel::registerScene(&scene3);
 	GUIControlPanel::registerScene(&scene4);
@@ -107,25 +106,11 @@ int main(){
 		GUIControlPanel::start();
 		GUIControlPanel::renderMenu();
 	
-		ImGui::ShowDemoWindow(&shouldShowDemoWindow);
-		ImGui::Begin("Stats");
-		if(ImGui::SliderInt("Zoom",&zoom,1,12)){
-			windowObj.zoom(zoom);
-		}
-		ImGui::Text("Application Domain [%.3f,%.3f]",
-			-(windowObj.getWidth()/(windowObj.getZoom())),
-			(windowObj.getWidth()/(windowObj.getZoom())));
-		ImGui::Text("Applicaiton Range 	[%.3f,%.3f]",
-			-(windowObj.getHeight()/(windowObj.getZoom())),
-			(windowObj.getHeight()/(windowObj.getZoom())));
-		ImGui::ColorEdit3("clear color",(float*)&clear_color);
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
-		ImGui::End();
+		windowObj.displayWindowStats();
 
 		GUIControlPanel::renderCurrentSceneGUI();
 		
-		glClearColor(clear_color.x,clear_color.y,clear_color.z,clear_color.w);
+		windowObj.clearColor();
 		glClear(GL_COLOR_BUFFER_BIT);	
 
 		GUIControlPanel::renderCurrentScene(&windowObj);
@@ -162,3 +147,4 @@ void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
            ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
             type, severity, message );
 }
+

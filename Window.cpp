@@ -1,6 +1,6 @@
 #include "Window.h"
 
-Window::Window(int width, int height, const std::string& title): m_width(width), m_height(height),  m_sizeChanged(false), m_title(title),m_zoom(1.0f){
+Window::Window(int width, int height, const std::string& title): m_width(width), m_height(height),  m_sizeChanged(false), m_title(title),m_zoom(2.0f),m_clearColor(glm::vec4(1.0f,1.0f,1.0f,1.0f)){
 	
 	if(!glfwInit()){
 		std::cout << "Error glfwInit" << std::endl;
@@ -21,10 +21,10 @@ Window::Window(int width, int height, const std::string& title): m_width(width),
 	glfwSwapInterval(1);
 	
 	m_projection = glm::ortho(
-		-(m_width/2.0f),
-		(m_width/2.0f),
-		-(m_height/2.0f),
-		(m_height/2.0f),
+		-(m_width/m_zoom),
+		(m_width/m_zoom),
+		-(m_height/m_zoom),
+		(m_height/m_zoom),
 		-1.0f,
 		1.0f
 	);
@@ -80,4 +80,30 @@ void Window::resize(int width,int height){
 
 void Window::pollEvents(){
 	glfwPollEvents();
+}
+
+void Window::displayWindowStats(){
+	ImGui::Begin("Stats");
+	int zoom = (int)m_zoom;
+	if(ImGui::SliderInt("Zoom",&zoom,2,12)){
+		m_zoom = zoom;
+	}
+	ImGui::Text("Application Domain [%.3f,%.3f]",
+		-(m_width/(m_zoom)),
+		(m_width/(m_zoom)));
+	ImGui::Text("Applicaiton Range 	[%.3f,%.3f]",
+		-(m_height/(m_zoom)),
+		(m_height/(m_zoom)));
+	ImGui::ColorEdit3("clear color",(float*)&m_clearColor);
+	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
+	ImGui::End();
+}
+
+void Window::clearColor(){
+	glClearColor(m_clearColor.x,m_clearColor.y,m_clearColor.z,m_clearColor.w);
+}
+
+void Window::setClearColor(glm::vec4 clearColor){
+	m_clearColor = glm::vec4(clearColor);
 }
