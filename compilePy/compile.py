@@ -28,9 +28,11 @@ def compile_files(files,flags,times,last_compiled_time,compile_type=""):
             #cmd_out = os.popen(current_cmd)
             out = subprocess.Popen(["g++",flags,"-c","-o","../objectFiles/"+names[i]+".o",files[i]], stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
             stdout,stderr = out.communicate()
+            out.kill()
             if stdout != b'' or stderr != None:
                 num_errors += 1
                 terminated_files.append(files[i])
+                print("\n[!!!]FATAL ERROR[!!!]\n")
                 print(str(stdout).replace('\\n','\n'))
                 print(str(stderr).replace('\\n','\n'))
                 print("\n[!!!]Fatal error when running command")

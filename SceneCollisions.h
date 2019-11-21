@@ -28,7 +28,6 @@
 class SceneCollisions : public Scene {
     private:
         std::string m_title;
-        bool m_active;
         bool m_useGravity;
         Shader* m_shader;
         Texture* m_texture;
@@ -43,10 +42,8 @@ class SceneCollisions : public Scene {
         ~SceneCollisions();
 
         std::string getSceneTitle() const;
-        bool isActive() const;
         void render(Window* window);
         void update(Window* window);
-        void setActive(bool active);
         void renderGUI();
     private:
         void input(Window* window);

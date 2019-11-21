@@ -21,7 +21,6 @@
 class SceneExample : public Scene{
 	private:
 		std::string m_title;
-		bool m_active;
 		float m_speed;
 		Shader* m_shader;
 		Texture* m_texture;
@@ -32,10 +31,8 @@ class SceneExample : public Scene{
 		SceneExample(Shader* shader, Texture* texture, const float vertices[]);
 		~SceneExample();
 		std::string getSceneTitle() const;
-		bool isActive() const;
 		void render(Window* window);
 		void update(Window* window);
-		void setActive(bool active);
 		void renderGUI();
 	private:
 		void input(Window* window);

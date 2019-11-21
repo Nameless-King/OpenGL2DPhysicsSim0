@@ -2,19 +2,19 @@
 
 RigidBody2D::RigidBody2D():
 	m_mass(1.0f),
-	m_damping(0.0f){
-	m_sigmaForce = new glm::vec2(0.0f,0.0f);
-	m_velocity = new glm::vec2(0.0f,0.0f);
-	m_acceleration = new glm::vec2(0.0f,0.0f);
-}
+	m_damping(0.0f),
+	m_sigmaForce(new glm::vec2(0.0f,0.0f)),
+	m_velocity(new glm::vec2(0.0f,0.0f)),
+	m_acceleration(new glm::vec2(0.0f,0.0f))
+{}
 
 RigidBody2D::RigidBody2D(float mass):
 	m_mass(mass),
-	m_damping(0.0f){
-	m_sigmaForce = new glm::vec2(0.0f,0.0f);
-	m_velocity = new glm::vec2(0.0f,0.0f);
-	m_acceleration = new glm::vec2(0.0f,0.0f);
-}
+	m_damping(0.0f),
+	m_sigmaForce(new glm::vec2(0.0f,0.0f)),
+	m_velocity(new glm::vec2(0.0f,0.0f)),
+	m_acceleration(new glm::vec2(0.0f,0.0f))
+{}
 
 RigidBody2D::~RigidBody2D(){
 	delete m_sigmaForce;

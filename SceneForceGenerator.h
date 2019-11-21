@@ -29,7 +29,6 @@
 class SceneForceGenerator : public Scene{
 	private:
 		std::string m_title;
-		bool m_active;
 		float m_springConstant;
 		bool m_useGravity;
 		Shader* m_shader;
@@ -49,10 +48,8 @@ class SceneForceGenerator : public Scene{
 		~SceneForceGenerator();
 		
 		std::string getSceneTitle() const;
-		bool isActive() const;
 		void render(Window* window);
 		void update(Window* window);
-		void setActive(bool active);
 		void renderGUI();
 	private:
 		void input(Window* window);

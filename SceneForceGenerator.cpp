@@ -2,7 +2,6 @@
 
 SceneForceGenerator::SceneForceGenerator():
 	m_title("SceneForceGenerator"),
-	m_active(false),
 	m_springConstant(2.0f),
 	m_useGravity(false),
 	m_shader(NULL),
@@ -18,7 +17,6 @@ SceneForceGenerator::SceneForceGenerator():
 	
 SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const float vertices[]):
 	m_title("SceneForceGenerator"),
-	m_active(false),
 	m_springConstant(2.0f),
 	m_useGravity(false),
 	m_shader(shader),
@@ -78,10 +76,6 @@ std::string SceneForceGenerator::getSceneTitle() const{
 	return m_title;
 }
 
-bool SceneForceGenerator::isActive() const{
-	return m_active;
-}
-
 void SceneForceGenerator::render(Window* window){
 	StaticRenderer::bind();
 	
@@ -126,10 +120,6 @@ void SceneForceGenerator::update(Window* window){
 	
 
 
-}
-
-void SceneForceGenerator::setActive(bool active){
-	
 }
 
 void SceneForceGenerator::renderGUI(){

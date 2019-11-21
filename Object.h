@@ -11,8 +11,6 @@
 #include "./Dependencies/glm/gtc/matrix_transform.hpp"
 #include "./Dependencies/glm/gtc/type_ptr.hpp"
 
-
-
 class Object{
 private:
 	const float* m_vertices;
@@ -21,32 +19,21 @@ private:
 	glm::vec3 m_position;
 	glm::vec3 m_rotation;
 	glm::vec3 m_scale;
-	float m_accel;
-	glm::vec2 m_velocity; 
-	float m_restitution;
-	float m_mass;
 public:
 	Object();
 	Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 	~Object();
 	
 	glm::mat4 getModelMatrix();
-	
-	void setVelocity(float xVel,float yVel);
+
 	void setPos(float xPos, float yPos, float zPos);
 	void setPos(float xPos, float yPos);
 	void setPos(glm::vec2 pos);
 	void setRot(float xRot, float yRot, float zRot);
 	void setScl(float xScl, float yScl, float zScl);
 	
-	void setAcceleration(float accel);
-	void setRestitution(float restitution);
-	void setMass(float mass);
-	
 	void addRigidBody2D(RigidBody2D* rb);
-	
 	void addVertices(const float vertices[]);
-	
 	void createAABB(BBType type);
 	
 	glm::vec3 getPos();
@@ -55,15 +42,9 @@ public:
 	
 	inline AABB getBoundingBox() const {return m_bb;}
 	inline RigidBody2D* getRigidBody2D() const {return m_rb;}
-	
-	inline float getAcceleration() const {return m_accel;}
-	inline float getMass() const {return m_mass;}
-	inline float getRestitution() const {return m_restitution;}
-	
-	inline glm::vec2 getVelocity() {return m_velocity;}
-	
-	void getPos(glm::vec2& pos);
 	inline glm::vec2 getPos2() const {return glm::vec2(m_position.x,m_position.y);}
+
+	void getPos(glm::vec2& pos);
 	
 };
 

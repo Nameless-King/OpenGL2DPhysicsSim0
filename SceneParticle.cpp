@@ -3,14 +3,12 @@
 SceneParticle::SceneParticle()
 	:m_title("SceneParticle")
 	,m_shader(NULL)
-	,m_active(false)
 	,m_renderAmount(1){}
 	
 SceneParticle::SceneParticle(Shader* shader)
 	:m_title("SceneParticle")
 	,m_shader(shader)
-	,m_active(false),
-	m_renderAmount(1){
+	,m_renderAmount(1){
 		
 	int iMax = 200;
 	int jMax = 200;
@@ -45,10 +43,6 @@ std::string SceneParticle::getSceneTitle() const{
 	return m_title;
 }
 
-bool SceneParticle::isActive()const{
-	return m_active;
-}
-
 void SceneParticle::render(Window* window){
 	StaticRenderer::bindPoint();
 	
@@ -67,10 +61,6 @@ void SceneParticle::render(Window* window){
 }
 
 void SceneParticle::update(Window* window){
-}
-
-void SceneParticle::setActive(bool active){
-	m_active = active;
 }
 
 void SceneParticle::renderGUI(){

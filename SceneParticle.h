@@ -25,7 +25,6 @@ class SceneParticle : public Scene{
 		std::string m_title;
 		Shader* m_shader;
 		std::vector<Particle*> m_particles;
-		bool m_active;
 		unsigned int m_renderAmount;
 	
 	public:
@@ -33,10 +32,7 @@ class SceneParticle : public Scene{
 		SceneParticle(Shader* shader);
 		~SceneParticle();
 		std::string getSceneTitle() const;
-		bool isActive() const;
 		void render(Window* window);
 		void update(Window* window);
-		void setActive(bool active);
 		void renderGUI();
-		
 };

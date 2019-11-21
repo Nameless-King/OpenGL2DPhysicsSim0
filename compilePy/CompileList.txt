@@ -20,7 +20,6 @@
 ../Physics2D.cpp
 ../EngineMaths.cpp
 ../RigidBody2D.cpp
-../SceneCRPC.cpp
 ../SceneExample.cpp
 ../SceneIntegrator.cpp
 ../SceneForces.cpp

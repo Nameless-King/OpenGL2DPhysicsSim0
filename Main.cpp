@@ -25,8 +25,6 @@
 #include "AABB.h"
 #include "Physics2D.h"
 
-#include "SceneExample.h"
-#include "SceneCRPC.h"
 #include "SceneIntegrator.h"
 #include "SceneForces.h"
 #include "SceneParticle.h"
@@ -78,8 +76,6 @@ int main(){
 		
 	StaticRenderer::init();
 	
-	//SceneCRPC scene0(&shader0,&texture0,StaticRenderer::getVertices());
-	//SceneExample scene1(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneIntegrator scene2(&shader0,&texture0,StaticRenderer::getVertices());
 	SceneForces scene3(&shader0, &texture0, StaticRenderer::getVertices());
 	SceneParticle scene4(&shaderPoint);
@@ -87,8 +83,6 @@ int main(){
 	SceneBuoyantForce scene6(&shader0, &texture0 , StaticRenderer::getVertices());
 	SceneCollisions scene7(&shader0, &texture0, StaticRenderer::getVertices());
 
-	//GUIControlPanel::registerScene(&scene1);
-	//GUIControlPanel::registerScene(&scene0);
 	GUIControlPanel::registerScene(&scene2);
 	GUIControlPanel::registerScene(&scene3);
 	GUIControlPanel::registerScene(&scene4);

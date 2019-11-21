@@ -2,7 +2,6 @@
 
 SceneForces::SceneForces():
 	m_title("SceneForces"),
-	m_active(false),
 	m_force(50.0f),
 	m_useGravity(false),
 	m_shader(NULL),
@@ -12,7 +11,6 @@ SceneForces::SceneForces():
 
 SceneForces::SceneForces(Shader* shader, Texture* texture, const float vertices[]):
 	m_title("SceneForces"),
-	m_active(false),
 	m_useGravity(false),
 	m_force(50.0f),
 	m_shader(shader),
@@ -41,10 +39,6 @@ std::string SceneForces::getSceneTitle() const{
 	return m_title;
 }
 
-bool SceneForces::isActive() const{
-	return m_active;
-}
-
 void SceneForces::render(Window* window){
 	StaticRenderer::bind();
 	
@@ -68,10 +62,6 @@ void SceneForces::update(Window* window){
 		Physics2D::gravitate(glm::vec2(0.0f,-1.0f),Physics2D::G * m_player->getRigidBody2D()->getMass(),m_player);
 	}
 	Physics2D::integrator2(m_player,ImGui::GetIO().DeltaTime);
-}
-
-void SceneForces::setActive(bool active){
-	m_active = active;
 }
 
 void SceneForces::renderGUI(){

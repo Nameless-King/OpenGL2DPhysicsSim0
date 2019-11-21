@@ -2,7 +2,6 @@
 
 SceneIntegrator::SceneIntegrator():
 	m_title("SceneIntegrator"),
-	m_active(false),
 	m_force(50.0f),
 	m_shader(NULL),
 	m_texture(NULL),
@@ -11,7 +10,6 @@ SceneIntegrator::SceneIntegrator():
 
 SceneIntegrator::SceneIntegrator(Shader* shader, Texture* texture, const float vertices[]):
 	m_title("SceneIntegrator"),
-	m_active(false),
 	m_force(50.0f),
 	m_shader(shader),
 	m_texture(texture){
@@ -37,10 +35,6 @@ SceneIntegrator::~SceneIntegrator(){
 
 std::string SceneIntegrator::getSceneTitle() const {
 	return m_title;
-}
-
-bool SceneIntegrator::isActive() const{
-	return m_active;
 }
 
 void SceneIntegrator::render(Window* window){
@@ -75,10 +69,6 @@ void SceneIntegrator::renderGUI(){
 	m_player->getRigidBody2D()->setDamping(damping);
 	m_player->getRigidBody2D()->setMass(mass);
 	ImGui::End();
-}
-
-void SceneIntegrator::setActive(bool active){
-	m_active = active;
 }
 
 void SceneIntegrator::input(Window* window){

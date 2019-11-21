@@ -2,7 +2,6 @@
 
 SceneBuoyantForce::SceneBuoyantForce():
     m_title("SceneBuoyantForce"),
-    m_active(false),
     m_shader(NULL),
     m_texture(NULL),
     m_object(NULL),
@@ -12,7 +11,6 @@ SceneBuoyantForce::SceneBuoyantForce():
 
 SceneBuoyantForce::SceneBuoyantForce(Shader* shader, Texture* texture, const float vertices[]):
     m_title("SceneBuoyantForce"),
-    m_active(false),
     m_shader(shader),
     m_texture(texture),
     m_forceGravity(ForceGravity(glm::vec2(0.0f,-15.0f))),
@@ -41,10 +39,6 @@ std::string SceneBuoyantForce::getSceneTitle() const{
       return m_title;
 }
 
-bool SceneBuoyantForce::isActive()const{
-     return m_active;
-}
-
 void SceneBuoyantForce::render(Window* window){
     StaticRenderer::bind();
 
@@ -70,10 +64,6 @@ void SceneBuoyantForce::update(Window* window){
 
     Physics2D::integrator3(m_object,ImGui::GetIO().DeltaTime);
   
-}
-
-void SceneBuoyantForce::setActive(bool active){
-    m_active = active;
 }
 
 void SceneBuoyantForce::renderGUI(){

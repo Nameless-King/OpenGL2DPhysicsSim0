@@ -24,7 +24,6 @@
 class SceneForces : public Scene{
 	private:
 		std::string m_title;
-		bool m_active;
 		float m_force;
 		bool m_useGravity;
 		Shader* m_shader;
@@ -36,10 +35,8 @@ class SceneForces : public Scene{
 		SceneForces(Shader* shader, Texture*, const float vertices[]);
 		~SceneForces();
 		std::string getSceneTitle() const;
-		bool isActive() const;
 		void render(Window* window);
 		void update(Window* window);
-		void setActive(bool active);
 		void renderGUI();
 	private:
 		void input(Window* window);

@@ -24,7 +24,6 @@
 class SceneBuoyantForce : public Scene{
     private:
         std::string m_title;
-        bool m_active;
         Shader* m_shader;
         Texture* m_texture;
         Object* m_object;
@@ -37,9 +36,7 @@ class SceneBuoyantForce : public Scene{
         SceneBuoyantForce(Shader* shader,Texture* texture,const float vertices[]);
         ~SceneBuoyantForce();
         std::string getSceneTitle() const;
-        bool isActive() const;
         void render(Window* window);
         void update(Window* window);
-        void setActive(bool active);
-        void renderGUI();
+      	void renderGUI();
 };

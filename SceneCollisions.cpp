@@ -4,7 +4,6 @@ static bool hasCollided = false;
 
 SceneCollisions::SceneCollisions():
     m_title("SceneCollisions"),
-    m_active(false),
     m_useGravity(false),
     m_shader(NULL),
     m_texture(NULL),
@@ -17,7 +16,6 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float v
     m_title("SceneCollisions"),
     m_shader(shader),
     m_texture(texture),
-    m_active(false),
     m_useGravity(false),
     m_contactResolver(ObjectContact()),
     m_forceGravity(ForceGravity(glm::vec2(0.0f,-5.0f * Physics2D::G)))
@@ -71,10 +69,6 @@ SceneCollisions::~SceneCollisions(){
 
 std::string SceneCollisions::getSceneTitle() const {
     return m_title;
-}
-
-bool SceneCollisions::isActive() const{
-    return m_active;
 }
 
 void SceneCollisions::render(Window* window){
@@ -163,10 +157,6 @@ void SceneCollisions::renderGUI(){
         m_useGravity = gravity;
     }
     ImGui::End();
-}
-
-void SceneCollisions::setActive(bool active){
-    m_active = active;
 }
 
 void SceneCollisions::input(Window* window){

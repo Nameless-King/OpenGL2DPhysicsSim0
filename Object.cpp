@@ -1,18 +1,11 @@
 #include "./Object.h"
-
-
-
 Object::Object():
 	m_position(glm::vec3(0.0f,0.0f,0.0f)),
 	m_rotation(glm::vec3(0.0f,0.0f,0.0f)),
 	m_scale(glm::vec3(1.0f,1.0f,1.0f)),
 	m_vertices(nullptr),
 	m_bb(AABB()),
-	m_rb(NULL),
-	m_accel(0),
-	m_restitution(0),
-	m_mass(0),
-	m_velocity(glm::vec2(0.0f,0.0f)){
+	m_rb(NULL){
 	}
 
 Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
@@ -21,11 +14,7 @@ Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
 	m_scale(scale),
 	m_vertices(nullptr),
 	m_bb(AABB()),
-	m_rb(NULL),
-	m_accel(0),
-	m_restitution(0),
-	m_mass(0),
-	m_velocity(glm::vec2(0.0f,0.0f)){
+	m_rb(NULL){
 	}
 	
 Object::~Object(){
@@ -40,11 +29,6 @@ glm::mat4 Object::getModelMatrix(){
 	model = glm::rotate(model,glm::radians(m_rotation.z),glm::vec3(0.0f,0.0f,1.0f));
 	model = glm::scale(model,m_scale);
 	return model;
-}
-
-//depricated
-void Object::setVelocity(float xVel, float yVel){
-	m_velocity = glm::vec2(xVel,yVel);
 }
 
 void Object::setPos(float xPos, float yPos, float zPos){
@@ -66,21 +50,6 @@ void Object::setRot(float xRot, float yRot, float zRot){
 
 void Object::setScl(float xScl, float yScl, float zScl){
 	m_scale = glm::vec3(xScl,yScl,zScl);
-}
-
-//depricated
-void Object::setAcceleration(float accel){
-	m_accel = accel;
-}
-
-//depricated
-void Object::setRestitution(float restitution){
-	m_restitution = restitution;
-}
-
-//depricated
-void Object::setMass(float mass){
-	m_mass = mass;
 }
 
 void Object::addRigidBody2D(RigidBody2D* rb){
