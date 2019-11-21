@@ -122,14 +122,15 @@ void SceneCollisions::update(Window* window){
         
         Physics2D::integrator3(m_objects[i],ImGui::GetIO().DeltaTime);
     }
- 
+    
+    float restitution = 0.0f;
     for(int i = 0;i<m_objects.size();i++){
         Collision playerCol = AABB::getCollision(m_player->getBoundingBox(),m_objects[i]->getBoundingBox());
 
         if(playerCol.colliding){
             m_contactResolver.object[0] = m_objects[i];
             m_contactResolver.object[1] = m_player;
-            m_contactResolver.m_restitution = 1.0f;
+            m_contactResolver.m_restitution = restitution;
             m_contactResolver.m_contactNormal = playerCol.collisionNormal;
             m_contactResolver.resolve(ImGui::GetIO().DeltaTime,playerCol);
         }
@@ -143,7 +144,7 @@ void SceneCollisions::update(Window* window){
                 hasCollided = true;
                 m_contactResolver.object[0] = m_objects[j];
                 m_contactResolver.object[1] = m_objects[i];
-                m_contactResolver.m_restitution = 1.0f;
+                m_contactResolver.m_restitution = restitution;
                 m_contactResolver.m_contactNormal = objectCol.collisionNormal;
                 m_contactResolver.resolve(ImGui::GetIO().DeltaTime,objectCol);
             }
@@ -202,9 +203,11 @@ void SceneCollisions::checkBounds(){
         glm::vec2 vel = *(m_objects[i]->getRigidBody2D()->getVelocity());
         if(pos.y < -300 || pos.y > 300){
             m_objects[i]->getRigidBody2D()->setVelocity(glm::vec2(vel.x,-vel.y));
+            m_objects[i]->setPos(pos.x,pos.y - pos.y/100.0f);
         }
         if(pos.x < -400 || pos.x > 400){
             m_objects[i]->getRigidBody2D()->setVelocity(glm::vec2(-vel.x,vel.y));
+            m_objects[i]->setPos(pos.x - pos.x/100.0f,pos.y);
         }
     }
 
@@ -212,8 +215,10 @@ void SceneCollisions::checkBounds(){
     glm::vec2 vel = *(m_player->getRigidBody2D()->getVelocity());
     if(pos.y<-300 || pos.y >300){
         m_player->getRigidBody2D()->setVelocity(glm::vec2(vel.x,-vel.y));
+        m_player->setPos(pos.x,pos.y - pos.y/100.0f);
     }
     if(pos.x < -400 || pos.x > 400){
         m_player->getRigidBody2D()->setVelocity(glm::vec2(-vel.x,vel.y));
+        m_player->setPos(pos.x - pos.x/100.0f,pos.y);
     }
 }
