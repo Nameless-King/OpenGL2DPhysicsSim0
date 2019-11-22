@@ -87,6 +87,7 @@ void Window::displayWindowStats(){
 	int zoom = (int)m_zoom;
 	if(ImGui::SliderInt("Zoom",&zoom,2,12)){
 		m_zoom = zoom;
+		m_sizeChanged = true;
 	}
 	ImGui::Text("Application Domain [%.3f,%.3f]",
 		-(m_width/(m_zoom)),

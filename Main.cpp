@@ -73,6 +73,7 @@ int main(){
 	Shader shaderPoint("./shaders/shaderPoint.vs","./shaders/shaderPoint.fs");
 	
 	Texture texture0("./textures/circle.png");
+	Texture texture1("./textures/rectangle.png");
 		
 	StaticRenderer::init();
 	
@@ -81,7 +82,7 @@ int main(){
 	SceneParticle scene4(&shaderPoint);
 	SceneForceGenerator scene5(&shader0, &texture0, StaticRenderer::getVertices());
 	SceneBuoyantForce scene6(&shader0, &texture0 , StaticRenderer::getVertices());
-	SceneCollisions scene7(&shader0, &texture0, StaticRenderer::getVertices());
+	SceneCollisions scene7(&shader0, &texture1, StaticRenderer::getVertices());
 
 	GUIControlPanel::registerScene(&scene2);
 	GUIControlPanel::registerScene(&scene3);

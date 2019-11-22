@@ -40,7 +40,7 @@ Collision AABB::getCollision(AABB box1, AABB box2){
 		//collision.distance = collision.distance - joinedExtents;
 		collision.colliding = (collision.distance.x < joinedExtents.x && collision.distance.y < joinedExtents.y);
 		//collision.penetrationDepth = glm::vec2(0.0f,0.0f);
-		collision.penetrationDepth = 0.0f;
+		collision.penetrationDepth = glm::length(joinedExtents-collision.distance);
 	}else if(box1.getBBType() == BBType::Circle && box2.getBBType() == BBType::Circle){
 		float joinedExtent = box1.getHalfExtents().x + box2.getHalfExtents().x;
 		collision.colliding = (sqrt(pow(collision.distance.x,2.0f)+pow(collision.distance.y,2.0f)) < joinedExtent);

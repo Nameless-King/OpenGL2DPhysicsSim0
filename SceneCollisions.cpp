@@ -1,6 +1,7 @@
 #include "./SceneCollisions.h"
 
 static bool hasCollided = false;
+static BBType type = BBType::AxisAligned;
 
 SceneCollisions::SceneCollisions():
     m_title("SceneCollisions"),
@@ -27,7 +28,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float v
         glm::vec3(1.0f,1.0f,1.0f)
     );
     m_player->addVertices(vertices);
-    m_player->createAABB(BBType::Circle);
+    m_player->createAABB(type);
 
     RigidBody2D* rbPlayer = new RigidBody2D(5.0f);
     m_player->addRigidBody2D(rbPlayer);
@@ -41,7 +42,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float v
             glm::vec3(1.0f,1.0f,1.0f)
         ));
         m_objects[i]->addVertices(vertices);
-        m_objects[i]->createAABB(BBType::Circle);
+        m_objects[i]->createAABB(type);
         m_objects[i]->addRigidBody2D(new RigidBody2D(5.0f));
     }
 
@@ -53,7 +54,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float v
             glm::vec3(1.0f,1.0f,1.0f)
         ));
         m_objects[i]->addVertices(vertices);
-        m_objects[i]->createAABB(BBType::Circle);
+        m_objects[i]->createAABB(type);
         m_objects[i]->addRigidBody2D(new RigidBody2D(5.0f));
     }
 
@@ -121,6 +122,8 @@ void SceneCollisions::update(Window* window){
     for(int i = 0;i<m_objects.size();i++){
         Collision playerCol = AABB::getCollision(m_player->getBoundingBox(),m_objects[i]->getBoundingBox());
 
+        
+
         if(playerCol.colliding){
             m_contactResolver.object[0] = m_objects[i];
             m_contactResolver.object[1] = m_player;
@@ -133,6 +136,8 @@ void SceneCollisions::update(Window* window){
     for(int i = 0;i<m_objects.size();i++){
         for(int j = i+1;j<m_objects.size();j++){
             Collision objectCol = AABB::getCollision(m_objects[i]->getBoundingBox(),m_objects[j]->getBoundingBox());
+
+            
 
             if(objectCol.colliding){
                 hasCollided = true;
