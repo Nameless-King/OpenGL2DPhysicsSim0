@@ -37,6 +37,7 @@ void framebuffer_size_callback(GLFWwindow* window,int width,int height);
 void updatePos(Object* obj);
 void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar* message, const void* userParam);
+void windowInput();
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -82,7 +83,7 @@ int main(){
 	SceneParticle scene4(&shaderPoint);
 	SceneForceGenerator scene5(&shader0, &texture0, StaticRenderer::getVertices());
 	SceneBuoyantForce scene6(&shader0, &texture0 , StaticRenderer::getVertices());
-	SceneCollisions scene7(&shader0, &texture1, StaticRenderer::getVertices());
+	SceneCollisions scene7(&shader0, &texture0, StaticRenderer::getVertices());
 
 	GUIControlPanel::registerScene(&scene2);
 	GUIControlPanel::registerScene(&scene3);
@@ -96,6 +97,8 @@ int main(){
 	while(!windowObj.windowShouldClose()){
 		windowObj.pollEvents();
 		input(windowObj.getWindow());
+		windowInput();
+
 	
 		GUIControlPanel::updateCurrentScene(&windowObj);
 		GUIControlPanel::start();
@@ -143,3 +146,41 @@ void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
             type, severity, message );
 }
 
+void windowInput(){
+	float camSpeed = 2.0f;
+	float zoomSpeed = 0.1f;
+
+	glm::vec2 camPos = windowObj.getCameraController()->getCameraPos();
+
+	float px = camPos.x;
+	float py = camPos.y;
+	float dz = windowObj.getZoom();
+
+	if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_UP)){
+		py+=camSpeed;
+	}else if (glfwGetKey(windowObj.getWindow(),GLFW_KEY_DOWN)){
+		py-=camSpeed;
+	}
+
+	if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_RIGHT)){
+		px+=camSpeed;
+	}else if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_LEFT)){
+		px-=camSpeed;
+	}
+
+	
+
+	if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_E)){
+		if(dz < 12.0f){
+			dz += zoomSpeed;
+		}
+	}else if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_Q)){
+		if(dz > 2.0f){
+			dz -= zoomSpeed;
+		}
+	}
+
+	windowObj.getCameraController()->setCameraPos(px,py);
+	windowObj.zoom(dz);
+
+}

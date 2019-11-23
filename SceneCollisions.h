@@ -36,6 +36,7 @@ class SceneCollisions : public Scene {
         ObjectContact m_contactResolver;
         ForceGravity m_forceGravity;
 
+
     public:
         SceneCollisions();
         SceneCollisions(Shader* shader, Texture* texture, const float vertices[]);

@@ -1,6 +1,13 @@
 #include "Window.h"
 
-Window::Window(int width, int height, const std::string& title): m_width(width), m_height(height),  m_sizeChanged(false), m_title(title),m_zoom(2.0f),m_clearColor(glm::vec4(1.0f,1.0f,1.0f,1.0f)){
+Window::Window(int width, int height, const std::string& title): 
+	m_width(width), 
+	m_height(height), 
+	 m_sizeChanged(false),
+	 m_title(title),
+	 m_zoom(2.0f),
+	 m_clearColor(glm::vec4(1.0f,1.0f,1.0f,1.0f)),
+	 m_cc(CameraController(glm::vec2(0.0f,0.0f))){
 	
 	if(!glfwInit()){
 		std::cout << "Error glfwInit" << std::endl;
@@ -107,4 +114,8 @@ void Window::clearColor(){
 
 void Window::setClearColor(glm::vec4 clearColor){
 	m_clearColor = glm::vec4(clearColor);
+}
+
+CameraController* Window::getCameraController(){
+	return &m_cc;
 }

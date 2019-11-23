@@ -37,6 +37,7 @@
 ../ForceFakeSpring.cpp
 ../Particle.cpp
 ../ObjectContact.cpp
+../CameraController.cpp
 
 COMPILER_FLAGS
 -std=c++17

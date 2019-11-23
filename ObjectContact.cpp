@@ -1,7 +1,7 @@
 #include "./ObjectContact.h"
 
 void ObjectContact::resolve(float dt,Collision col){
-    resolveVelocity(dt);
+    //resolveVelocity(dt);
     resolveInterpenetration(dt, col);
 }
 

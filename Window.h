@@ -12,6 +12,8 @@
 #include "./Dependencies/imgui/imgui_impl_glfw.h"
 #include "./Dependencies/imgui/imgui_impl_opengl3.h"
 
+#include "./CameraController.h"
+
 class Window{
 private:
 	int m_width;
@@ -22,6 +24,7 @@ private:
 	GLFWwindow *m_window;
 	glm::mat4 m_projection;
 	glm::vec4 m_clearColor;
+	CameraController m_cc;
 	
 public:
 	Window(int width, int height, const std::string &title);
@@ -42,5 +45,6 @@ public:
 	void displayWindowStats();
 	void clearColor();
 	void setClearColor(glm::vec4 clearColor);
+	CameraController* getCameraController();
 	
 };

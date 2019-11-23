@@ -1,7 +1,6 @@
 #include "./SceneCollisions.h"
 
-static bool hasCollided = false;
-static BBType type = BBType::AxisAligned;
+static BBType type = BBType::Circle;
 
 SceneCollisions::SceneCollisions():
     m_title("SceneCollisions"),
@@ -79,7 +78,7 @@ void SceneCollisions::render(Window* window){
     m_texture->bind();
 
     m_shader->setUniformMat4f("u_projection",window->getProjectionMatrix());
-    m_shader->setUniformMat4f("u_view",glm::mat4(1.0f));
+    m_shader->setUniformMat4f("u_view",*(window->getCameraController()->getViewMatrix()));
 
     m_shader->setUniformMat4f("u_model",m_player->getModelMatrix());
     StaticRenderer::renderObject();
@@ -99,7 +98,7 @@ void SceneCollisions::update(Window* window){
     input(window);
 
     if(m_useGravity){
-        m_forceGravity.updateForce(m_player,ImGui::GetIO().DeltaTime);
+        //m_forceGravity.updateForce(m_player,ImGui::GetIO().DeltaTime);
         for(int i = 0;i<m_objects.size();i++){
             m_forceGravity.updateForce(m_objects[i],ImGui::GetIO().DeltaTime);
         }
@@ -107,13 +106,7 @@ void SceneCollisions::update(Window* window){
 
     Physics2D::integrator3(m_player,ImGui::GetIO().DeltaTime);
     for(int i = 0;i<m_objects.size();i++){
-        if(!hasCollided){
-                if(i<5){
-                    m_objects[i]->getRigidBody2D()->addForce(glm::vec2(0.0f,-50.0f));
-                }else{
-                    m_objects[i]->getRigidBody2D()->addForce(glm::vec2(0.0f,50.0f));
-                }
-        }
+        
         
         Physics2D::integrator3(m_objects[i],ImGui::GetIO().DeltaTime);
     }
@@ -140,7 +133,7 @@ void SceneCollisions::update(Window* window){
             
 
             if(objectCol.colliding){
-                hasCollided = true;
+
                 m_contactResolver.object[0] = m_objects[j];
                 m_contactResolver.object[1] = m_objects[i];
                 m_contactResolver.m_restitution = restitution;
@@ -167,28 +160,36 @@ void SceneCollisions::renderGUI(){
 void SceneCollisions::input(Window* window){
     float px = m_player->getPos().x;
     float py = m_player->getPos().y;
+    float vx = 0.0f;
+    float vy = 0.0f;
     float speed = 1.0f;
+    float velocity = 40.0f;
 
     glm::vec2 force(0.0f,0.0f);
-    float fforce = 150.0f;
+    float fforce = 500.0f;
 
     if(glfwGetKey(window->getWindow(),GLFW_KEY_W)){
         py += speed;
+        vy += velocity;
         force.y = fforce;
     }else if(glfwGetKey(window->getWindow(),GLFW_KEY_S)){
         py -= speed;
+        vy -= velocity;
         force.y = -fforce;
     }
 
     if(glfwGetKey(window->getWindow(),GLFW_KEY_D)){
         px += speed;
+        vx += velocity;
         force.x = fforce;
     }else if(glfwGetKey(window->getWindow(),GLFW_KEY_A)){
         px -= speed;
+        vx -= velocity;
         force.x = -fforce;
     }
 
-    m_player->getRigidBody2D()->addForce(force);
+    m_player->getRigidBody2D()->setVelocity(glm::vec2(vx,vy));
+    //m_player->getRigidBody2D()->addForce(force);
     //m_player->setPos(px,py);
 }
 
@@ -198,10 +199,12 @@ void SceneCollisions::checkBounds(){
         glm::vec2 vel = *(m_objects[i]->getRigidBody2D()->getVelocity());
         if(pos.y < -300 || pos.y > 300){
             m_objects[i]->getRigidBody2D()->setVelocity(glm::vec2(vel.x,-vel.y));
+            m_objects[i]->getRigidBody2D()->setVelocity(glm::vec2(0.0f,0.0f));
             m_objects[i]->setPos(pos.x,pos.y - pos.y/100.0f);
         }
         if(pos.x < -400 || pos.x > 400){
             m_objects[i]->getRigidBody2D()->setVelocity(glm::vec2(-vel.x,vel.y));
+            m_objects[i]->getRigidBody2D()->setVelocity(glm::vec2(0.0f,0.0f));
             m_objects[i]->setPos(pos.x - pos.x/100.0f,pos.y);
         }
     }
