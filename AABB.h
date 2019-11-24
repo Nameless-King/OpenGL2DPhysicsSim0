@@ -41,6 +41,10 @@ public:
 	const glm::vec2 getCenter() const { return glm::vec2(m_center->x,m_center->y);}
 	const glm::vec2 getHalfExtents() const {return m_halfExtent;}
 	const int getBBType() const {return m_bbType;}
+
+private:
+	static float getSmallestComponent(glm::vec2 vector);
+	static glm::vec2 getAABBCollisionNormal(Collision collision);
 };
 
 #endif

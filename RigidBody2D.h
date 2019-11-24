@@ -40,4 +40,6 @@ class RigidBody2D{
 
 		void getVelocity(glm::vec2& vel);
 
+		bool hasInfiniteMass();
+
 };

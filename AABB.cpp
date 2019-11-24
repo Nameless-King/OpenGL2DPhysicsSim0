@@ -39,32 +39,34 @@ Collision AABB::getCollision(AABB box1, AABB box2){
 		glm::vec2 joinedExtents = box1.getHalfExtents() + box2.getHalfExtents();
 		//collision.distance = collision.distance - joinedExtents;
 		collision.colliding = (collision.distance.x < joinedExtents.x && collision.distance.y < joinedExtents.y);
-		//collision.penetrationDepth = glm::vec2(0.0f,0.0f);
-		collision.penetrationDepth = glm::length(joinedExtents-collision.distance);
+		
+		glm::vec2 penetrationVec = joinedExtents - collision.distance;
+		collision.penetrationDepth = getSmallestComponent(penetrationVec);
+
+		if(collision.colliding){
+			collision.collisionNormal = getAABBCollisionNormal(collision);
+		}
+
 	}else if(box1.getBBType() == BBType::Circle && box2.getBBType() == BBType::Circle){
 		float joinedExtent = box1.getHalfExtents().x + box2.getHalfExtents().x;
 		collision.colliding = (sqrt(pow(collision.distance.x,2.0f)+pow(collision.distance.y,2.0f)) < joinedExtent);
-		//collision.penetrationDepth = glm::vec2(joinedExtent - collision.distance.x,joinedExtent-collision.distance.x);
-		//collision.penetrationDepth = sqrt(pow(joinedExtent-collision.distance.x,2.0f)+pow(joinedExtent-collision.distance.y,2.0f));
-		collision.penetrationDepth = glm::length(glm::vec2(joinedExtent,joinedExtent)-collision.distance);
-	}
-	
-	if(collision.colliding){
-		//normalize vector
-		glm::vec2 distVector = box2.getCenter() - box1.getCenter();
-		//float lengthDist = std::sqrt((collision.distance.x*collision.distance.x) + (collision.distance.y*collision.distance.y));
-		//float lengthDist = glm::length(collision.distance);
-		//if(lengthDist!=0){
-			//collision.collisionNormal = glm::vec2(distVector.x/lengthDist,distVector.y/lengthDist);
+		glm::vec2 penetrationVec = glm::vec2(joinedExtent,joinedExtent)-collision.distance;
+		collision.penetrationDepth = getSmallestComponent(penetrationVec);
+		if(collision.colliding){
+			glm::vec2 distVector = box2.getCenter() - box1.getCenter();
 			collision.collisionNormal = glm::normalize(distVector);
-		//}else{
-			//collision.collisionNormal = glm::vec2(1.0f,1.0f);
-		//}
-		  
+		}
 	}
-
-	
 	
 	return collision;
+}
+
+float AABB::getSmallestComponent(glm::vec2 vector){
+	return (vector.x < vector.y) ? vector.x : vector.y;
+}
+
+glm::vec2 AABB::getAABBCollisionNormal(Collision collision){
+	glm::vec2 normal = (collision.distance.x < collision.distance.y) ? glm::vec2(1.0f,0.0f) : glm::vec2(0.0f,1.0f);
+	return glm::vec2(0.0f,1.0f);
 }
 

@@ -67,3 +67,7 @@ void RigidBody2D::setVelocity(glm::vec2 vel){
 void RigidBody2D::getVelocity(glm::vec2& vel){
 	vel = *m_velocity;
 }
+
+bool RigidBody2D::hasInfiniteMass(){
+	return m_mass < 0;
+}

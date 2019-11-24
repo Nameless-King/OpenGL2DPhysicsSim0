@@ -96,8 +96,10 @@ int main(){
 	GUIControlPanel::registerScene(&scene5);
 	GUIControlPanel::registerScene(&scene6);
 
+	glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
-	
 	while(!windowObj.windowShouldClose()){
 		windowObj.pollEvents();
 		input(windowObj.getWindow());

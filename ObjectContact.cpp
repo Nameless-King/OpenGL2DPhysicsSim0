@@ -128,7 +128,7 @@ void ObjectContact::resolveInterpenetration(float dt,Collision col){
 
     glm::vec2 movePerMass = col.collisionNormal * (-col.penetrationDepth/totalInverseMass);
 
-    float percent = 0.1f;
+    float percent = 1.0f;
 
     object[0]->setPos(object[0]->getPos2() + percent * -movePerMass * object[0]->getRigidBody2D()->getInverseMass());
     if(object[1]){

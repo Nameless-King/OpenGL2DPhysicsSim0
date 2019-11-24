@@ -28,6 +28,7 @@ class SceneRestingContact : public Scene{
 		Shader* m_shader;
 		Texture* m_texture;
 		Object* m_player;
+		Object* m_restingObject;
 		Object* m_wall;
 		ObjectContact m_contactResolver;
 		ForceGravity m_forceGravity;

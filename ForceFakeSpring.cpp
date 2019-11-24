@@ -14,7 +14,9 @@ ForceFakeSpring::ForceFakeSpring(Object* other, float springConstant, float damp
 
 void ForceFakeSpring::updateForce(Object* object, float dt){
     //should check if object has infinite mass
-
+    if(object->getRigidBody2D()->hasInfiniteMass()){
+        return;
+    }
     //get relative position of object to other
     glm::vec2 position;
     object->getPos(position);
