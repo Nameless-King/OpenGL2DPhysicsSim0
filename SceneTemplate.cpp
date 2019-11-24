@@ -21,7 +21,7 @@ SceneRestingContact::SceneRestingContact(Shader* shader, Texture* texture, const
 	);
 	
 	m_player->addVertices(vertices);
-	m_player->createAABB(BBType::Circle);
+	m_player->createAABB(BBType::AxisAligned);
 	m_player->addRigidBody2D(new RigidBody2D(5.0f));
 }
 
@@ -34,7 +34,7 @@ void SceneRestingContact::render(Window* window){
 	m_shader->use();
 	m_texture->bind();
 	m_shader->setUniformMat4f("u_projection",window->getProjectionMatrix());
-	m_shader->setUniformMat4f("u_view",glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,0.0f,0.0f)));
+	m_shader->setUniformMat4f("u_view",window->getCameraController()->getViewMatrix());
 	
 	m_shader->setUniformMat4f("u_model",m_player->getModelMatrix());
 	StaticRenderer::renderObject();

@@ -13,7 +13,7 @@ class CameraController {
 		CameraController();
 		CameraController(glm::vec2 pos);
 		~CameraController();
-		glm::mat4* getViewMatrix();
+		glm::mat4 getViewMatrix();
 		void setCameraPos(float px,float py);
 		void setCameraPos(glm::vec2 pos);
 		void setCameraZoom(float zoom);

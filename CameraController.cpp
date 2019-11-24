@@ -14,9 +14,9 @@ CameraController::CameraController(glm::vec2 pos):
 
 CameraController::~CameraController(){}
 
-glm::mat4* CameraController::getViewMatrix(){
+glm::mat4 CameraController::getViewMatrix(){
     m_viewMatrix = glm::lookAt(glm::vec3(m_cameraPos.x,m_cameraPos.y,0.0f),glm::vec3(m_cameraPos.x,m_cameraPos.y,0.0f)+glm::vec3(0.0f,0.0f,-1.0f),glm::vec3(0.0f,1.0f,0.0f));
-    return &m_viewMatrix;
+    return m_viewMatrix;
 }
 
 void CameraController::setCameraPos(float px, float py){

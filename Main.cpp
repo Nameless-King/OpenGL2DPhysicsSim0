@@ -31,6 +31,7 @@
 #include "SceneForceGenerator.h"
 #include "SceneBuoyantForce.h"
 #include "SceneCollisions.h"
+#include "SceneRestingContact.h"
 
 void input(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
@@ -75,22 +76,25 @@ int main(){
 	
 	Texture texture0("./textures/circle.png");
 	Texture texture1("./textures/rectangle.png");
+	Texture texture2("./textures/white.png");
 		
 	StaticRenderer::init();
 	
-	SceneIntegrator scene2(&shader0,&texture0,StaticRenderer::getVertices());
-	SceneForces scene3(&shader0, &texture0, StaticRenderer::getVertices());
-	SceneParticle scene4(&shaderPoint);
-	SceneForceGenerator scene5(&shader0, &texture0, StaticRenderer::getVertices());
-	SceneBuoyantForce scene6(&shader0, &texture0 , StaticRenderer::getVertices());
-	SceneCollisions scene7(&shader0, &texture0, StaticRenderer::getVertices());
+	SceneIntegrator scene0(&shader0,&texture0,StaticRenderer::getVertices());
+	SceneForces scene1(&shader0, &texture0, StaticRenderer::getVertices());
+	SceneParticle scene2(&shaderPoint);
+	SceneForceGenerator scene3(&shader0, &texture0, StaticRenderer::getVertices());
+	SceneBuoyantForce scene4(&shader0, &texture0 , StaticRenderer::getVertices());
+	SceneCollisions scene5(&shader0, &texture0, StaticRenderer::getVertices());
+	SceneRestingContact scene6(&shader0,&texture2,StaticRenderer::getVertices());
 
+	GUIControlPanel::registerScene(&scene0);
+	GUIControlPanel::registerScene(&scene1);
 	GUIControlPanel::registerScene(&scene2);
 	GUIControlPanel::registerScene(&scene3);
 	GUIControlPanel::registerScene(&scene4);
 	GUIControlPanel::registerScene(&scene5);
 	GUIControlPanel::registerScene(&scene6);
-	GUIControlPanel::registerScene(&scene7);
 
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	
@@ -156,15 +160,15 @@ void windowInput(){
 	float py = camPos.y;
 	float dz = windowObj.getZoom();
 
-	if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_UP)){
+	if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_W)){
 		py+=camSpeed;
-	}else if (glfwGetKey(windowObj.getWindow(),GLFW_KEY_DOWN)){
+	}else if (glfwGetKey(windowObj.getWindow(),GLFW_KEY_S)){
 		py-=camSpeed;
 	}
 
-	if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_RIGHT)){
+	if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_D)){
 		px+=camSpeed;
-	}else if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_LEFT)){
+	}else if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_A)){
 		px-=camSpeed;
 	}
 

@@ -15,11 +15,13 @@ class ObjectContact{
     public:
         //deals with contact resolution for both velocity and interpenetration
         void resolve(float dt, Collision col);
+        void resolveRestingContact(float dt, Collision col);
     protected:
         //calculates closing velocity
         float calculateClosingVelocity() const;
     private:
         //calculates impulse
         void resolveVelocity(float dt);
+        void resolveRestingContactVelocity(float dt);
         void resolveInterpenetration(float dt, Collision col);
 };

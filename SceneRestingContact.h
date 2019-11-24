@@ -17,6 +17,9 @@
 #include "./StaticRenderer.h"
 #include "./Texture.h"
 #include "./Window.h"
+#include "./ForceGravity.h"
+#include "./ObjectContact.h"
+#include "./Physics2D.h"
 
 class SceneRestingContact : public Scene{
 	private:
@@ -25,6 +28,9 @@ class SceneRestingContact : public Scene{
 		Shader* m_shader;
 		Texture* m_texture;
 		Object* m_player;
+		Object* m_wall;
+		ObjectContact m_contactResolver;
+		ForceGravity m_forceGravity;
 	
 	public:
 		SceneRestingContact();
