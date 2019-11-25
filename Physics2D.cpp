@@ -71,7 +71,11 @@ void Physics2D::integrator2(Object* obj, float dt){
 }
 
 void Physics2D::gravitate(glm::vec2 dir, float mag, Object* obj){
-	obj->getRigidBody2D()->addForce(mag*dir);
+	
+	glm::vec2 ray = dir-obj->getPos2();
+	ray = glm::normalize(ray);
+	glm::vec2 force = ray * mag;
+	obj->getRigidBody2D()->addForce(force);
 }
 
 void Physics2D::integrator3(Object* obj, float dt){

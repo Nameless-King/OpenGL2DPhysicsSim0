@@ -44,7 +44,8 @@ Collision AABB::getCollision(AABB box1, AABB box2){
 		collision.penetrationDepth = getSmallestComponent(penetrationVec);
 
 		if(collision.colliding){
-			collision.collisionNormal = getAABBCollisionNormal(collision);
+			collision.collisionNormal = glm::normalize(box2.getCenter() - box1.getCenter());
+			//collision.collisionNormal = getAABBCollisionNormal(collision);
 		}
 
 	}else if(box1.getBBType() == BBType::Circle && box2.getBBType() == BBType::Circle){

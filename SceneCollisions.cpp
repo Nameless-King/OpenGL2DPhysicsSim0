@@ -29,7 +29,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float v
     m_player->addVertices(vertices);
     m_player->createAABB(type);
 
-    RigidBody2D* rbPlayer = new RigidBody2D(5.0f);
+    RigidBody2D* rbPlayer = new RigidBody2D(50.0f);
     m_player->addRigidBody2D(rbPlayer);
 
 
@@ -46,7 +46,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float v
     }
 
     for(int i = 5;i<10;i++){
-        float x_pos = ((i-5)+1) * (397.0f/5.0f);
+        float x_pos = ((i-5)+0.1f) * (397.0f/5.0f);
         m_objects.push_back(new Object(
             glm::vec3(x_pos,-295.0f,0.0f),
             glm::vec3(0.0f,0.0f,0.0f),
@@ -100,7 +100,8 @@ void SceneCollisions::update(Window* window){
     if(m_useGravity){
         m_forceGravity.updateForce(m_player,ImGui::GetIO().DeltaTime);
         for(int i = 0;i<m_objects.size();i++){
-            m_forceGravity.updateForce(m_objects[i],ImGui::GetIO().DeltaTime);
+            //m_forceGravity.updateForce(m_objects[i],ImGui::GetIO().DeltaTime);
+            Physics2D::gravitate(glm::vec2(0.0f,0.0f),100.0f,m_objects[i]);
         }
     }
 
@@ -154,6 +155,12 @@ void SceneCollisions::renderGUI(){
     if(ImGui::Checkbox("Use Gravity",&gravity)){
         m_useGravity = gravity;
     }
+    if(ImGui::Button("Zero Velocity")){
+        for(int i = 0;i<m_objects.size();i++){
+            m_objects[i]->getRigidBody2D()->setVelocity(glm::vec2(0.0f,0.0f));
+        }
+        m_player->getRigidBody2D()->setVelocity(glm::vec2(0.0f,0.0f));
+    }
     ImGui::End();
 }
 
@@ -166,7 +173,7 @@ void SceneCollisions::input(Window* window){
     float velocity = 40.0f;
 
     glm::vec2 force(0.0f,0.0f);
-    float fforce = 500.0f;
+    float fforce = 25000.0f;
 
     if(glfwGetKey(window->getWindow(),GLFW_KEY_UP)){
         py += speed;

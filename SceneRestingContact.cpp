@@ -79,8 +79,9 @@ void SceneRestingContact::render(Window* window){
 void SceneRestingContact::update(Window* window){
 	input(window);
 
+	
 	m_forceGravity.updateForce(m_player,ImGui::GetIO().DeltaTime);
-	m_forceGravity.updateForce(m_restingObject,ImGui::GetIO().DeltaTime);
+	//m_forceGravity.updateForce(m_restingObject,ImGui::GetIO().DeltaTime);
 
 	Physics2D::integrator3(m_player,ImGui::GetIO().DeltaTime);
 	Physics2D::integrator3(m_restingObject,ImGui::GetIO().DeltaTime);
@@ -90,7 +91,7 @@ void SceneRestingContact::update(Window* window){
 	if(col0.colliding){
 		m_contactResolver.object[0] = m_player;
 		m_contactResolver.object[1] = NULL;
-		m_contactResolver.m_restitution = 1.0f;
+		m_contactResolver.m_restitution = 0.0f;
 		m_contactResolver.m_contactNormal = col0.collisionNormal;
 		m_contactResolver.resolve(ImGui::GetIO().DeltaTime,col0);
 	}
@@ -102,8 +103,19 @@ void SceneRestingContact::update(Window* window){
 		//object[1] is already NULL
 		m_contactResolver.m_restitution = 0.0f; //don't believe it needs to be zero, but just in case
 		m_contactResolver.m_contactNormal = col1.collisionNormal;
-		m_contactResolver.resolveRestingContact(ImGui::GetIO().DeltaTime,col1);
+		m_contactResolver.resolve(ImGui::GetIO().DeltaTime,col1);
 	}
+
+	Collision col2 = AABB::getCollision(m_restingObject->getBoundingBox(),m_player->getBoundingBox());
+
+	if(col2.colliding){
+		m_contactResolver.object[0] = m_player;
+		m_contactResolver.object[1] = NULL;
+		m_contactResolver.m_restitution = 0.0f;
+		m_contactResolver.m_contactNormal = col2.collisionNormal;
+		m_contactResolver.resolve(ImGui::GetIO().DeltaTime,col2);
+	}
+
 }
 
 void SceneRestingContact::renderGUI(){
@@ -117,9 +129,9 @@ void SceneRestingContact::input(Window* window){
 	float speed = 1.0f;
 	
 	if(glfwGetKey(window->getWindow(),GLFW_KEY_UP)){
-		
+		position.y += speed;
 	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_DOWN)){
-		
+		position.y -= speed;
 	}
 	
 	if(glfwGetKey(window->getWindow(),GLFW_KEY_RIGHT)){
@@ -135,3 +147,5 @@ void SceneRestingContact::input(Window* window){
 std::string SceneRestingContact::getSceneTitle() const {
 	return m_title;
 }
+
+
