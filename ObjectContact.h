@@ -12,12 +12,15 @@ class ObjectContact{
         Object* object[2];
         float m_restitution;
         glm::vec2 m_contactNormal;
+        Collision m_collision;
     public:
+        ObjectContact();
+        ObjectContact(const ObjectContact& contact);
         //deals with contact resolution for both velocity and interpenetration
         void resolve(float dt, Collision col);
+        void resolve(float dt);
         void resolveRestingContact(float dt, Collision col);
-    protected:
-        //calculates closing velocity
+        //calculate closing velocity
         float calculateClosingVelocity() const;
     private:
         //calculates impulse

@@ -1,8 +1,23 @@
 #include "./ObjectContact.h"
 
+ObjectContact::ObjectContact(){}
+
+ObjectContact::ObjectContact(const ObjectContact& contact){
+    object[0] = contact.object[0];
+    object[1] = contact.object[1];
+    m_restitution = contact.m_restitution;
+    m_contactNormal = contact.m_contactNormal;
+    m_collision = contact.m_collision;
+}
+
 void ObjectContact::resolve(float dt,Collision col){
     resolveVelocity(dt);
     resolveInterpenetration(dt, col);
+}
+
+void ObjectContact::resolve(float dt){
+    resolveVelocity(dt);
+    resolveInterpenetration(dt,m_collision);
 }
 
 void ObjectContact::resolveRestingContact(float dt, Collision col){

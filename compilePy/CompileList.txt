@@ -38,6 +38,7 @@
 ../Particle.cpp
 ../ObjectContact.cpp
 ../CameraController.cpp
+../CollisionBatchResolver.cpp
 
 COMPILER_FLAGS
 -std=c++17

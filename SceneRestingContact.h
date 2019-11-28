@@ -20,6 +20,7 @@
 #include "./ForceGravity.h"
 #include "./ObjectContact.h"
 #include "./Physics2D.h"
+#include "./CollisionBatchResolver.h"
 
 class SceneRestingContact : public Scene{
 	private:
@@ -32,6 +33,7 @@ class SceneRestingContact : public Scene{
 		Object* m_wall;
 		ObjectContact m_contactResolver;
 		ForceGravity m_forceGravity;
+		CollisionBatchResolver m_collisionBatchResolver;
 	
 	public:
 		SceneRestingContact();

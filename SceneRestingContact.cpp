@@ -9,7 +9,8 @@ SceneRestingContact::SceneRestingContact():
 	m_wall(NULL),
 	m_speed(1.0f),
 	m_forceGravity(ForceGravity(glm::vec2(0.0f,0.0f))),
-	m_contactResolver(ObjectContact()){
+	m_contactResolver(ObjectContact()),
+	m_collisionBatchResolver(CollisionBatchResolver(1)){
 }
 
 SceneRestingContact::SceneRestingContact(Shader* shader, Texture* texture, const float vertices[]):
@@ -18,7 +19,8 @@ SceneRestingContact::SceneRestingContact(Shader* shader, Texture* texture, const
 	m_shader(shader),
 	m_texture(texture),
 	m_contactResolver(ObjectContact()),
-	m_forceGravity(ForceGravity(glm::vec2(0.0f, Physics2D::G * -5.0f))){
+	m_forceGravity(ForceGravity(glm::vec2(0.0f, Physics2D::G * -5.0f))),
+	m_collisionBatchResolver(CollisionBatchResolver(1)){
 	
 	m_player = new Object(
 		glm::vec3(0.0f,0.0f,0.0f),
@@ -79,7 +81,6 @@ void SceneRestingContact::render(Window* window){
 void SceneRestingContact::update(Window* window){
 	input(window);
 
-	
 	m_forceGravity.updateForce(m_player,ImGui::GetIO().DeltaTime);
 	//m_forceGravity.updateForce(m_restingObject,ImGui::GetIO().DeltaTime);
 
@@ -93,7 +94,9 @@ void SceneRestingContact::update(Window* window){
 		m_contactResolver.object[1] = NULL;
 		m_contactResolver.m_restitution = 0.0f;
 		m_contactResolver.m_contactNormal = col0.collisionNormal;
-		m_contactResolver.resolve(ImGui::GetIO().DeltaTime,col0);
+		m_contactResolver.m_collision = col0;
+		//m_contactResolver.resolve(ImGui::GetIO().DeltaTime,col0);
+		m_collisionBatchResolver.registerContact(m_contactResolver);
 	}
 
 	Collision col1 = AABB::getCollision(m_wall->getBoundingBox(),m_restingObject->getBoundingBox());
@@ -103,7 +106,10 @@ void SceneRestingContact::update(Window* window){
 		//object[1] is already NULL
 		m_contactResolver.m_restitution = 0.0f; //don't believe it needs to be zero, but just in case
 		m_contactResolver.m_contactNormal = col1.collisionNormal;
-		m_contactResolver.resolve(ImGui::GetIO().DeltaTime,col1);
+		m_contactResolver.m_collision = col1;
+		//m_contactResolver.resolve(ImGui::GetIO().DeltaTime,col1);
+		//std::cout << "Log col1 if statement" << std::endl;
+		m_collisionBatchResolver.registerContact(m_contactResolver);
 	}
 
 	Collision col2 = AABB::getCollision(m_restingObject->getBoundingBox(),m_player->getBoundingBox());
@@ -113,9 +119,15 @@ void SceneRestingContact::update(Window* window){
 		m_contactResolver.object[1] = NULL;
 		m_contactResolver.m_restitution = 0.0f;
 		m_contactResolver.m_contactNormal = col2.collisionNormal;
-		m_contactResolver.resolve(ImGui::GetIO().DeltaTime,col2);
+		m_contactResolver.m_collision = col2;
+		//m_contactResolver.resolve(ImGui::GetIO().DeltaTime,col2);
+		m_collisionBatchResolver.registerContact(m_contactResolver);
 	}
 
+	
+	m_collisionBatchResolver.resolveContacts(ImGui::GetIO().DeltaTime);
+
+	m_collisionBatchResolver.resetRegistry();
 }
 
 void SceneRestingContact::renderGUI(){
