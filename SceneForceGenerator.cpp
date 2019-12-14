@@ -194,15 +194,15 @@ void SceneForceGenerator::input(Window* window){
 	float py = m_staticObj->getPos().y;
 	float speed = 5.0f;
 
-	if(glfwGetKey(window->getWindow(),GLFW_KEY_W)){
+	if(glfwGetKey(window->getWindow(),GLFW_KEY_UP)){
 		py += speed;
-	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_S)){
+	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_DOWN)){
 		py -= speed;
 	}
 
-	if(glfwGetKey(window->getWindow(),GLFW_KEY_D)){
+	if(glfwGetKey(window->getWindow(),GLFW_KEY_RIGHT)){
 		px += speed;
-	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_A)){
+	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_LEFT)){
 		px -= speed;
 	}
 

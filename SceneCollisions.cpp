@@ -9,7 +9,8 @@ SceneCollisions::SceneCollisions():
     m_texture(NULL),
     m_player(NULL),
     m_contactResolver(ObjectContact()),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,0.0f)))
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,0.0f))),
+    m_collisionBatchResolver(CollisionBatchResolver(1))
 {}
 
 SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float vertices[]):
@@ -18,7 +19,8 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float v
     m_texture(texture),
     m_useGravity(false),
     m_contactResolver(ObjectContact()),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,-5.0f * Physics2D::G)))
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,-5.0f * Physics2D::G))),
+    m_collisionBatchResolver(CollisionBatchResolver(1))
 {
 
     m_player = new Object(
@@ -123,7 +125,10 @@ void SceneCollisions::update(Window* window){
             m_contactResolver.object[1] = m_player;
             m_contactResolver.m_restitution = restitution;
             m_contactResolver.m_contactNormal = playerCol.collisionNormal;
-            m_contactResolver.resolve(ImGui::GetIO().DeltaTime,playerCol);
+            m_contactResolver.m_penetrationDepth = playerCol.penetrationDepth;
+            m_contactResolver.m_collision = playerCol;
+            m_collisionBatchResolver.registerContact(m_contactResolver);
+            //m_contactResolver.resolve(ImGui::GetIO().DeltaTime,playerCol);
         }
     }
 
@@ -139,13 +144,20 @@ void SceneCollisions::update(Window* window){
                 m_contactResolver.object[1] = m_objects[i];
                 m_contactResolver.m_restitution = restitution;
                 m_contactResolver.m_contactNormal = objectCol.collisionNormal;
-                m_contactResolver.resolve(ImGui::GetIO().DeltaTime,objectCol);
+                m_contactResolver.m_penetrationDepth = objectCol.penetrationDepth;
+                m_contactResolver.m_collision = objectCol;
+                m_collisionBatchResolver.registerContact(m_contactResolver);
+                //m_contactResolver.resolve(ImGui::GetIO().DeltaTime,objectCol);
             }
         }
     }
 
+    m_collisionBatchResolver.resolveContacts(ImGui::GetIO().DeltaTime);
+
     checkBounds();
 
+
+    m_collisionBatchResolver.resetRegistry();
 }
 
 

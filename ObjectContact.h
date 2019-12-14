@@ -7,12 +7,14 @@
 #include "./Object.h"
 #include "./AABB.h"
 
+
 class ObjectContact{
     public:
         Object* object[2];
         float m_restitution;
         glm::vec2 m_contactNormal;
         Collision m_collision;
+        float m_penetrationDepth;
     public:
         ObjectContact();
         ObjectContact(const ObjectContact& contact);
@@ -27,4 +29,5 @@ class ObjectContact{
         void resolveVelocity(float dt);
         void resolveRestingContactVelocity(float dt);
         void resolveInterpenetration(float dt, Collision col);
+        void resolveInterpenetration(float dt);
 };

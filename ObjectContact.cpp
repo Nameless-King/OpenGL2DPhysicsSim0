@@ -8,6 +8,7 @@ ObjectContact::ObjectContact(const ObjectContact& contact){
     m_restitution = contact.m_restitution;
     m_contactNormal = contact.m_contactNormal;
     m_collision = contact.m_collision;
+    m_penetrationDepth = contact.m_penetrationDepth;
 }
 
 void ObjectContact::resolve(float dt,Collision col){
@@ -15,15 +16,19 @@ void ObjectContact::resolve(float dt,Collision col){
     resolveInterpenetration(dt, col);
 }
 
+//currently in use in CollisionBatchResolver loop
 void ObjectContact::resolve(float dt){
     resolveVelocity(dt);
-    resolveInterpenetration(dt,m_collision);
+    //resolveRestingContactVelocity(dt);
+    resolveInterpenetration(dt);
+    //resolveInterpenetration(dt,m_collision);
 }
 
 void ObjectContact::resolveRestingContact(float dt, Collision col){
     resolveRestingContactVelocity(dt);
     resolveInterpenetration(dt,col);
 }
+
 
 float ObjectContact::calculateClosingVelocity() const{
     glm::vec2 relativeVelocity = *(object[0]->getRigidBody2D()->getVelocity());
@@ -32,6 +37,7 @@ float ObjectContact::calculateClosingVelocity() const{
     }
     return glm::dot(relativeVelocity,m_contactNormal);
 }
+
 
 void ObjectContact::resolveVelocity(float dt){
     //find velocity in direction of collision
@@ -148,5 +154,25 @@ void ObjectContact::resolveInterpenetration(float dt,Collision col){
     object[0]->setPos(object[0]->getPos2() + percent * -movePerMass * object[0]->getRigidBody2D()->getInverseMass());
     if(object[1]){
         object[1]->setPos(object[1]->getPos2() + percent * movePerMass*object[1]->getRigidBody2D()->getInverseMass());
+    }
+}
+
+void ObjectContact::resolveInterpenetration(float dt){
+    if(m_penetrationDepth <= 0){
+        return;
+    }
+
+    float totalInverseMass = object[0]->getRigidBody2D()->getInverseMass();
+    if(object[1]){
+        totalInverseMass += object[1]->getRigidBody2D()->getInverseMass();
+    }
+
+    glm::vec2 movePerMass = m_contactNormal * (-m_penetrationDepth/totalInverseMass);
+
+    float percent = 1.0f;
+
+    object[0]->setPos(object[0]->getPos2() + percent * -movePerMass * object[0]->getRigidBody2D()->getInverseMass());
+    if(object[1]){
+        object[1]->setPos(object[1]->getPos2() + percent * movePerMass * object[1]->getRigidBody2D()->getInverseMass());
     }
 }

@@ -124,7 +124,7 @@ int main(){
 	}
 	
 	StaticRenderer::destroy();
-	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
+	std::cout << "Final Error Code: " << glGetError() << std::endl;
 		
 	return 0;
 	

@@ -24,6 +24,7 @@
 #include "./Window.h"
 #include "./ObjectContact.h"
 #include "./ForceGravity.h"
+#include "./CollisionBatchResolver.h"
 
 class SceneCollisions : public Scene {
     private:
@@ -35,7 +36,7 @@ class SceneCollisions : public Scene {
         std::vector<Object*> m_objects;
         ObjectContact m_contactResolver;
         ForceGravity m_forceGravity;
-
+        CollisionBatchResolver m_collisionBatchResolver;
 
     public:
         SceneCollisions();

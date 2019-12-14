@@ -10,6 +10,7 @@
 #include "./Dependencies/imgui/imgui_impl_opengl3.h"
 
 #include <string>
+#include <vector>
 
 #include "./Object.h"
 #include "./Scene.h"
@@ -31,6 +32,7 @@ class SceneRestingContact : public Scene{
 		Object* m_player;
 		Object* m_restingObject;
 		Object* m_wall;
+		std::vector<Object*> m_objects;
 		ObjectContact m_contactResolver;
 		ForceGravity m_forceGravity;
 		CollisionBatchResolver m_collisionBatchResolver;
@@ -45,4 +47,6 @@ class SceneRestingContact : public Scene{
 		void renderGUI();
 	private:
 		void input(Window* window);
+		void boundCheck(Window* window, Object* object);
+		void testBoxCollision(Object* obj1, Object* obj2, Collision* col);
 };
