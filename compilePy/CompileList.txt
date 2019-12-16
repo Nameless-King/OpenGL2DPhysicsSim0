@@ -16,7 +16,7 @@
 ../Renderer.cpp
 ../StaticRenderer.cpp
 ../GUIControlPanel.cpp
-../AABB.cpp
+../Hitbox.cpp
 ../Physics2D.cpp
 ../EngineMaths.cpp
 ../RigidBody2D.cpp

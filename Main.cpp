@@ -22,7 +22,7 @@
 #include "Renderer.h"
 #include "StaticRenderer.h"
 #include "GUIControlPanel.h"
-#include "AABB.h"
+#include "Hitbox.h"
 #include "Physics2D.h"
 
 #include "SceneIntegrator.h"

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -17,6 +19,7 @@
 #include "./StaticRenderer.h"
 #include "./Texture.h"
 #include "./Window.h"
+#include "./Hitbox.h"
 
 class SceneRestingContact : public Scene{
 	private:

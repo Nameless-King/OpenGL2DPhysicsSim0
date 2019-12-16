@@ -17,6 +17,7 @@
 #include "./StaticRenderer.h"
 #include "./Texture.h"
 #include "./Window.h"
+#include "./Hitbox.h"
 
 class SceneRestingContact : public Scene{
 	private:

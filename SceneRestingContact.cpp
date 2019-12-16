@@ -30,7 +30,7 @@ SceneRestingContact::SceneRestingContact(Shader* shader, Texture* texture, const
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
 	m_player->addVertices(vertices);
-	m_player->createAABB(BBType::AxisAligned);
+	m_player->createHitbox(HitboxType::AxisAligned);
 	m_player->addRigidBody2D(new RigidBody2D(5.0f));
 
 	m_restingObject = new Object(
@@ -39,7 +39,7 @@ SceneRestingContact::SceneRestingContact(Shader* shader, Texture* texture, const
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
 	m_restingObject->addVertices(vertices);
-	m_restingObject->createAABB(BBType::AxisAligned);
+	m_restingObject->createHitbox(HitboxType::AxisAligned);
 	m_restingObject->addRigidBody2D(new RigidBody2D(5.0f));
 
 	m_wall = new Object(
@@ -48,7 +48,7 @@ SceneRestingContact::SceneRestingContact(Shader* shader, Texture* texture, const
 		glm::vec3(20.0f,1.0f,1.0f)
 	);
 	m_wall->addVertices(vertices);
-	m_wall->createAABB(BBType::AxisAligned);
+	m_wall->createHitbox(HitboxType::AxisAligned);
 	m_wall->addRigidBody2D(new RigidBody2D(-1.0f));
 
 	
@@ -106,58 +106,55 @@ void SceneRestingContact::update(Window* window){
 		Physics2D::integrator3(m_objects[i],ImGui::GetIO().DeltaTime);
 	}
 
-	Collision col0 = AABB::getCollision(m_wall->getBoundingBox(),m_player->getBoundingBox());
+	ObjectContact col0 = ObjectContact::detectContact(m_wall->getHitbox(),m_player->getHitbox());
 
-	if(col0.colliding){
+	if(col0.m_colliding){
 		m_contactResolver.object[0] = m_player;
 		m_contactResolver.object[1] = NULL;
 		m_contactResolver.m_restitution = 0.0f;
 		testBoxCollision(m_player,m_wall,&col0);
-		m_contactResolver.m_collision = col0;
-		m_contactResolver.m_penetrationDepth = col0.penetrationDepth;
-		m_contactResolver.m_contactNormal = col0.collisionNormal;
+	
+		m_contactResolver.m_penetrationDepth = col0.m_penetrationDepth;
+		m_contactResolver.m_contactNormal = col0.m_contactNormal;
 		m_collisionBatchResolver.registerContact(m_contactResolver);
 	}
 
-	Collision col1 = AABB::getCollision(m_wall->getBoundingBox(),m_restingObject->getBoundingBox());
+	ObjectContact col1 = ObjectContact::detectContact(m_wall->getHitbox(),m_restingObject->getHitbox());
 
-	if(col1.colliding){
+	if(col1.m_colliding){
 		m_contactResolver.object[0] = m_restingObject;
 		m_contactResolver.object[1] = NULL;
 		m_contactResolver.m_restitution = 0.0f; //don't believe it needs to be zero, but just in case
 		testBoxCollision(m_restingObject,m_wall,&col1);
-		m_contactResolver.m_collision = col1;
-		m_contactResolver.m_penetrationDepth = col1.penetrationDepth;
-		m_contactResolver.m_contactNormal = col1.collisionNormal;
+		m_contactResolver.m_penetrationDepth = col1.m_penetrationDepth;
+		m_contactResolver.m_contactNormal = col1.m_contactNormal;
 		m_collisionBatchResolver.registerContact(m_contactResolver);
 	}
 
-	Collision col2 = AABB::getCollision(m_restingObject->getBoundingBox(),m_player->getBoundingBox());
+	ObjectContact col2 = ObjectContact::detectContact(m_restingObject->getHitbox(),m_player->getHitbox());
 
-	if(col2.colliding){
+	if(col2.m_colliding){
 		m_contactResolver.object[0] = m_player;
 		m_contactResolver.object[1] = m_restingObject;
 		m_contactResolver.m_restitution = 0.0f;
 		testBoxCollision(m_player,m_restingObject,&col2);
-		m_contactResolver.m_collision = col2;
-		m_contactResolver.m_penetrationDepth = col2.penetrationDepth;
-		m_contactResolver.m_contactNormal = col2.collisionNormal;
+		m_contactResolver.m_penetrationDepth = col2.m_penetrationDepth;
+		m_contactResolver.m_contactNormal = col2.m_contactNormal;
 		m_collisionBatchResolver.registerContact(m_contactResolver);
 	}
 
 
 	for(int i = 0;i<m_objects.size();i++){
 		for(int j = i+1;j<m_objects.size();j++){
-			Collision col3 = AABB::getCollision(m_objects[i]->getBoundingBox(),m_objects[j]->getBoundingBox());
+			ObjectContact col3 = ObjectContact::detectContact(m_objects[i]->getHitbox(),m_objects[j]->getHitbox());
 
-			if(col3.colliding){
+			if(col3.m_colliding){
 				m_contactResolver.object[0] = m_objects[j];
 				m_contactResolver.object[1] = m_objects[i];
 				m_contactResolver.m_restitution = 0.0f;
 				testBoxCollision(m_objects[j],m_objects[i],&col3);
-				m_contactResolver.m_collision = col3;
-				m_contactResolver.m_penetrationDepth = col3.penetrationDepth;
-				m_contactResolver.m_contactNormal = col3.collisionNormal;
+				m_contactResolver.m_penetrationDepth = col3.m_penetrationDepth;
+				m_contactResolver.m_contactNormal = col3.m_contactNormal;
 				m_collisionBatchResolver.registerContact(m_contactResolver);
 			}
 		}
@@ -224,7 +221,7 @@ void SceneRestingContact::input(Window* window){
 		));
 		int newIndex = m_objects.size() - 1;
 		m_objects[newIndex]->addVertices(StaticRenderer::getVertices());
-		m_objects[newIndex]->createAABB(BBType::AxisAligned);
+		m_objects[newIndex]->createHitbox(HitboxType::AxisAligned);
 		m_objects[newIndex]->addRigidBody2D(new RigidBody2D(5.0f));
 		
 	}else if(mousePressed == GLFW_FALSE && mouse1Pressed){
@@ -247,22 +244,22 @@ void SceneRestingContact::boundCheck(Window* window, Object* object){
 	}
 }
 
-void SceneRestingContact::testBoxCollision(Object* obj1, Object* obj2, Collision* col){
-	if(col->distance.x  / (obj1->getScl().x * obj2->getScl().x)> col->distance.y / (obj1->getScl().y * obj2->getScl().y)){
+void SceneRestingContact::testBoxCollision(Object* obj1, Object* obj2, ObjectContact* col){
+	if(col->m_distance.x  / (obj1->getScl().x * obj2->getScl().x)> col->m_distance.y / (obj1->getScl().y * obj2->getScl().y)){
 		if(obj1->getPos2().x > obj2->getPos2().x){
-			col->collisionNormal.x = 1;
-			col->collisionNormal.y = 0;
+			col->m_contactNormal.x = 1;
+			col->m_contactNormal.y = 0;
 		}else{
-			col->collisionNormal.x = -1;
-			col->collisionNormal.y = 0;
+			col->m_contactNormal.x = -1;
+			col->m_contactNormal.y = 0;
 		}
 	}else{
 		if(obj1->getPos2().y > obj2->getPos2().y){
-			col->collisionNormal.x = 0;
-			col->collisionNormal.y = 1;
+			col->m_contactNormal.x = 0;
+			col->m_contactNormal.y = 1;
 		}else{
-			col->collisionNormal.x = 0;
-			col->collisionNormal.y = -1;
+			col->m_contactNormal.x = 0;
+			col->m_contactNormal.y = -1;
 		}
 	}
 	

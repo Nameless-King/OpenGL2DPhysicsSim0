@@ -15,7 +15,7 @@ unsigned int Cable::fillContact(ObjectContact* contact, unsigned int limit) cons
 
     //return contact in passed ObjectContact reference
     glm::vec2 normal = m_objects[1]->getPos2() - m_objects[0]->getPos2();
-    glm::normalize(normal);
+    normal = glm::normalize(normal);
     contact->m_contactNormal = normal;
     contact->m_restitution = m_restitution;
     contact->m_penetrationDepth = length - m_maxLength;

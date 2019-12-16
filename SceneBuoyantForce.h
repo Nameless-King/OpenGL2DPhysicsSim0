@@ -20,6 +20,7 @@
 #include "./ForceGravity.h"
 #include "./ForceDrag.h"
 #include "./Physics2D.h"
+#include "./Hitbox.h"
 
 class SceneBuoyantForce : public Scene{
     private:

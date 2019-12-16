@@ -1,3 +1,5 @@
+#pragma once
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -22,6 +24,7 @@
 #include "./ObjectContact.h"
 #include "./Physics2D.h"
 #include "./CollisionBatchResolver.h"
+#include "./Hitbox.h"
 
 class SceneRestingContact : public Scene{
 	private:
@@ -48,5 +51,5 @@ class SceneRestingContact : public Scene{
 	private:
 		void input(Window* window);
 		void boundCheck(Window* window, Object* object);
-		void testBoxCollision(Object* obj1, Object* obj2, Collision* col);
+		void testBoxCollision(Object* obj1, Object* obj2, ObjectContact* col);
 };

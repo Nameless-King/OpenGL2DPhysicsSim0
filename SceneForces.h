@@ -19,7 +19,8 @@
 #include "./Shader.h"
 #include "./StaticRenderer.h"
 #include "./Texture.h"
-#include "Window.h"
+#include "./Window.h"
+#include "./Hitbox.h"
 
 class SceneForces : public Scene{
 	private:

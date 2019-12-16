@@ -7,7 +7,7 @@
 #include <assert.h>
 
 #include "./Object.h"
-#include "./AABB.h"
+
 
 #include "./Dependencies/glm/glm.hpp"
 #include "./Dependencies/glm/gtc/matrix_transform.hpp"

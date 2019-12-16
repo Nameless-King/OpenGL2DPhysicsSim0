@@ -1,6 +1,6 @@
 #include "./SceneCollisions.h"
 
-static BBType type = BBType::Circle;
+static HitboxType type = HitboxType::Circle;
 
 SceneCollisions::SceneCollisions():
     m_title("SceneCollisions"),
@@ -29,7 +29,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float v
         glm::vec3(1.0f,1.0f,1.0f)
     );
     m_player->addVertices(vertices);
-    m_player->createAABB(type);
+    m_player->createHitbox(type);
 
     RigidBody2D* rbPlayer = new RigidBody2D(50.0f);
     m_player->addRigidBody2D(rbPlayer);
@@ -43,7 +43,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float v
             glm::vec3(1.0f,1.0f,1.0f)
         ));
         m_objects[i]->addVertices(vertices);
-        m_objects[i]->createAABB(type);
+        m_objects[i]->createHitbox(type);
         m_objects[i]->addRigidBody2D(new RigidBody2D(5.0f));
     }
 
@@ -55,7 +55,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture, const float v
             glm::vec3(1.0f,1.0f,1.0f)
         ));
         m_objects[i]->addVertices(vertices);
-        m_objects[i]->createAABB(type);
+        m_objects[i]->createHitbox(type);
         m_objects[i]->addRigidBody2D(new RigidBody2D(5.0f));
     }
 
@@ -116,17 +116,16 @@ void SceneCollisions::update(Window* window){
     
     float restitution = 0.0f;
     for(int i = 0;i<m_objects.size();i++){
-        Collision playerCol = AABB::getCollision(m_player->getBoundingBox(),m_objects[i]->getBoundingBox());
+        ObjectContact playerCol = ObjectContact::detectContact(m_player->getHitbox(),m_objects[i]->getHitbox());
 
         
 
-        if(playerCol.colliding){
+        if(playerCol.m_colliding){
             m_contactResolver.object[0] = m_objects[i];
             m_contactResolver.object[1] = m_player;
             m_contactResolver.m_restitution = restitution;
-            m_contactResolver.m_contactNormal = playerCol.collisionNormal;
-            m_contactResolver.m_penetrationDepth = playerCol.penetrationDepth;
-            m_contactResolver.m_collision = playerCol;
+            m_contactResolver.m_contactNormal = playerCol.m_contactNormal;
+            m_contactResolver.m_penetrationDepth = playerCol.m_penetrationDepth;
             m_collisionBatchResolver.registerContact(m_contactResolver);
             //m_contactResolver.resolve(ImGui::GetIO().DeltaTime,playerCol);
         }
@@ -134,18 +133,17 @@ void SceneCollisions::update(Window* window){
 
     for(int i = 0;i<m_objects.size();i++){
         for(int j = i+1;j<m_objects.size();j++){
-            Collision objectCol = AABB::getCollision(m_objects[i]->getBoundingBox(),m_objects[j]->getBoundingBox());
+            ObjectContact objectCol = ObjectContact::detectContact(m_objects[i]->getHitbox(),m_objects[j]->getHitbox());
 
             
 
-            if(objectCol.colliding){
+            if(objectCol.m_colliding){
 
                 m_contactResolver.object[0] = m_objects[j];
                 m_contactResolver.object[1] = m_objects[i];
                 m_contactResolver.m_restitution = restitution;
-                m_contactResolver.m_contactNormal = objectCol.collisionNormal;
-                m_contactResolver.m_penetrationDepth = objectCol.penetrationDepth;
-                m_contactResolver.m_collision = objectCol;
+                m_contactResolver.m_contactNormal = objectCol.m_contactNormal;
+                m_contactResolver.m_penetrationDepth = objectCol.m_penetrationDepth;
                 m_collisionBatchResolver.registerContact(m_contactResolver);
                 //m_contactResolver.resolve(ImGui::GetIO().DeltaTime,objectCol);
             }

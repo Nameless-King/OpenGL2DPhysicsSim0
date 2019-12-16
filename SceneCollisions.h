@@ -16,7 +16,7 @@
 
 #include "./Object.h"
 #include "./Physics2D.h"
-#include "./AABB.h"
+#include "./Hitbox.h"
 #include "./Scene.h"
 #include "./Shader.h"
 #include "./StaticRenderer.h"

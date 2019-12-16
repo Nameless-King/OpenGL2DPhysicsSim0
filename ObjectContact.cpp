@@ -7,14 +7,10 @@ ObjectContact::ObjectContact(const ObjectContact& contact){
     object[1] = contact.object[1];
     m_restitution = contact.m_restitution;
     m_contactNormal = contact.m_contactNormal;
-    m_collision = contact.m_collision;
     m_penetrationDepth = contact.m_penetrationDepth;
 }
 
-void ObjectContact::resolve(float dt,Collision col){
-    resolveVelocity(dt);
-    resolveInterpenetration(dt, col);
-}
+
 
 //currently in use in CollisionBatchResolver loop
 void ObjectContact::resolve(float dt){
@@ -24,9 +20,9 @@ void ObjectContact::resolve(float dt){
     //resolveInterpenetration(dt,m_collision);
 }
 
-void ObjectContact::resolveRestingContact(float dt, Collision col){
+void ObjectContact::resolveRestingContact(float dt){
     resolveRestingContactVelocity(dt);
-    resolveInterpenetration(dt,col);
+    resolveInterpenetration(dt);
 }
 
 
@@ -131,32 +127,6 @@ void ObjectContact::resolveRestingContactVelocity(float dt){
     }
 }
 
-void ObjectContact::resolveInterpenetration(float dt,Collision col){
-    //if no penetration
-    if(col.penetrationDepth <= 0){
-        return;
-    }
-
-    float totalInverseMass = object[0]->getRigidBody2D()->getInverseMass();
-    if(object[1]){
-        totalInverseMass += object[1]->getRigidBody2D()->getInverseMass();
-    }
-
-    //both have infinite mass
-    if(totalInverseMass <= 0){
-        return;
-    }
-
-    glm::vec2 movePerMass = col.collisionNormal * (-col.penetrationDepth/totalInverseMass);
-
-    float percent = 1.0f;
-
-    object[0]->setPos(object[0]->getPos2() + percent * -movePerMass * object[0]->getRigidBody2D()->getInverseMass());
-    if(object[1]){
-        object[1]->setPos(object[1]->getPos2() + percent * movePerMass*object[1]->getRigidBody2D()->getInverseMass());
-    }
-}
-
 void ObjectContact::resolveInterpenetration(float dt){
     if(m_penetrationDepth <= 0){
         return;
@@ -175,4 +145,47 @@ void ObjectContact::resolveInterpenetration(float dt){
     if(object[1]){
         object[1]->setPos(object[1]->getPos2() + percent * movePerMass * object[1]->getRigidBody2D()->getInverseMass());
     }
+}
+
+float ObjectContact::getSmallestComponent(glm::vec2 vector){
+    return (vector.x < vector.y) ? vector.x : vector.y;
+}
+
+glm::vec2 ObjectContact::calcContactNormal(ObjectContact contact){
+    glm::vec2 normal = (contact.m_distance.x < contact.m_distance.y) ? glm::vec2(1.0f,0.0f) : glm::vec2(0.0f,1.0f);
+    return normal;
+}
+
+ObjectContact ObjectContact::detectContact(Hitbox box1, Hitbox box2){
+    
+	ObjectContact contact;
+
+	contact.m_distance = box1.getCenter() - box2.getCenter();
+	
+	contact.m_distance.x = fabs(contact.m_distance.x);
+	contact.m_distance.y = fabs(contact.m_distance.y);
+
+	if(box1.getHitboxType() == HitboxType::AxisAligned && box2.getHitboxType() == HitboxType::AxisAligned){
+		glm::vec2 joinedExtents = box1.getHalfExtents() + box2.getHalfExtents();
+		contact.m_colliding = (contact.m_distance.x < joinedExtents.x && contact.m_distance.y < joinedExtents.y);
+		
+		glm::vec2 penetrationVec = joinedExtents - contact.m_distance;
+		contact.m_penetrationDepth = getSmallestComponent(penetrationVec);
+
+		if(contact.m_colliding){
+			contact.m_contactNormal = glm::normalize(box2.getCenter() - box1.getCenter());
+		}
+
+	}else if(box1.getHitboxType() == HitboxType::Circle && box2.getHitboxType() == HitboxType::Circle){
+		float joinedExtent = box1.getHalfExtents().x + box2.getHalfExtents().x;
+		contact.m_colliding = (sqrt(pow(contact.m_distance.x,2.0f)+pow(contact.m_distance.y,2.0f)) < joinedExtent);
+		glm::vec2 penetrationVec = glm::vec2(joinedExtent,joinedExtent)-contact.m_distance;
+		contact.m_penetrationDepth = getSmallestComponent(penetrationVec);
+		if(contact.m_colliding){
+			glm::vec2 distVector = box2.getCenter() - box1.getCenter();
+			contact.m_contactNormal = glm::normalize(distVector);
+		}
+	}
+	
+	return contact;
 }

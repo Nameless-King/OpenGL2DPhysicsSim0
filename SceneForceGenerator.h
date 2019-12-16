@@ -25,6 +25,7 @@
 #include "./ForceDrag.h"
 #include "./ForceBungee.h"
 #include "./ForceFakeSpring.h"
+#include "./Hitbox.h"
 
 class SceneForceGenerator : public Scene{
 	private:

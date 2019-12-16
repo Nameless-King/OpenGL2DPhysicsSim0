@@ -1,10 +1,9 @@
-#ifndef OBJECT_H_
-#define OBJECT_H_
+#pragma once
 
 #include <iostream>
 
 #include "./VertexArrayObj.h"
-#include "./AABB.h"
+#include "./Hitbox.h"
 #include "./RigidBody2D.h"
 
 #include "./Dependencies/glm/glm.hpp"
@@ -14,7 +13,7 @@
 class Object{
 private:
 	const float* m_vertices;
-	AABB m_bb;
+	Hitbox m_hitbox;
 	RigidBody2D* m_rb;
 	glm::vec3 m_position;
 	glm::vec3 m_rotation;
@@ -34,13 +33,13 @@ public:
 	
 	void addRigidBody2D(RigidBody2D* rb);
 	void addVertices(const float vertices[]);
-	void createAABB(BBType type);
+	void createHitbox(HitboxType type);
 	
 	glm::vec3 getPos();
 	glm::vec3 getRot();
 	glm::vec3 getScl();
 	
-	inline AABB getBoundingBox() const {return m_bb;}
+	inline Hitbox getHitbox() const {return m_hitbox;}
 	inline RigidBody2D* getRigidBody2D() const {return m_rb;}
 	inline glm::vec2 getPos2() const {return glm::vec2(m_position.x,m_position.y);}
 
@@ -48,4 +47,3 @@ public:
 	
 };
 
-#endif

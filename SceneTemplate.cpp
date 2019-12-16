@@ -21,7 +21,7 @@ SceneRestingContact::SceneRestingContact(Shader* shader, Texture* texture, const
 	);
 	
 	m_player->addVertices(vertices);
-	m_player->createAABB(BBType::AxisAligned);
+	m_player->createHitbox(HitboxType::AxisAligned);
 	m_player->addRigidBody2D(new RigidBody2D(5.0f));
 }
 

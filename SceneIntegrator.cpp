@@ -21,7 +21,7 @@ SceneIntegrator::SceneIntegrator(Shader* shader, Texture* texture, const float v
 		);
 		
 		m_player->addVertices(vertices);
-		m_player->createAABB(BBType::Circle);
+		m_player->createHitbox(HitboxType::Circle);
 		
 		RigidBody2D* rbPlayer = new RigidBody2D(5.0f);
 		rbPlayer->setDamping(1.0f);

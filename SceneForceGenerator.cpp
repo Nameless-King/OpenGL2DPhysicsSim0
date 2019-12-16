@@ -31,7 +31,7 @@ SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const
 	);
 	
 	m_staticObj->addVertices(vertices);
-	m_staticObj->createAABB(BBType::Circle);
+	m_staticObj->createHitbox(HitboxType::Circle);
 	
 	RigidBody2D* rbStatic = new RigidBody2D(5.0f);
 	rbStatic->setDamping(1.0f);
@@ -45,7 +45,7 @@ SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const
 	);
 	
 	m_hangingObj->addVertices(vertices);
-	m_hangingObj->createAABB(BBType::Circle);
+	m_hangingObj->createHitbox(HitboxType::Circle);
 	
 	RigidBody2D* rbHanging = new RigidBody2D(5.0f);
 	rbHanging->setDamping(0.5f);

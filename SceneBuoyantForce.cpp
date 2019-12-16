@@ -22,7 +22,7 @@ SceneBuoyantForce::SceneBuoyantForce(Shader* shader, Texture* texture, const flo
         );
 
         m_object->addVertices(vertices);
-        m_object->createAABB(BBType::Circle);
+        m_object->createHitbox(HitboxType::Circle);
         RigidBody2D* rb = new RigidBody2D(5.0f);
         rb->setDamping(1.0f);
         m_object->addRigidBody2D(rb);
