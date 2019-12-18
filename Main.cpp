@@ -51,7 +51,7 @@ int main(){
 	if(windowObj.getWindow() == NULL){
 		return EXIT_FAILURE;
 	}
-	windowObj.setFramebufferSizeCallback(framebuffer_size_callback);
+	//windowObj.setFramebufferSizeCallback(framebuffer_size_callback);
 	windowObj.setClearColor(glm::vec4(0.9f,0.7f,0.7f,1.0f));
 
 	if(glewInit() != GLEW_OK){
@@ -70,22 +70,22 @@ int main(){
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	
-	Shader shader0("./shaders/shader0.vs","./shaders/shader0.fs");	
+	Shader shaderQuad("./shaders/shaderQuad.vs","./shaders/shaderQuad.fs");	
 	Shader shaderPoint("./shaders/shaderPoint.vs","./shaders/shaderPoint.fs");
 	
-	Texture texture0("./textures/circle.png");
-	Texture texture1("./textures/rectangle.png");
-	Texture texture2("./textures/white.png");
+	Texture textureCircle("./textures/circle.png");
+	Texture textureRectangle("./textures/rectangle.png");
+	Texture textureWhite("./textures/white.png");
 		
 	StaticRenderer::init();
 	
-	SceneIntegrator scene0(&shader0,&texture0,StaticRenderer::getVertices());
-	SceneForces scene1(&shader0, &texture0, StaticRenderer::getVertices());
+	SceneIntegrator scene0(&shaderQuad,&textureCircle,StaticRenderer::getVertices());
+	SceneForces scene1(&shaderQuad, &textureCircle, StaticRenderer::getVertices());
 	SceneParticle scene2(&shaderPoint);
-	SceneForceGenerator scene3(&shader0, &texture0, StaticRenderer::getVertices());
-	SceneBuoyantForce scene4(&shader0, &texture0 , StaticRenderer::getVertices());
-	SceneCollisions scene5(&shader0, &texture0, StaticRenderer::getVertices());
-	SceneRestingContact scene6(&shader0,&texture2,StaticRenderer::getVertices());
+	SceneForceGenerator scene3(&shaderQuad, &textureCircle, StaticRenderer::getVertices());
+	SceneBuoyantForce scene4(&shaderQuad, &textureCircle , StaticRenderer::getVertices());
+	SceneCollisions scene5(&shaderQuad, &textureCircle, StaticRenderer::getVertices());
+	SceneRestingContact scene6(&shaderQuad,&textureWhite,StaticRenderer::getVertices());
 
 	SceneManager::registerScene(&scene0);
 	SceneManager::registerScene(&scene1);
@@ -104,7 +104,6 @@ int main(){
 		input(windowObj.getWindow());
 		windowInput();
 
-	
 		SceneManager::updateCurrentScene(&windowObj);
 		SceneManager::start();
 		SceneManager::renderMenu();
@@ -114,7 +113,6 @@ int main(){
 		SceneManager::renderCurrentSceneGUI();
 		
 		windowObj.clear();
-		
 
 		SceneManager::renderCurrentScene(&windowObj);
 		SceneManager::finalize();
@@ -129,13 +127,13 @@ int main(){
 	
 }	
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+/*void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0,width,height);
 	windowObj.resize(width,height);
-}
+}*/
 
 void input(GLFWwindow* window){
 	if(glfwGetKey(window,GLFW_KEY_ESCAPE)){
@@ -159,7 +157,7 @@ void windowInput(){
 
 	float px = camPos.x;
 	float py = camPos.y;
-	float dz = windowObj.getZoom();
+	float dz = windowObj.getCameraController()->getCameraZoom();
 
 	if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_W)){
 		py+=camSpeed;
@@ -186,6 +184,7 @@ void windowInput(){
 	}
 
 	windowObj.getCameraController()->setCameraPos(px,py);
-	windowObj.zoom(dz);
-
+	//windowObj.zoom(dz);
+	windowObj.getCameraController()->setCameraZoom(dz);
+	windowObj.sizeChanged(true);
 }

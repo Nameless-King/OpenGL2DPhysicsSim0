@@ -45,6 +45,7 @@ public:
 	void displayWindowStats();
 	void clear();
 	void setClearColor(glm::vec4 clearColor);
+	void sizeChanged(bool hasChanged);
 	CameraController* getCameraController();
 	
 };

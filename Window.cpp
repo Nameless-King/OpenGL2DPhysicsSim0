@@ -5,7 +5,6 @@ Window::Window(int width, int height, const std::string& title):
 	m_height(height), 
 	 m_sizeChanged(false),
 	 m_title(title),
-	 m_zoom(2.0f),
 	 m_clearColor(glm::vec4(1.0f,1.0f,1.0f,1.0f)),
 	 m_cc(CameraController(glm::vec2(0.0f,0.0f))){
 	
@@ -17,6 +16,7 @@ Window::Window(int width, int height, const std::string& title):
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
 	
 	m_window = glfwCreateWindow(m_width,m_height,m_title.c_str(),NULL,NULL);
 	
@@ -28,10 +28,10 @@ Window::Window(int width, int height, const std::string& title):
 	glfwSwapInterval(1);
 	
 	m_projection = glm::ortho(
-		-(m_width/m_zoom),
-		(m_width/m_zoom),
-		-(m_height/m_zoom),
-		(m_height/m_zoom),
+		-(m_width/2.0f),
+		(m_width/2.0f),
+		-(m_height/2.0f),
+		(m_height/2.0f),
 		-1.0f,
 		1.0f
 	);
@@ -62,10 +62,10 @@ void Window::setFramebufferSizeCallback(void(*callback)(GLFWwindow*,int,int)){
 glm::mat4 Window::getProjectionMatrix(){
 	if(m_sizeChanged){
 		m_projection = glm::ortho(
-			-(m_width/(m_zoom)),
-			(m_width/(m_zoom)),
-			-(m_height/(m_zoom)),
-			(m_height/(m_zoom)),
+			-(m_width/m_cc.getCameraZoom()),
+			(m_width/m_cc.getCameraZoom()),
+			-(m_height/m_cc.getCameraZoom()),
+			(m_height/m_cc.getCameraZoom()),
 			-1.0f,
 			1.0f
 		);
@@ -91,17 +91,17 @@ void Window::pollEvents(){
 
 void Window::displayWindowStats(){
 	ImGui::Begin("Stats");
-	int zoom = (int)m_zoom;
+	int zoom = (int)m_cc.getCameraZoom();
 	if(ImGui::SliderInt("Zoom",&zoom,2,12)){
-		m_zoom = zoom;
+		m_cc.setCameraZoom(zoom);
 		m_sizeChanged = true;
 	}
 	ImGui::Text("Application Domain [%.3f,%.3f]",
-		-(m_width/(m_zoom)),
-		(m_width/(m_zoom)));
+		-(m_width/(m_cc.getCameraZoom())),
+		(m_width/(m_cc.getCameraZoom())));
 	ImGui::Text("Applicaiton Range 	[%.3f,%.3f]",
-		-(m_height/(m_zoom)),
-		(m_height/(m_zoom)));
+		-(m_height/(m_cc.getCameraZoom())),
+		(m_height/(m_cc.getCameraZoom())));
 	ImGui::ColorEdit3("clear color",(float*)&m_clearColor);
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
@@ -119,4 +119,8 @@ void Window::setClearColor(glm::vec4 clearColor){
 
 CameraController* Window::getCameraController(){
 	return &m_cc;
+}
+
+void Window::sizeChanged(bool hasChanged){
+	m_sizeChanged = hasChanged;
 }

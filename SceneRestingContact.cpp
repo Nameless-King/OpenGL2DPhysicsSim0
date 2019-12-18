@@ -151,7 +151,7 @@ void SceneRestingContact::update(Window* window){
 			if(col3.m_colliding){
 				m_contactResolver.object[0] = m_objects[j];
 				m_contactResolver.object[1] = m_objects[i];
-				m_contactResolver.m_restitution = 0.0f;
+				m_contactResolver.m_restitution = 1.0f;
 				testBoxCollision(m_objects[j],m_objects[i],&col3);
 				m_contactResolver.m_penetrationDepth = col3.m_penetrationDepth;
 				m_contactResolver.m_contactNormal = col3.m_contactNormal;
@@ -159,6 +159,34 @@ void SceneRestingContact::update(Window* window){
 			}
 		}
 	}
+
+	for(int i = 0;i<m_objects.size();i++){
+		ObjectContact col4 = ObjectContact::detectContact(m_wall->getHitbox(),m_objects[i]->getHitbox());
+
+		if(col4.m_colliding){
+			m_contactResolver.object[0] = m_objects[i];
+			m_contactResolver.object[1] = NULL;
+			m_contactResolver.m_restitution = 0.0f;
+			testBoxCollision(m_objects[i],m_wall,&col4);
+			m_contactResolver.m_penetrationDepth = col4.m_penetrationDepth;
+			m_contactResolver.m_contactNormal = col4.m_contactNormal;
+			m_collisionBatchResolver.registerContact(m_contactResolver);
+
+		}
+
+		ObjectContact col5 = ObjectContact::detectContact(m_player->getHitbox(),m_objects[i]->getHitbox());
+
+		if(col5.m_colliding){
+			m_contactResolver.object[0] = m_objects[i];
+			m_contactResolver.object[1] = m_player;
+			testBoxCollision(m_objects[i],m_player,&col5);
+			m_contactResolver.m_penetrationDepth = col5.m_penetrationDepth;
+			m_contactResolver.m_contactNormal = col5.m_contactNormal;
+			m_collisionBatchResolver.registerContact(m_contactResolver);
+		}
+	}
+
+	
 
 	
 	m_collisionBatchResolver.resolveContacts(ImGui::GetIO().DeltaTime);

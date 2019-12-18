@@ -15,7 +15,7 @@
 ../Dependencies/imgui/imgui_widgets.cpp
 ../Renderer.cpp
 ../StaticRenderer.cpp
-../GUIControlPanel.cpp
+../SceneManager.cpp
 ../Hitbox.cpp
 ../Physics2D.cpp
 ../EngineMaths.cpp
