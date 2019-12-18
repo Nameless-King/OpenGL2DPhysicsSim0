@@ -14,7 +14,7 @@ class Object{
 private:
 	const float* m_vertices;
 	Hitbox m_hitbox;
-	RigidBody2D* m_rb;
+	RigidBody2D* m_rigidbody;
 	glm::vec3 m_position;
 	glm::vec3 m_rotation;
 	glm::vec3 m_scale;
@@ -35,15 +35,19 @@ public:
 	void addVertices(const float vertices[]);
 	void createHitbox(HitboxType type);
 	
-	glm::vec3 getPos();
-	glm::vec3 getRot();
-	glm::vec3 getScl();
+
+	void getPosXY(glm::vec2& pos);
+
+	inline glm::vec3 getPositionXYZ() const {return m_position;}
+	inline glm::vec3 getRotationXYZ() const {return m_rotation;}
+	inline glm::vec3 getScaleXYZ() const {return m_scale;}
+
+	inline glm::vec2 getPositionXY() const {return glm::vec2(m_position.x,m_position.y);}
+	inline glm::vec2 getRotationXY() const {return glm::vec2(m_rotation.x,m_rotation.y);}
+	inline glm::vec2 getScaleXY() const {return glm::vec2(m_scale.x,m_scale.y);}
 	
 	inline Hitbox getHitbox() const {return m_hitbox;}
-	inline RigidBody2D* getRigidBody2D() const {return m_rb;}
-	inline glm::vec2 getPos2() const {return glm::vec2(m_position.x,m_position.y);}
-
-	void getPos(glm::vec2& pos);
+	inline RigidBody2D* getRigidBody2D() const {return m_rigidbody;}
 	
 };
 

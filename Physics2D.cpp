@@ -10,7 +10,7 @@ glm::vec2 Physics2D::getGravity(){
 //Integrator of the physics engine
 //Take not that the higher acceleration becomes to more unstable the physics
 void Physics2D::updatePos(Object* obj){
-	glm::vec2 objPos(obj->getPos().x,obj->getPos().y);
+	glm::vec2 objPos(obj->getPositionXYZ().x,obj->getPositionXYZ().y);
 	RigidBody2D* objRb = obj->getRigidBody2D();
 	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
 	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
@@ -48,7 +48,7 @@ void Physics2D::updatePos(Object* obj){
 
 void Physics2D::integrator2(Object* obj, float dt){
 	//refer to updatePos for more comments
-	glm::vec2 objPos(obj->getPos().x,obj->getPos().y);
+	glm::vec2 objPos(obj->getPositionXYZ().x,obj->getPositionXYZ().y);
 	RigidBody2D* objRb = obj->getRigidBody2D();
 	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
 	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
@@ -72,7 +72,7 @@ void Physics2D::integrator2(Object* obj, float dt){
 
 void Physics2D::gravitate(glm::vec2 dir, float mag, Object* obj){
 	
-	glm::vec2 ray = dir-obj->getPos2();
+	glm::vec2 ray = dir-obj->getPositionXY();
 	ray = glm::normalize(ray);
 	glm::vec2 force = ray * mag;
 	obj->getRigidBody2D()->addForce(force);
@@ -80,7 +80,7 @@ void Physics2D::gravitate(glm::vec2 dir, float mag, Object* obj){
 
 void Physics2D::integrator3(Object* obj, float dt){
 	//refer to updatePos for more comments
-	glm::vec2 objPos(obj->getPos().x,obj->getPos().y);
+	glm::vec2 objPos(obj->getPositionXYZ().x,obj->getPositionXYZ().y);
 	RigidBody2D* objRb = obj->getRigidBody2D();
 	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
 	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
@@ -99,5 +99,5 @@ void Physics2D::integrator3(Object* obj, float dt){
 }
 
 void Physics2D::updatePos(Object* object, float dt){
-	object->getPos2() +=   dt * *(object->getRigidBody2D()->getVelocity());
+	object->getPositionXY() +=   dt * *(object->getRigidBody2D()->getVelocity());
 }

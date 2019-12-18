@@ -5,7 +5,7 @@ Object::Object():
 	m_scale(glm::vec3(1.0f,1.0f,1.0f)),
 	m_vertices(nullptr),
 	m_hitbox(Hitbox()),
-	m_rb(NULL){
+	m_rigidbody(NULL){
 	}
 
 Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
@@ -14,11 +14,11 @@ Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
 	m_scale(scale),
 	m_vertices(nullptr),
 	m_hitbox(Hitbox()),
-	m_rb(NULL){
+	m_rigidbody(NULL){
 	}
 	
 Object::~Object(){
-	delete m_rb;
+	delete m_rigidbody;
 }
 
 glm::mat4 Object::getModelMatrix(){
@@ -53,7 +53,7 @@ void Object::setScl(float xScl, float yScl, float zScl){
 }
 
 void Object::addRigidBody2D(RigidBody2D* rb){
-	m_rb = rb;
+	m_rigidbody = rb;
 }
 
 void Object::addVertices(const float vertices[]){
@@ -64,19 +64,6 @@ void Object::createHitbox(HitboxType type){
 	m_hitbox = Hitbox(&m_position,&m_scale,m_vertices,type);
 }
 
-glm::vec3 Object::getPos(){
-	return m_position;
-}
-
-glm::vec3 Object::getRot(){
-	return m_rotation;
-}
-
-glm::vec3 Object::getScl(){
-	return m_scale;
-}
-
-void Object::getPos(glm::vec2& pos){
+void Object::getPosXY(glm::vec2& pos){
 	pos = glm::vec2(m_position.x,m_position.y);
 }
-

@@ -190,8 +190,8 @@ void SceneForceGenerator::renderGUI(){
 }
 	
 void SceneForceGenerator::input(Window* window){
-	float px = m_staticObj->getPos().x;
-	float py = m_staticObj->getPos().y;
+	float px = m_staticObj->getPositionXYZ().x;
+	float py = m_staticObj->getPositionXYZ().y;
 	float speed = 5.0f;
 
 	if(glfwGetKey(window->getWindow(),GLFW_KEY_UP)){

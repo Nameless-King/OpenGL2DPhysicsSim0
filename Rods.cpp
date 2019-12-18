@@ -1,7 +1,7 @@
 #include "./Rods.h"
 
 float Rods::currentLength() const{
-    glm::vec2 relativePosition = m_objects[0]->getPos2() - m_objects[1]->getPos2();
+    glm::vec2 relativePosition = m_objects[0]->getPositionXY() - m_objects[1]->getPositionXY();
     return glm::length(relativePosition);
 }
 
@@ -16,7 +16,7 @@ unsigned int Rods::fillContact(ObjectContact* contact, unsigned int limit) const
     contact->object[0] = m_objects[0];
     contact->object[1] = m_objects[1];
 
-    glm::vec2 normal = m_objects[1]->getPos2() - m_objects[0]->getPos2();
+    glm::vec2 normal = m_objects[1]->getPositionXY() - m_objects[0]->getPositionXY();
     normal = glm::normalize(normal);
 
     //value of contact normal depends on whether this is extending or compressing

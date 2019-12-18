@@ -175,8 +175,8 @@ void SceneCollisions::renderGUI(){
 }
 
 void SceneCollisions::input(Window* window){
-    float px = m_player->getPos().x;
-    float py = m_player->getPos().y;
+    float px = m_player->getPositionXYZ().x;
+    float py = m_player->getPositionXYZ().y;
     float vx = 0.0f;
     float vy = 0.0f;
     float speed = 1.0f;
@@ -212,7 +212,7 @@ void SceneCollisions::input(Window* window){
 
 void SceneCollisions::checkBounds(){
     for(int i = 0;i<m_objects.size();i++){
-        glm::vec2 pos = m_objects[i]->getPos2();
+        glm::vec2 pos = m_objects[i]->getPositionXY();
         glm::vec2 vel = *(m_objects[i]->getRigidBody2D()->getVelocity());
         if(pos.y < -300 || pos.y > 300){
             m_objects[i]->getRigidBody2D()->setVelocity(glm::vec2(vel.x,-vel.y));
@@ -224,7 +224,7 @@ void SceneCollisions::checkBounds(){
         }
     }
 
-    glm::vec2 pos = m_player->getPos2();
+    glm::vec2 pos = m_player->getPositionXY();
     glm::vec2 vel = *(m_player->getRigidBody2D()->getVelocity());
     if(pos.y<-300 || pos.y >300){
         m_player->getRigidBody2D()->setVelocity(glm::vec2(vel.x,-vel.y));

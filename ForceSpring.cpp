@@ -11,11 +11,9 @@ ForceSpring::ForceSpring(Object* other, float springConstant, float equilibrium)
 	m_equilibrium(equilibrium){}
 	
 void ForceSpring::updateForce(Object* obj, float dt){
-	glm::vec2 force;
+	glm::vec2 force = obj->getPositionXY();
 	
-	obj->getPos(force);
-	
-	force -= m_other->getPos2();
+	force -= m_other->getPositionXY();
 
 	float magnitude = glm::length(force);
 	magnitude = magnitude - m_equilibrium;

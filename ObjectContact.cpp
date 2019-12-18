@@ -141,9 +141,9 @@ void ObjectContact::resolveInterpenetration(float dt){
 
     float percent = 1.0f;
 
-    object[0]->setPos(object[0]->getPos2() + percent * -movePerMass * object[0]->getRigidBody2D()->getInverseMass());
+    object[0]->setPos(object[0]->getPositionXY() + percent * -movePerMass * object[0]->getRigidBody2D()->getInverseMass());
     if(object[1]){
-        object[1]->setPos(object[1]->getPos2() + percent * movePerMass * object[1]->getRigidBody2D()->getInverseMass());
+        object[1]->setPos(object[1]->getPositionXY() + percent * movePerMass * object[1]->getRigidBody2D()->getInverseMass());
     }
 }
 

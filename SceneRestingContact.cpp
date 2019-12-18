@@ -178,7 +178,7 @@ void SceneRestingContact::renderGUI(){
 
 void SceneRestingContact::input(Window* window){
 	glm::vec2 velocity(0.0f,0.0f);
-	glm::vec2 position = m_player->getPos2();
+	glm::vec2 position = m_player->getPositionXY();
 	float speed = 100.0f;
 	
 	if(glfwGetKey(window->getWindow(),GLFW_KEY_UP)){
@@ -237,7 +237,7 @@ std::string SceneRestingContact::getSceneTitle() const {
 
 void SceneRestingContact::boundCheck(Window* window, Object* object){
 	glm::vec2* vel = object->getRigidBody2D()->getVelocity();
-	glm::vec2 pos = object->getPos();
+	glm::vec2 pos = object->getPositionXYZ();
 	if(pos.y < window->getHeight()/-2.0f + 5.0f){
 		object->getRigidBody2D()->setVelocity(0.0f,0.0f);
 		object->setPos(pos.x,window->getHeight()/-2.0f + 5.0f);
@@ -245,8 +245,8 @@ void SceneRestingContact::boundCheck(Window* window, Object* object){
 }
 
 void SceneRestingContact::testBoxCollision(Object* obj1, Object* obj2, ObjectContact* col){
-	if(col->m_distance.x  / (obj1->getScl().x * obj2->getScl().x)> col->m_distance.y / (obj1->getScl().y * obj2->getScl().y)){
-		if(obj1->getPos2().x > obj2->getPos2().x){
+	if(col->m_distance.x  / (obj1->getScaleXYZ().x * obj2->getScaleXYZ().x)> col->m_distance.y / (obj1->getScaleXYZ().y * obj2->getScaleXYZ().y)){
+		if(obj1->getPositionXY().x > obj2->getPositionXY().x){
 			col->m_contactNormal.x = 1;
 			col->m_contactNormal.y = 0;
 		}else{
@@ -254,7 +254,7 @@ void SceneRestingContact::testBoxCollision(Object* obj1, Object* obj2, ObjectCon
 			col->m_contactNormal.y = 0;
 		}
 	}else{
-		if(obj1->getPos2().y > obj2->getPos2().y){
+		if(obj1->getPositionXY().y > obj2->getPositionXY().y){
 			col->m_contactNormal.x = 0;
 			col->m_contactNormal.y = 1;
 		}else{

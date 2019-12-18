@@ -11,8 +11,7 @@ ForceAnchoredSpring::~ForceAnchoredSpring(){
 }
 
 void ForceAnchoredSpring::updateForce(Object* object, float dt){
-    glm::vec2 force;
-    object->getPos(force);
+    glm::vec2 force = object->getPositionXY();
     force -= * m_anchor;
 
     float magnitude = glm::length(force);
