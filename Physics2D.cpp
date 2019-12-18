@@ -7,17 +7,27 @@ glm::vec2 Physics2D::getGravity(){
 	return gravity;
 }
 
+
+
+void Physics2D::gravitate(glm::vec2 dir, float mag, Object* obj){
+	
+	glm::vec2 ray = dir-obj->getPositionXY();
+	ray = glm::normalize(ray);
+	glm::vec2 force = ray * mag;
+	obj->getRigidBody2D()->addForce(force);
+}
+
 //Integrator of the physics engine
 //Take not that the higher acceleration becomes to more unstable the physics
-void Physics2D::updatePos(Object* obj){
+void Physics2D::integrator3(Object* obj, float dt){
+	//refer to updatePos for more comments
 	glm::vec2 objPos(obj->getPositionXYZ().x,obj->getPositionXYZ().y);
 	RigidBody2D* objRb = obj->getRigidBody2D();
 	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
 	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
 	glm::vec2 objAcl(objRb->getAcceleration()->x,objRb->getAcceleration()->y);
-	float dt = ImGui::GetIO().DeltaTime;
 	
-	objAcl = objRb->getInverseMass() * objSigmaForce;
+	objAcl += objRb->getInverseMass() * objSigmaForce;
 	
 	//update velocity
 	objVel += dt*objAcl;
@@ -33,71 +43,16 @@ void Physics2D::updatePos(Object* obj){
 		-though the smaller the damping value the more visible the spikes are
 		when framerate dependent
 	*/
-	objVel *= pow(objRb->getDamping(), dt);
-	
+	//objVel *= pow(objRb->getDamping(), dt);
+
 	//update position
 	objPos += dt*objVel;
-	
+
 	//not needed, the resulting value will by much too low to make a difference
 	//objPos += dt*dt*0.5f*objRb->getAcceleration();
 	
-	//objRb->setAcceleration(objAcl.x,objAcl.y);
-	objRb->setVelocity(objVel.x,objVel.y);
-	obj->setPos(objPos.x,objPos.y);
-}
-
-void Physics2D::integrator2(Object* obj, float dt){
-	//refer to updatePos for more comments
-	glm::vec2 objPos(obj->getPositionXYZ().x,obj->getPositionXYZ().y);
-	RigidBody2D* objRb = obj->getRigidBody2D();
-	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
-	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
-	glm::vec2 objAcl(objRb->getAcceleration()->x,objRb->getAcceleration()->y);
-	
-	
-	objAcl += objRb->getInverseMass() * objSigmaForce;
-	
-	objVel += dt*objAcl;
-	
-	objVel *= pow(objRb->getDamping(), dt);
-	
-	objPos += dt*objVel;
-	
 	objRb->setVelocity(objVel.x,objVel.y);
 	obj->setPos(objPos.x,objPos.y);
 	
 	objRb->zeroForce();
-
-}
-
-void Physics2D::gravitate(glm::vec2 dir, float mag, Object* obj){
-	
-	glm::vec2 ray = dir-obj->getPositionXY();
-	ray = glm::normalize(ray);
-	glm::vec2 force = ray * mag;
-	obj->getRigidBody2D()->addForce(force);
-}
-
-void Physics2D::integrator3(Object* obj, float dt){
-	//refer to updatePos for more comments
-	glm::vec2 objPos(obj->getPositionXYZ().x,obj->getPositionXYZ().y);
-	RigidBody2D* objRb = obj->getRigidBody2D();
-	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
-	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
-	glm::vec2 objAcl(objRb->getAcceleration()->x,objRb->getAcceleration()->y);
-	
-	objAcl += objRb->getInverseMass() * objSigmaForce;
-	
-	objVel += dt*objAcl;
-	
-	objPos += dt*objVel;
-	
-	objRb->setVelocity(objVel.x,objVel.y);
-	obj->setPos(objPos.x,objPos.y);
-	
-	objRb->zeroForce();
-}
-
-void Physics2D::updatePos(Object* object, float dt){
-	object->getPositionXY() +=   dt * *(object->getRigidBody2D()->getVelocity());
 }

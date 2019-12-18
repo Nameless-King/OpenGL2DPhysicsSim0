@@ -56,7 +56,7 @@ void SceneIntegrator::render(Window* window){
 
 void SceneIntegrator::update(Window* window){
 	input(window);
-	Physics2D::updatePos(m_player);
+	Physics2D::integrator3(m_player,ImGui::GetIO().DeltaTime);
 }
 
 void SceneIntegrator::renderGUI(){
