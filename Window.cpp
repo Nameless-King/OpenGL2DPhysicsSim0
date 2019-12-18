@@ -108,8 +108,9 @@ void Window::displayWindowStats(){
 	ImGui::End();
 }
 
-void Window::clearColor(){
+void Window::clear(){
 	glClearColor(m_clearColor.x,m_clearColor.y,m_clearColor.z,m_clearColor.w);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 }
 
 void Window::setClearColor(glm::vec4 clearColor){

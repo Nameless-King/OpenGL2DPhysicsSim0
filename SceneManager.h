@@ -11,7 +11,7 @@
 #include "./Dependencies/imgui/imgui_impl_glfw.h"
 #include "./Dependencies/imgui/imgui_impl_opengl3.h"
 
-class GUIControlPanel{
+class SceneManager{
 public:
 	static void init(GLFWwindow* window, bool installCallbacks);
 	static void start();

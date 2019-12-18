@@ -1,9 +1,9 @@
-#include "./GuiControlPanel.h"
+#include "./SceneManager.h"
 
 static std::vector<Scene*> s_scenes;
 static int s_currentScene = -1;
 
-void GUIControlPanel::init(GLFWwindow* window, bool installCallbacks){
+void SceneManager::init(GLFWwindow* window, bool installCallbacks){
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	
@@ -13,13 +13,13 @@ void GUIControlPanel::init(GLFWwindow* window, bool installCallbacks){
 	ImGui_ImplOpenGL3_Init("#version 130");
 }
 
-void GUIControlPanel::start(){
+void SceneManager::start(){
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 }
 
-void GUIControlPanel::renderMenu(){
+void SceneManager::renderMenu(){
 	ImGui::Begin("Scene(s)");
 	ImGui::RadioButton("Default",&s_currentScene,-1);
 	for(int i = 0;i<s_scenes.size();i++){
@@ -28,37 +28,37 @@ void GUIControlPanel::renderMenu(){
 	ImGui::End();
 }
 
-void GUIControlPanel::registerScene(Scene* scene){
+void SceneManager::registerScene(Scene* scene){
 	s_scenes.push_back(scene);
 }
 
-void GUIControlPanel::finalize(){
+void SceneManager::finalize(){
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void GUIControlPanel::listScene(Scene* scene,int sceneIndex){
+void SceneManager::listScene(Scene* scene,int sceneIndex){
 	if(!scene){
 		ImGui::RadioButton("Default",&s_currentScene,sceneIndex);
 	}
 	ImGui::RadioButton(scene->getSceneTitle().c_str(),&s_currentScene,sceneIndex);
 }
 
-void GUIControlPanel::updateCurrentScene(Window* window){
+void SceneManager::updateCurrentScene(Window* window){
 	if(s_currentScene>=0){
 		s_scenes[s_currentScene]->update(window);
 	}
 	
 }
 
-void GUIControlPanel::renderCurrentSceneGUI(){
+void SceneManager::renderCurrentSceneGUI(){
 	if(s_currentScene>=0){
 		s_scenes[s_currentScene]->renderGUI();
 	}
 	
 }
 
-void GUIControlPanel::renderCurrentScene(Window* window){
+void SceneManager::renderCurrentScene(Window* window){
 	if(s_currentScene>=0){
 		s_scenes[s_currentScene]->render(window);
 	}

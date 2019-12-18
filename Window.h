@@ -43,7 +43,7 @@ public:
 	void pollEvents();
 	glm::mat4 getProjectionMatrix();
 	void displayWindowStats();
-	void clearColor();
+	void clear();
 	void setClearColor(glm::vec4 clearColor);
 	CameraController* getCameraController();
 	

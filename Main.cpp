@@ -21,7 +21,7 @@
 #include "Object.h"
 #include "Renderer.h"
 #include "StaticRenderer.h"
-#include "GUIControlPanel.h"
+#include "SceneManager.h"
 #include "Hitbox.h"
 #include "Physics2D.h"
 
@@ -62,7 +62,7 @@ int main(){
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(MessageCallback,0);
 	
-	GUIControlPanel::init(windowObj.getWindow(),true);	
+	SceneManager::init(windowObj.getWindow(),true);	
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -87,13 +87,13 @@ int main(){
 	SceneCollisions scene5(&shader0, &texture0, StaticRenderer::getVertices());
 	SceneRestingContact scene6(&shader0,&texture2,StaticRenderer::getVertices());
 
-	GUIControlPanel::registerScene(&scene0);
-	GUIControlPanel::registerScene(&scene1);
-	GUIControlPanel::registerScene(&scene2);
-	GUIControlPanel::registerScene(&scene3);
-	GUIControlPanel::registerScene(&scene4);
-	GUIControlPanel::registerScene(&scene5);
-	GUIControlPanel::registerScene(&scene6);
+	SceneManager::registerScene(&scene0);
+	SceneManager::registerScene(&scene1);
+	SceneManager::registerScene(&scene2);
+	SceneManager::registerScene(&scene3);
+	SceneManager::registerScene(&scene4);
+	SceneManager::registerScene(&scene5);
+	SceneManager::registerScene(&scene6);
 
 	//glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
@@ -105,19 +105,19 @@ int main(){
 		windowInput();
 
 	
-		GUIControlPanel::updateCurrentScene(&windowObj);
-		GUIControlPanel::start();
-		GUIControlPanel::renderMenu();
+		SceneManager::updateCurrentScene(&windowObj);
+		SceneManager::start();
+		SceneManager::renderMenu();
 	
 		windowObj.displayWindowStats();
 
-		GUIControlPanel::renderCurrentSceneGUI();
+		SceneManager::renderCurrentSceneGUI();
 		
-		windowObj.clearColor();
-		glClear(GL_COLOR_BUFFER_BIT);	
+		windowObj.clear();
+		
 
-		GUIControlPanel::renderCurrentScene(&windowObj);
-		GUIControlPanel::finalize();
+		SceneManager::renderCurrentScene(&windowObj);
+		SceneManager::finalize();
 
 		windowObj.swapBuffers();
 	}
