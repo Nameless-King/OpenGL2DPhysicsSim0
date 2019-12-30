@@ -6,7 +6,8 @@ Window::Window(int width, int height, const std::string& title):
 	 m_sizeChanged(false),
 	 m_title(title),
 	 m_clearColor(glm::vec4(1.0f,1.0f,1.0f,1.0f)),
-	 m_cc(CameraController(glm::vec2(0.0f,0.0f))){
+	 m_cc(CameraController(glm::vec2(0.0f,0.0f))),
+	 m_zoom(2.0f){
 	
 	if(!glfwInit()){
 		std::cout << "Error glfwInit" << std::endl;
@@ -16,7 +17,7 @@ Window::Window(int width, int height, const std::string& title):
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT,GL_TRUE);
-	glfwWindowHint(GLFW_RESIZABLE,GL_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE,GL_TRUE);
 	
 	m_window = glfwCreateWindow(m_width,m_height,m_title.c_str(),NULL,NULL);
 	
@@ -60,7 +61,7 @@ void Window::setFramebufferSizeCallback(void(*callback)(GLFWwindow*,int,int)){
 }
 
 glm::mat4 Window::getProjectionMatrix(){
-	if(m_sizeChanged){
+	if(m_sizeChanged || m_zoom != m_cc.getCameraZoom()){
 		m_projection = glm::ortho(
 			-(m_width/m_cc.getCameraZoom()),
 			(m_width/m_cc.getCameraZoom()),
@@ -70,6 +71,7 @@ glm::mat4 Window::getProjectionMatrix(){
 			1.0f
 		);
 		m_sizeChanged = false;
+		m_zoom = m_cc.getCameraZoom();
 	}
 	return m_projection;
 }

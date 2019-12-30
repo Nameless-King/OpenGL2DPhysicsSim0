@@ -40,7 +40,7 @@ SceneRestingContact::SceneRestingContact(Shader* shader, Texture* texture, const
 	);
 	m_restingObject->addVertices(vertices);
 	m_restingObject->createHitbox(HitboxType::AxisAligned);
-	m_restingObject->addRigidBody2D(new RigidBody2D(5.0f));
+	m_restingObject->addRigidBody2D(new RigidBody2D(50.0f));
 
 	m_wall = new Object(
 		glm::vec3(0.0f,-100.0f,0.0f),
@@ -113,7 +113,6 @@ void SceneRestingContact::update(Window* window){
 		m_contactResolver.object[1] = NULL;
 		m_contactResolver.m_restitution = 0.0f;
 		testBoxCollision(m_player,m_wall,&col0);
-	
 		m_contactResolver.m_penetrationDepth = col0.m_penetrationDepth;
 		m_contactResolver.m_contactNormal = col0.m_contactNormal;
 		m_collisionBatchResolver.registerContact(m_contactResolver);
@@ -124,7 +123,7 @@ void SceneRestingContact::update(Window* window){
 	if(col1.m_colliding){
 		m_contactResolver.object[0] = m_restingObject;
 		m_contactResolver.object[1] = NULL;
-		m_contactResolver.m_restitution = 0.0f; //don't believe it needs to be zero, but just in case
+		m_contactResolver.m_restitution = 0.0f; 
 		testBoxCollision(m_restingObject,m_wall,&col1);
 		m_contactResolver.m_penetrationDepth = col1.m_penetrationDepth;
 		m_contactResolver.m_contactNormal = col1.m_contactNormal;
@@ -179,9 +178,22 @@ void SceneRestingContact::update(Window* window){
 		if(col5.m_colliding){
 			m_contactResolver.object[0] = m_objects[i];
 			m_contactResolver.object[1] = m_player;
+			m_contactResolver.m_restitution = 1.0f;
 			testBoxCollision(m_objects[i],m_player,&col5);
 			m_contactResolver.m_penetrationDepth = col5.m_penetrationDepth;
 			m_contactResolver.m_contactNormal = col5.m_contactNormal;
+			m_collisionBatchResolver.registerContact(m_contactResolver);
+		}
+
+		ObjectContact col6 = ObjectContact::detectContact(m_restingObject->getHitbox(),m_objects[i]->getHitbox());
+
+		if(col6.m_colliding){
+			m_contactResolver.object[0] = m_objects[i];
+			m_contactResolver.object[1] = m_restingObject;
+			m_contactResolver.m_restitution = 1.0f;
+			testBoxCollision(m_objects[i],m_restingObject,&col6);
+			m_contactResolver.m_penetrationDepth = col6.m_penetrationDepth;
+			m_contactResolver.m_contactNormal = col6.m_contactNormal;
 			m_collisionBatchResolver.registerContact(m_contactResolver);
 		}
 	}

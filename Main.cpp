@@ -32,8 +32,10 @@
 #include "SceneBuoyantForce.h"
 #include "SceneCollisions.h"
 #include "SceneRestingContact.h"
+#include "ScenePhysicsSystem.h"
+//#include "SceneMassAggregate.h"
 
-void input(GLFWwindow* window);
+void input();
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
 void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar* message, const void* userParam);
@@ -51,7 +53,7 @@ int main(){
 	if(windowObj.getWindow() == NULL){
 		return EXIT_FAILURE;
 	}
-	//windowObj.setFramebufferSizeCallback(framebuffer_size_callback);
+	windowObj.setFramebufferSizeCallback(framebuffer_size_callback);
 	windowObj.setClearColor(glm::vec4(0.9f,0.7f,0.7f,1.0f));
 
 	if(glewInit() != GLEW_OK){
@@ -86,6 +88,8 @@ int main(){
 	SceneBuoyantForce scene4(&shaderQuad, &textureCircle , StaticRenderer::getVertices());
 	SceneCollisions scene5(&shaderQuad, &textureCircle, StaticRenderer::getVertices());
 	SceneRestingContact scene6(&shaderQuad,&textureWhite,StaticRenderer::getVertices());
+	ScenePhysicsSystem scene7(&shaderQuad, &textureWhite, StaticRenderer::getVertices());
+	
 
 	SceneManager::registerScene(&scene0);
 	SceneManager::registerScene(&scene1);
@@ -94,6 +98,8 @@ int main(){
 	SceneManager::registerScene(&scene4);
 	SceneManager::registerScene(&scene5);
 	SceneManager::registerScene(&scene6);
+	SceneManager::registerScene(&scene7);
+	
 
 	//glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
@@ -101,7 +107,7 @@ int main(){
 	std::cout << "Retrieved Error Code: " << glGetError() << std::endl;
 	while(!windowObj.windowShouldClose()){
 		windowObj.pollEvents();
-		input(windowObj.getWindow());
+		input();
 		windowInput();
 
 		SceneManager::updateCurrentScene(&windowObj);
@@ -127,16 +133,16 @@ int main(){
 	
 }	
 
-/*void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0,width,height);
 	windowObj.resize(width,height);
-}*/
+}
 
-void input(GLFWwindow* window){
-	if(glfwGetKey(window,GLFW_KEY_ESCAPE)){
+void input(){
+	if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_ESCAPE)){
 		windowObj.closeWindow();
 	}
 }
@@ -186,5 +192,5 @@ void windowInput(){
 	windowObj.getCameraController()->setCameraPos(px,py);
 	//windowObj.zoom(dz);
 	windowObj.getCameraController()->setCameraZoom(dz);
-	windowObj.sizeChanged(true);
+	
 }
