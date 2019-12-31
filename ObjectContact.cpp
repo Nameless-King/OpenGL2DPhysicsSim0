@@ -8,6 +8,8 @@ ObjectContact::ObjectContact(const ObjectContact& contact){
     m_restitution = contact.m_restitution;
     m_contactNormal = contact.m_contactNormal;
     m_penetrationDepth = contact.m_penetrationDepth;
+    m_distance = contact.m_distance;
+    m_colliding = contact.m_colliding;
 }
 
 

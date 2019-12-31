@@ -60,3 +60,56 @@ void ScenePhysicsSystem::input(Window* window){
 std::string ScenePhysicsSystem::getSceneTitle() const {
 	return m_title;
 }
+
+void ScenePhysicsSystem::startFrame(){
+	ObjectRegistration* currentRegister;
+	currentRegister = m_firstObject;
+
+	while(currentRegister){
+		//Remove all forces frome the accumulator
+		currentRegister->object->getRigidBody2D()->zeroForce();
+		//Get the next registration
+		currentRegister = currentRegister->next;
+	}
+}
+
+unsigned int ScenePhysicsSystem::generateContacts(){
+	unsigned int limit = m_maxContacts;
+	ObjectContact* nextContact = m_contacts;
+
+	ContactGeneratorRegistration* currentRegister = m_firstContactGenerator;
+
+	while(currentRegister){
+		limit--;
+
+		currentRegister->generator->registerContact(*nextContact);
+
+		//When out of contacts
+		if(limit <= 0){
+			break;
+		}
+
+		currentRegister = currentRegister->next;
+	}
+
+	//return number of contacts used;
+	return m_maxContacts - limit;
+}
+
+void ScenePhysicsSystem::integrate(float dt){
+	ObjectRegistration* currentRegister = m_firstObject;
+	while(currentRegister){
+		Physics2D::integrator3(currentRegister->object,dt);
+		currentRegister = currentRegister->next;
+	}
+}
+
+void ScenePhysicsSystem::runPhysics(float dt){
+	//apply force generators
+
+	integrate(ImGui::GetIO().DeltaTime);
+
+	//generate contacts
+
+	//process contacts
+}

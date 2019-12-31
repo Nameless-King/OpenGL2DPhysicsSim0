@@ -16,16 +16,7 @@ SceneMassAggregate::~SceneMassAggregate(){
 }
 
 void SceneMassAggregate::render(Window* window){
-	StaticRenderer::bind();
-	m_shader->use();
-	m_shader->setUniformMat4f("u_projection",window->getProjectionMatrix());
-	m_shader->setUniformMat4f("u_view",window->getCameraController()->getViewMatrix());
 	
-	
-	
-	
-	
-	StaticRenderer::unbind();
 
 }
 

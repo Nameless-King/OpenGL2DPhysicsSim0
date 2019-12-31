@@ -20,9 +20,10 @@
 #include "./Hitbox.h"
 #include "./CollisionBatchResolver.h"
 #include "./ObjectContact.h"
+#include "./Physics2D.h"
 
 class ScenePhysicsSystem : public Scene{
-	struct ObjectRegistration{
+ struct ObjectRegistration{
 		Object* object;
 		ObjectRegistration* next;
 	};
@@ -54,4 +55,28 @@ class ScenePhysicsSystem : public Scene{
 		void renderGUI();
 	private:
 		void input(Window* window);
+		/**
+		 * Initializes the world for a simulation frame. This clears
+		 * the force accumulators for objects in the world. After
+		 * claaing this, the objects can have their forces for this
+		 * frame added.
+		 */
+		void startFrame();
+
+		/**
+		 * Calls each of the registered contact generators to report
+		 * their contacts. Returns the number of generated contacts.
+		 */
+		unsigned int generateContacts();
+
+		/**
+		 * Integrates all the objects in this world forward in time
+		 * by the given duration
+		 */
+		void integrate(float dt);
+
+		/**
+		 * Processes all the physics for the object world.
+		 */
+		void runPhysics(float dt);
 };
