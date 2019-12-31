@@ -73,27 +73,27 @@ void ScenePhysicsSystem::startFrame(){
 	}
 }
 
-unsigned int ScenePhysicsSystem::generateContacts(){
-	unsigned int limit = m_maxContacts;
-	ObjectContact* nextContact = m_contacts;
+void ScenePhysicsSystem::generateContacts(){
+	//unsigned int limit = m_maxContacts;
 
-	ContactGeneratorRegistration* currentRegister = m_firstContactGenerator;
+	ContactRegistration* currentRegister = m_firstContact;
+	
 
 	while(currentRegister){
-		limit--;
+		//limit--;
 
-		currentRegister->generator->registerContact(*nextContact);
+		m_collisionResolver->registerContact(*(currentRegister->contact));
 
 		//When out of contacts
-		if(limit <= 0){
-			break;
-		}
+		//if(limit <= 0){
+		//	break;
+		//}
 
 		currentRegister = currentRegister->next;
 	}
 
 	//return number of contacts used;
-	return m_maxContacts - limit;
+	//return m_maxContacts - limit;
 }
 
 void ScenePhysicsSystem::integrate(float dt){
@@ -110,6 +110,18 @@ void ScenePhysicsSystem::runPhysics(float dt){
 	integrate(ImGui::GetIO().DeltaTime);
 
 	//generate contacts
+	generateContacts();
 
 	//process contacts
+	m_collisionResolver->resolveContacts(ImGui::GetIO().DeltaTime);
+}
+
+void ScenePhysicsSystem::detectAllContacts(){
+	ObjectRegistration* hittee = m_firstObject;
+	while(hittee){
+		ObjectRegistration* hitter = hittee->next;
+		while(hitter){
+			ObjectContact gendContact = ObjectContact::detectContact(hittee->object->getHitbox(),hitter->object->getHitbox());
+		}
+	}
 }

@@ -34,14 +34,14 @@ class ScenePhysicsSystem : public Scene{
 		Texture* m_texture;
 		ObjectRegistration* m_firstObject;
 
-		struct ContactGeneratorRegistration{
-			CollisionBatchResolver* generator;
-			ContactGeneratorRegistration* next;
+		struct ContactRegistration{
+			ObjectContact* contact;
+			ContactRegistration* next;
 		};
 
-		ContactGeneratorRegistration* m_firstContactGenerator;
+		ContactRegistration* m_firstContact;
 
-		ObjectContact* m_contacts;
+		CollisionBatchResolver* m_collisionResolver;
 
 		unsigned int m_maxContacts;
 	
@@ -67,7 +67,9 @@ class ScenePhysicsSystem : public Scene{
 		 * Calls each of the registered contact generators to report
 		 * their contacts. Returns the number of generated contacts.
 		 */
-		unsigned int generateContacts();
+		//unsigned int generateContacts();
+		void generateContacts();
+	
 
 		/**
 		 * Integrates all the objects in this world forward in time
@@ -79,4 +81,9 @@ class ScenePhysicsSystem : public Scene{
 		 * Processes all the physics for the object world.
 		 */
 		void runPhysics(float dt);
+
+		/**
+		 * Get contacts between all objects in the scene
+		 */
+		void detectAllContacts();
 };
