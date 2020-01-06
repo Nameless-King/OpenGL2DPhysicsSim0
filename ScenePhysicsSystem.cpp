@@ -9,11 +9,30 @@ ScenePhysicsSystem::ScenePhysicsSystem():
 ScenePhysicsSystem::ScenePhysicsSystem(Shader* shader, Texture* texture, const float vertices[]):
 	m_title("ScenePhysicsSystem"),
 	m_shader(shader),
-	m_texture(texture){
+	m_texture(texture),
+	m_maxContacts(0){
+
+	m_firstObject = new ObjectRegistration();
+	m_firstObject->object = new Object(
+		glm::vec3(0.0f,0.0f,0.0f),
+		glm::vec3(0.0f,0.0f,0.0f),
+		glm::vec3(1.0f,1.0f,1.0f)
+	);
+	m_firstObject->object->addVertices(vertices);
+	m_firstObject->object->createHitbox(HitboxType::AxisAligned);
+	m_firstObject->object->addRigidBody2D(new RigidBody2D(5.0f));
+
+	m_collisionResolver = new CollisionBatchResolver(1);
 }
 
 ScenePhysicsSystem::~ScenePhysicsSystem(){
+	ObjectRegistration* currentRegistry = m_firstObject;
+	while(currentRegistry){
+		delete currentRegistry->object;
+		currentRegistry = currentRegistry->next;
+	}
 
+	delete m_collisionResolver;
 }
 
 void ScenePhysicsSystem::render(Window* window){
@@ -23,13 +42,20 @@ void ScenePhysicsSystem::render(Window* window){
 	m_shader->setUniformMat4f("u_projection",window->getProjectionMatrix());
 	m_shader->setUniformMat4f("u_view",window->getCameraController()->getViewMatrix());
 	
+	ObjectRegistration* currentRegistry = m_firstObject;
+	while(currentRegistry){
+		m_shader->setUniformMat4f("u_model",currentRegistry->object->getModelMatrix());
+		StaticRenderer::renderObject();
+
+		currentRegistry = currentRegistry->next;
+	}
 	
 	m_texture->unbind();
 	StaticRenderer::unbind();
 }
 
 void ScenePhysicsSystem::update(Window* window){
-
+	runPhysics(ImGui::GetIO().DeltaTime);
 	
 	input(window);
 }
@@ -62,8 +88,7 @@ std::string ScenePhysicsSystem::getSceneTitle() const {
 }
 
 void ScenePhysicsSystem::startFrame(){
-	ObjectRegistration* currentRegister;
-	currentRegister = m_firstObject;
+	ObjectRegistration* currentRegister = m_firstObject;
 
 	while(currentRegister){
 		//Remove all forces frome the accumulator
@@ -74,26 +99,17 @@ void ScenePhysicsSystem::startFrame(){
 }
 
 void ScenePhysicsSystem::generateContacts(){
-	//unsigned int limit = m_maxContacts;
-
-	ContactRegistration* currentRegister = m_firstContact;
-	
-
-	while(currentRegister){
-		//limit--;
-
-		m_collisionResolver->registerContact(*(currentRegister->contact));
-
-		//When out of contacts
-		//if(limit <= 0){
-		//	break;
-		//}
-
-		currentRegister = currentRegister->next;
+	ObjectRegistration* hittee = m_firstObject;
+	while(hittee){
+		ObjectRegistration* hitter = hittee->next;
+		while(hitter){
+			ObjectContact generatedContact = ObjectContact::detectContact(hittee->object->getHitbox(),hitter->object->getHitbox());
+			if(generatedContact.m_colliding){
+				m_collisionResolver->registerContact(generatedContact);
+			}
+		}
+		hittee = hittee->next;
 	}
-
-	//return number of contacts used;
-	//return m_maxContacts - limit;
 }
 
 void ScenePhysicsSystem::integrate(float dt){
@@ -107,21 +123,16 @@ void ScenePhysicsSystem::integrate(float dt){
 void ScenePhysicsSystem::runPhysics(float dt){
 	//apply force generators
 
+	std::cout << "Integrating..." << std::endl;
+	//integrate forces and update positions
 	integrate(ImGui::GetIO().DeltaTime);
 
+	std::cout << "Generating Contacts..." << std::endl;
 	//generate contacts
 	generateContacts();
 
+	std::cout << "Resolving Contacts..." << std::endl;
 	//process contacts
 	m_collisionResolver->resolveContacts(ImGui::GetIO().DeltaTime);
 }
 
-void ScenePhysicsSystem::detectAllContacts(){
-	ObjectRegistration* hittee = m_firstObject;
-	while(hittee){
-		ObjectRegistration* hitter = hittee->next;
-		while(hitter){
-			ObjectContact gendContact = ObjectContact::detectContact(hittee->object->getHitbox(),hitter->object->getHitbox());
-		}
-	}
-}

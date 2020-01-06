@@ -33,7 +33,7 @@
 #include "SceneCollisions.h"
 #include "SceneRestingContact.h"
 #include "ScenePhysicsSystem.h"
-//#include "SceneMassAggregate.h"
+#include "SceneMassAggregate.h"
 
 void input();
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
@@ -111,6 +111,7 @@ int main(){
 		windowInput();
 
 		SceneManager::updateCurrentScene(&windowObj);
+		//prepares ImGui to be drawn
 		SceneManager::start();
 		SceneManager::renderMenu();
 	
