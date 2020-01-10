@@ -109,14 +109,14 @@ int main(){
 		windowObj.pollEvents();
 		input();
 		windowInput();
-
+		
 		SceneManager::updateCurrentScene(&windowObj);
 		//prepares ImGui to be drawn
 		SceneManager::start();
 		SceneManager::renderMenu();
-	
-		windowObj.displayWindowStats();
 
+		windowObj.displayWindowStats();
+	
 		SceneManager::renderCurrentSceneGUI();
 		
 		windowObj.clear();
@@ -191,7 +191,6 @@ void windowInput(){
 	}
 
 	windowObj.getCameraController()->setCameraPos(px,py);
-	//windowObj.zoom(dz);
 	windowObj.getCameraController()->setCameraZoom(dz);
 	
 }

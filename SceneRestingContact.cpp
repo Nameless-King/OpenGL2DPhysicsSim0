@@ -50,11 +50,6 @@ SceneRestingContact::SceneRestingContact(Shader* shader, Texture* texture, const
 	m_wall->addVertices(vertices);
 	m_wall->createHitbox(HitboxType::AxisAligned);
 	m_wall->addRigidBody2D(new RigidBody2D(-1.0f));
-
-	
-	
-
-
 }
 
 SceneRestingContact::~SceneRestingContact(){
@@ -198,9 +193,6 @@ void SceneRestingContact::update(Window* window){
 		}
 	}
 
-	
-
-	
 	m_collisionBatchResolver.resolveContacts(ImGui::GetIO().DeltaTime);
 	m_collisionBatchResolver.resetRegistry();
 

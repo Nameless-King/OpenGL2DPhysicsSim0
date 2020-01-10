@@ -18,6 +18,8 @@ class CollisionBatchResolver{
         ~CollisionBatchResolver();
         inline unsigned int getIterationsUsed() const { return m_iterationsUsed;}
 
+        unsigned int numOfCollisions();
+
         void resolveContacts(float dt);
         void registerContact(ObjectContact contact);
         void resetRegistry();

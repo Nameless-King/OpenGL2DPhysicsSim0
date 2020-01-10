@@ -21,6 +21,7 @@
 #include "./CollisionBatchResolver.h"
 #include "./ObjectContact.h"
 #include "./Physics2D.h"
+#include "./ForceGravity.h"
 
 class ScenePhysicsSystem : public Scene{
  struct ObjectRegistration{
@@ -33,17 +34,13 @@ class ScenePhysicsSystem : public Scene{
 		Shader* m_shader;
 		Texture* m_texture;
 		ObjectRegistration* m_firstObject;
-
-		//Contacts are added to the resolver immediately after creation.
-		/*struct ContactRegistration{
-			ObjectContact* contact;
-			ContactRegistration* next;
-		};*/
-		//ContactRegistration* m_firstContact;
+		Object* m_player;
 
 		CollisionBatchResolver* m_collisionResolver;
-
+		ObjectContact m_tempContact;
 		unsigned int m_maxContacts;
+		ForceGravity m_forceGravity;
+		unsigned int m_numCollisions;
 	
 	public:
 		ScenePhysicsSystem();
@@ -55,30 +52,11 @@ class ScenePhysicsSystem : public Scene{
 		void renderGUI();
 	private:
 		void input(Window* window);
-		/**
-		 * Initializes the world for a simulation frame. This clears
-		 * the force accumulators for objects in the world. After
-		 * claaing this, the objects can have their forces for this
-		 * frame added.
-		 */
+		void addObject(Object* newObject);
+		
 		void startFrame();
-
-		/**
-		 * Interates through Object registry and generates all contacts.
-		 * Each contact that is generated is then passed to the collision resolver.
-		 */
-		//unsigned int generateContacts();
 		void generateContacts();
-	
-
-		/**
-		 * Integrates all the objects in this world forward in time
-		 * by the given duration
-		 */
 		void integrate(float dt);
-
-		/**
-		 * Processes all the physics for the object world.
-		 */
 		void runPhysics(float dt);
+		void testBoxCollision(Object* obj1, Object* obj2, ObjectContact* col);
 };

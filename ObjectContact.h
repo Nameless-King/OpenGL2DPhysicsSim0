@@ -31,4 +31,6 @@ class ObjectContact{
         void resolveInterpenetration(float dt);
         static glm::vec2 calcContactNormal(ObjectContact);
         static float getSmallestComponent(glm::vec2 vector);
+        bool correctObjects();
+        bool correctObjects2();
 };

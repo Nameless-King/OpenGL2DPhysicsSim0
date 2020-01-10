@@ -45,3 +45,7 @@ void CollisionBatchResolver::registerContact(ObjectContact contact){
 void CollisionBatchResolver::resetRegistry(){
     m_contacts.clear();
 }
+
+unsigned int CollisionBatchResolver::numOfCollisions(){
+    return m_contacts.size();
+}

@@ -16,10 +16,16 @@ ObjectContact::ObjectContact(const ObjectContact& contact){
 
 //currently in use in CollisionBatchResolver loop
 void ObjectContact::resolve(float dt){
-    resolveVelocity(dt);
-    //resolveRestingContactVelocity(dt);
-    resolveInterpenetration(dt);
-    //resolveInterpenetration(dt,m_collision);
+
+    //if(correctObjects2() && correctObjects()){
+        //std::cout << "Resolving Velocity" << std::endl;
+        resolveVelocity(dt);
+        //resolveRestingContactVelocity(dt);
+        //std::cout << "Resolving Interpenetration" << std::endl;
+        resolveInterpenetration(dt);
+        //resolveInterpenetration(dt,m_collision);
+    //}
+   
 }
 
 void ObjectContact::resolveRestingContact(float dt){
@@ -134,19 +140,19 @@ void ObjectContact::resolveInterpenetration(float dt){
         return;
     }
 
-    float totalInverseMass = object[0]->getRigidBody2D()->getInverseMass();
+     float totalInverseMass = object[0]->getRigidBody2D()->getInverseMass();
     if(object[1]){
-        totalInverseMass += object[1]->getRigidBody2D()->getInverseMass();
-    }
+         totalInverseMass += object[1]->getRigidBody2D()->getInverseMass();
+     }
 
     glm::vec2 movePerMass = m_contactNormal * (-m_penetrationDepth/totalInverseMass);
-
+    
     float percent = 1.0f;
 
-    object[0]->setPos(object[0]->getPositionXY() + percent * -movePerMass * object[0]->getRigidBody2D()->getInverseMass());
+     object[0]->setPos(object[0]->getPositionXY() + percent * -movePerMass * object[0]->getRigidBody2D()->getInverseMass());
     if(object[1]){
         object[1]->setPos(object[1]->getPositionXY() + percent * movePerMass * object[1]->getRigidBody2D()->getInverseMass());
-    }
+     }
 }
 
 float ObjectContact::getSmallestComponent(glm::vec2 vector){
@@ -190,4 +196,38 @@ ObjectContact ObjectContact::detectContact(Hitbox box1, Hitbox box2){
 	}
 	
 	return contact;
+}
+
+bool ObjectContact::correctObjects(){
+    if(!object[0] && !object[1]){
+        return false;
+    }
+
+    if(!object[1]){
+        Object* temp = object[0];
+        object[0] = object[1];
+        object[0] = temp;
+    }
+
+    return true;
+}
+
+bool ObjectContact::correctObjects2(){
+    if(object[0]->getRigidBody2D()->getMass() == -1 && object[1]->getRigidBody2D()->getMass() == -1){
+        return false;
+    }
+
+    if(object[0] && object[1]){
+        if(object[0]->getRigidBody2D()->getMass() < 0 || object[1]->getRigidBody2D()->getMass() < 0){
+            if(object[0]->getRigidBody2D()->getMass() == -1){
+                object[0] = object[1];
+                object[1] = NULL;
+            }else{
+                object[1] = NULL;
+            }
+        }
+
+    }
+    
+    return true;
 }
