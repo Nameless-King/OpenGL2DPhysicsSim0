@@ -19,12 +19,11 @@ void ObjectContact::resolve(float dt){
 
 
     if(correctObjects()){
-        //std::cout << "Resolving Velocity" << std::endl;
+        
         resolveVelocity(dt);
         //resolveRestingContactVelocity(dt);
-        //std::cout << "Resolving Interpenetration" << std::endl;
+        
         resolveInterpenetration(dt);
-        //resolveInterpenetration(dt,m_collision);
     }
    
 }
@@ -148,6 +147,8 @@ void ObjectContact::resolveInterpenetration(float dt){
 
     glm::vec2 movePerMass = m_contactNormal * (-m_penetrationDepth/totalInverseMass);
     
+    //affects the magnitude at which the interpenetration resolving affects the position
+    //of the objects
     float percent = 1.0f;
 
      object[0]->setPos(object[0]->getPositionXY() + percent * -movePerMass * object[0]->getRigidBody2D()->getInverseMass());
@@ -170,7 +171,7 @@ ObjectContact ObjectContact::detectContact(Hitbox box1, Hitbox box2){
     
 	ObjectContact contact;
 
-	contact.m_distance = box1.getCenter() - box2.getCenter();
+	contact.m_distance = box2.getCenter() - box1.getCenter();
 	
 	contact.m_distance.x = fabs(contact.m_distance.x);
 	contact.m_distance.y = fabs(contact.m_distance.y);

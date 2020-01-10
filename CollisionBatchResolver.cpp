@@ -21,11 +21,14 @@ void CollisionBatchResolver::resolveContacts(float dt){
             for(unsigned int i = 0;i < m_contacts.size();i++){
                 
                 float closingVelocity = m_contacts[i].calculateClosingVelocity();
-                
-                if(closingVelocity < max){
-                        max = closingVelocity;
-                        maxIndex = i;
-                    }
+
+                std::cout << closingVelocity << std::endl;
+
+                if(abs(closingVelocity) > abs(max)){
+                    
+                    max = closingVelocity;
+                    maxIndex = i;
+                }
             }
 
                 //resolve contact of largest closing velocity

@@ -31,7 +31,6 @@ def compile_files(files,flags,times,last_compiled_time,compile_type="",prev_term
         if(compile_type == "--compile-all" or last_compiled_time < os.path.getmtime(files[i]) or files[i] in prev_terminated):
             current_cmd = "g++ "+flags+" -c -o '../objectFiles/"+names[i]+".o' '"+files[i]+"'"
             
-            print()
             print("[***]Compiling file [->]"+files[i]+"[<-]")
             print("[***]Executing [->]"+current_cmd+"[<-]")
             #could not get os.popen to work with current_cmd
@@ -64,15 +63,12 @@ def compile_files(files,flags,times,last_compiled_time,compile_type="",prev_term
                 print("[***]Successfully exectued command.")
                 yield "OK\n" 
            
-            
-            print()
             out.stdout.close()
 
         else:
-            print()
             print("[***]File [->]"+files[i]+"[<-]")
             print("[***]\tdoes not need to be recompiled.")
-            print()
+            
 
         
 
