@@ -104,6 +104,10 @@ void Window::displayWindowStats(){
 	ImGui::Text("Applicaiton Range 	[%.3f,%.3f]",
 		-(m_height/(m_cc.getCameraZoom())),
 		(m_height/(m_cc.getCameraZoom())));
+	double posX = 0;
+	double posY = 0;
+	glfwGetCursorPos(m_window,&posX,&posY);
+	ImGui::Text("Mouse Position (user resizing may cause misinformation) [%.3f,%.3f]",posX - (m_width/2.0f), -posY + (m_height/2.0f));
 	ImGui::ColorEdit3("clear color",(float*)&m_clearColor);
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
