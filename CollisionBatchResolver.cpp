@@ -22,6 +22,7 @@ void CollisionBatchResolver::resolveContacts(float dt){
                 
                 float closingVelocity = m_contacts[i].calculateClosingVelocity();
 
+                //if(closingVelocity < max){
                 if(abs(closingVelocity) > abs(max)){
                     
                     max = closingVelocity;
