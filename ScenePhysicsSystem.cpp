@@ -1,5 +1,7 @@
 #include "./ScenePhysicsSystem.h"
 
+static bool mouseButtonDown = false;
+
 ScenePhysicsSystem::ScenePhysicsSystem():
 	m_title("ScenePhysicsSystem"),
 	m_shader(NULL),
@@ -7,7 +9,8 @@ ScenePhysicsSystem::ScenePhysicsSystem():
 	m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 0.0f))),
 	m_collisionResolver(new CollisionBatchResolver(1)),
 	m_tempContact(ObjectContact()),
-	m_numCollisions(0){
+	m_numCollisions(0),
+	m_numObjects(0){
 }
 
 ScenePhysicsSystem::ScenePhysicsSystem(Shader* shader, Texture* texture, const float vertices[]):
@@ -18,7 +21,8 @@ ScenePhysicsSystem::ScenePhysicsSystem(Shader* shader, Texture* texture, const f
 	m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 0.0f))),
 	m_collisionResolver(new CollisionBatchResolver(1)),
 	m_tempContact(ObjectContact()),
-	m_numCollisions(0){
+	m_numCollisions(0),
+	m_numObjects(0){
 
 	m_firstObject = new ObjectRegistration();
 
@@ -81,8 +85,10 @@ void ScenePhysicsSystem::update(Window* window){
 }
 
 void ScenePhysicsSystem::renderGUI(){
+	
 	ImGui::Begin(m_title.c_str());
 	ImGui::Text("Number of collision: %d",m_numCollisions);
+	ImGui::Text("Number of objects: %d",m_numObjects);
 	ImGui::End();
 }
 
@@ -108,6 +114,33 @@ void ScenePhysicsSystem::input(Window* window){
 	}
 	
 	m_player->getRigidBody2D()->setVelocity(velocity);
+
+
+	int mouseButtonPressed = glfwGetMouseButton(window->getWindow(),GLFW_MOUSE_BUTTON_1);
+	if( mouseButtonPressed == GLFW_TRUE && !mouseButtonDown){
+			mouseButtonDown = true;
+
+			double posX = 0;
+			double posY = 0;
+			glfwGetCursorPos(window->getWindow(),&posX,&posY);
+
+			posX -= window->getWidth() / 2.0f;
+			posY = window->getHeight() / 2.0f - posY;
+
+			Object* newObject = new Object(
+				glm::vec3(posX,posY,0.0f),
+				glm::vec3(0.0f,0.0f,0.0f),
+				glm::vec3(1.0f,1.0f,1.0f)
+			);
+			newObject->addVertices(StaticRenderer::getVertices());
+			newObject->createHitbox(HitboxType::AxisAligned);
+			newObject->addRigidBody2D(new RigidBody2D(-1.0f));
+
+			addObject(newObject);
+
+		}else if(mouseButtonPressed == GLFW_FALSE && mouseButtonDown){
+			mouseButtonDown = false;
+		}
 	
 }
 
@@ -131,18 +164,21 @@ void ScenePhysicsSystem::generateContacts(){
 	while(hittee){
 		ObjectRegistration* hitter = hittee->next;
 		while(hitter){
-			ObjectContact generatedContact = ObjectContact::detectContact(hitter->object->getHitbox(),hittee->object->getHitbox());
-			if(generatedContact.m_colliding){
-				
-				m_tempContact.object[0] = hitter->object;
-				m_tempContact.object[1] = hittee->object;
-				m_tempContact.m_restitution = 0.0f;
-				testBoxCollision(hitter->object,hittee->object,&generatedContact);
-				m_tempContact.m_penetrationDepth = generatedContact.m_penetrationDepth;
-				m_tempContact.m_contactNormal = generatedContact.m_contactNormal;
-				
-				m_collisionResolver->registerContact(m_tempContact);
+			if(!(ObjectContact::hasInfiniteMass(hitter->object)==ObjectContact::hasInfiniteMass(hittee->object) && ObjectContact::hasInfiniteMass(hitter->object))){
+				ObjectContact generatedContact = ObjectContact::detectContact(hittee->object->getHitbox(),hitter->object->getHitbox());
+				if(generatedContact.m_colliding){
+					
+					m_tempContact.object[0] = hitter->object;
+					m_tempContact.object[1] = hittee->object;
+					m_tempContact.m_restitution = 0.0f;
+					testBoxCollision(hittee->object,hitter->object,&generatedContact);
+					m_tempContact.m_penetrationDepth = generatedContact.m_penetrationDepth;
+					m_tempContact.m_contactNormal = generatedContact.m_contactNormal;
+					
+					m_collisionResolver->registerContact(m_tempContact);
+				}
 			}
+			
 			hitter = hitter->next;
 		}
 		hittee = hittee->next;
@@ -192,6 +228,8 @@ void ScenePhysicsSystem::addObject(Object* newObject){
 		}
 		currentRegistry->next = lastRegistry;
 	}
+
+	m_numObjects++;
 }
 
 void ScenePhysicsSystem::testBoxCollision(Object* obj1, Object* obj2, ObjectContact* col){

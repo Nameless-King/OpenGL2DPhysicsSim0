@@ -24,6 +24,7 @@ class ObjectContact{
         //calculate closing velocity
         float calculateClosingVelocity() const;
         static ObjectContact detectContact(Hitbox box1, Hitbox box2);
+        static bool hasInfiniteMass(Object* argObj);
     private:
         //calculates impulse
         void resolveVelocity(float dt);
@@ -31,6 +32,7 @@ class ObjectContact{
         void resolveInterpenetration(float dt);
         static glm::vec2 calcContactNormal(ObjectContact);
         static float getSmallestComponent(glm::vec2 vector);
+        
         bool correctObjects();
-        bool correctObjects2();
+        
 };

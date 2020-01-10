@@ -17,14 +17,15 @@ ObjectContact::ObjectContact(const ObjectContact& contact){
 //currently in use in CollisionBatchResolver loop
 void ObjectContact::resolve(float dt){
 
-    //if(correctObjects2() && correctObjects()){
+
+    if(correctObjects()){
         //std::cout << "Resolving Velocity" << std::endl;
         resolveVelocity(dt);
         //resolveRestingContactVelocity(dt);
         //std::cout << "Resolving Interpenetration" << std::endl;
         resolveInterpenetration(dt);
         //resolveInterpenetration(dt,m_collision);
-    //}
+    }
    
 }
 
@@ -60,7 +61,7 @@ void ObjectContact::resolveVelocity(float dt){
 
     //apply change in proportion to inverse mass
     float totalInverseMass = object[0]->getRigidBody2D()->getInverseMass();
-    if(object[1]){
+    if(object[1] ){
         totalInverseMass += object[1]->getRigidBody2D()->getInverseMass();
     }
 
@@ -164,6 +165,7 @@ glm::vec2 ObjectContact::calcContactNormal(ObjectContact contact){
     return normal;
 }
 
+
 ObjectContact ObjectContact::detectContact(Hitbox box1, Hitbox box2){
     
 	ObjectContact contact;
@@ -198,36 +200,27 @@ ObjectContact ObjectContact::detectContact(Hitbox box1, Hitbox box2){
 	return contact;
 }
 
+
+
 bool ObjectContact::correctObjects(){
-    if(!object[0] && !object[1]){
-        return false;
-    }
-
-    if(!object[1]){
-        Object* temp = object[0];
-        object[0] = object[1];
-        object[0] = temp;
-    }
-
-    return true;
-}
-
-bool ObjectContact::correctObjects2(){
-    if(object[0]->getRigidBody2D()->getMass() == -1 && object[1]->getRigidBody2D()->getMass() == -1){
-        return false;
-    }
-
     if(object[0] && object[1]){
-        if(object[0]->getRigidBody2D()->getMass() < 0 || object[1]->getRigidBody2D()->getMass() < 0){
-            if(object[0]->getRigidBody2D()->getMass() == -1){
+         if(hasInfiniteMass(object[0]) && hasInfiniteMass(object[1])){
+        return false;
+        }
+    
+        if(hasInfiniteMass(object[0]) || hasInfiniteMass(object[1])){
+            if(hasInfiniteMass(object[0])){
                 object[0] = object[1];
                 object[1] = NULL;
             }else{
                 object[1] = NULL;
             }
         }
-
     }
-    
+   
     return true;
+}
+
+bool ObjectContact::hasInfiniteMass(Object* argObj){
+    return argObj->getRigidBody2D()->getMass() < 0;
 }

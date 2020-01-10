@@ -41,6 +41,7 @@ class ScenePhysicsSystem : public Scene{
 		unsigned int m_maxContacts;
 		ForceGravity m_forceGravity;
 		unsigned int m_numCollisions;
+		unsigned int m_numObjects;
 	
 	public:
 		ScenePhysicsSystem();
