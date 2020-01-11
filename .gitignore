@@ -5,4 +5,5 @@ objectFiles/
 *.bat
 *.exe
 *.ini
+*.txt
 oldCompile
