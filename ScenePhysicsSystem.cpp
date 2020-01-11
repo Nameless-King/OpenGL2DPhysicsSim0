@@ -127,6 +127,15 @@ void ScenePhysicsSystem::input(Window* window){
 			posX -= window->getWidth() / 2.0f;
 			posY = window->getHeight() / 2.0f - posY;
 
+			posX /= window->getZoom() / 2.0f;
+			posY /= window->getZoom() / 2.0f;
+
+			int camX = window->getCameraController()->getCameraPos().x;
+			int camY = window->getCameraController()->getCameraPos().y;
+
+			posX += camX;
+			posY += camY;
+
 			Object* newObject = new Object(
 				glm::vec3(posX,posY,0.0f),
 				glm::vec3(0.0f,0.0f,0.0f),

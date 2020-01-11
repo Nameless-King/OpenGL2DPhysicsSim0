@@ -183,10 +183,14 @@ void windowInput(){
 	if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_E)){
 		if(dz < 12.0f){
 			dz += zoomSpeed;
+		}else{
+			dz = 12.0f;
 		}
 	}else if(glfwGetKey(windowObj.getWindow(),GLFW_KEY_Q)){
 		if(dz > 2.0f){
 			dz -= zoomSpeed;
+		}else{
+			dz = 2.0f;
 		}
 	}
 
