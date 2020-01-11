@@ -1,12 +1,13 @@
 #include "./ScenePhysicsSystem.h"
 
-static bool mouseButtonDown = false;
+static bool mouseButton1Down = false;
+static bool mouseButton2Down = false;
 
 ScenePhysicsSystem::ScenePhysicsSystem():
 	m_title("ScenePhysicsSystem"),
 	m_shader(NULL),
 	m_texture(NULL),
-	m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 0.0f))),
+	m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 1.0f))),
 	m_collisionResolver(new CollisionBatchResolver(1)),
 	m_tempContact(ObjectContact()),
 	m_numCollisions(0),
@@ -104,7 +105,6 @@ void ScenePhysicsSystem::input(Window* window){
 		velocity.y = 0.0f;
 	}
 	
-	
 	if(glfwGetKey(window->getWindow(),GLFW_KEY_RIGHT)){
 		velocity.x = speed;
 	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_LEFT)){
@@ -115,10 +115,10 @@ void ScenePhysicsSystem::input(Window* window){
 	
 	m_player->getRigidBody2D()->setVelocity(velocity);
 
-
-	int mouseButtonPressed = glfwGetMouseButton(window->getWindow(),GLFW_MOUSE_BUTTON_1);
-	if( mouseButtonPressed == GLFW_TRUE && !mouseButtonDown){
-			mouseButtonDown = true;
+	//creates infinite mass objects upon left click at mouse position
+	int mouseButton1Pressed = glfwGetMouseButton(window->getWindow(),GLFW_MOUSE_BUTTON_1);
+	if( mouseButton1Pressed == GLFW_TRUE && !mouseButton1Down){
+			mouseButton1Down = true;
 
 			double posX = 0;
 			double posY = 0;
@@ -147,8 +147,44 @@ void ScenePhysicsSystem::input(Window* window){
 
 			addObject(newObject);
 
-		}else if(mouseButtonPressed == GLFW_FALSE && mouseButtonDown){
-			mouseButtonDown = false;
+		}else if(mouseButton1Pressed == GLFW_FALSE && mouseButton1Down){
+			mouseButton1Down = false;
+		}
+
+		//creates finite mass objects upon right click at mouse position
+		int mouseButton2Pressed = glfwGetMouseButton(window->getWindow(),GLFW_MOUSE_BUTTON_2);
+		if( mouseButton2Pressed == GLFW_TRUE && !mouseButton2Down){
+			mouseButton2Down = true;
+
+			double posX = 0;
+			double posY = 0;
+			glfwGetCursorPos(window->getWindow(),&posX,&posY);
+
+			posX -= window->getWidth() / 2.0f;
+			posY = window->getHeight() / 2.0f - posY;
+
+			posX /= window->getZoom() / 2.0f;
+			posY /= window->getZoom() / 2.0f;
+
+			int camX = window->getCameraController()->getCameraPos().x;
+			int camY = window->getCameraController()->getCameraPos().y;
+
+			posX += camX;
+			posY += camY;
+
+			Object* newObject = new Object(
+				glm::vec3(posX,posY,0.0f),
+				glm::vec3(0.0f,0.0f,0.0f),
+				glm::vec3(1.0f,1.0f,1.0f)
+			);
+			newObject->addVertices(StaticRenderer::getVertices());
+			newObject->createHitbox(HitboxType::AxisAligned);
+			newObject->addRigidBody2D(new RigidBody2D(1.0f));
+
+			addObject(newObject);
+
+		}else if(mouseButton2Pressed == GLFW_FALSE && mouseButton2Down){
+			mouseButton2Down = false;
 		}
 	
 }
@@ -174,14 +210,18 @@ void ScenePhysicsSystem::generateContacts(){
 		ObjectRegistration* hitter = hittee->next;
 		while(hitter){
 			if(!(ObjectContact::hasInfiniteMass(hitter->object)==ObjectContact::hasInfiniteMass(hittee->object) && ObjectContact::hasInfiniteMass(hitter->object))){
+				//Order doesn't matter for detectContact
 				ObjectContact generatedContact = ObjectContact::detectContact(hittee->object->getHitbox(),hitter->object->getHitbox());
 				if(generatedContact.m_colliding){
 					
-					m_tempContact.object[0] = hitter->object;
-					m_tempContact.object[1] = hittee->object;
+					//Order does motter for object[0] and object[1] of ObjectContact
+					m_tempContact.object[0] = hittee->object;
+					m_tempContact.object[1] = hitter->object;
+					//std::cout << hitter->object->getRigidBody2D()->getMass() << " " << hittee->object->getRigidBody2D()->getMass() << std::endl;
 					m_tempContact.m_restitution = 0.0f;
-					testBoxCollision(hittee->object,hitter->object,&generatedContact);
 					m_tempContact.m_penetrationDepth = generatedContact.m_penetrationDepth;
+					//Order does matter for obj1 and obj2 of testBoxCollision
+					testBoxCollision(hittee->object,hitter->object,&generatedContact);
 					m_tempContact.m_contactNormal = generatedContact.m_contactNormal;
 					
 					m_tempContact.resolve(ImGui::GetIO().DeltaTime);
@@ -243,6 +283,11 @@ void ScenePhysicsSystem::addObject(Object* newObject){
 }
 
 void ScenePhysicsSystem::testBoxCollision(Object* obj1, Object* obj2, ObjectContact* col){
+	if(ObjectContact::hasInfiniteMass(obj1)){
+		Object* temp = obj2;
+		obj2 = obj1;
+		obj1 = temp;
+	}
 	if(col->m_distance.x  / (obj1->getScaleXYZ().x * obj2->getScaleXYZ().x)> col->m_distance.y / (obj1->getScaleXYZ().y * obj2->getScaleXYZ().y)){
 		if(obj1->getPositionXY().x > obj2->getPositionXY().x){
 			col->m_contactNormal.x = 1;
@@ -260,5 +305,5 @@ void ScenePhysicsSystem::testBoxCollision(Object* obj1, Object* obj2, ObjectCont
 			col->m_contactNormal.y = -1;
 		}
 	}
-	
+	//std::cout << col->m_contactNormal.x << " " << col->m_contactNormal.y << std::endl;
 }
