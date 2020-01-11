@@ -111,6 +111,8 @@ void SceneRestingContact::update(Window* window){
 		m_contactResolver.m_penetrationDepth = col0.m_penetrationDepth;
 		m_contactResolver.m_contactNormal = col0.m_contactNormal;
 		m_collisionBatchResolver.registerContact(m_contactResolver);
+		//line below and resolveContacts comment out are related
+		m_contactResolver.resolve(ImGui::GetIO().DeltaTime);
 	}
 
 	ObjectContact col1 = ObjectContact::detectContact(m_wall->getHitbox(),m_restingObject->getHitbox());
@@ -123,6 +125,9 @@ void SceneRestingContact::update(Window* window){
 		m_contactResolver.m_penetrationDepth = col1.m_penetrationDepth;
 		m_contactResolver.m_contactNormal = col1.m_contactNormal;
 		m_collisionBatchResolver.registerContact(m_contactResolver);
+		//line below and resolveContacts comment out are related
+		m_contactResolver.resolve(ImGui::GetIO().DeltaTime);
+
 	}
 
 	ObjectContact col2 = ObjectContact::detectContact(m_restingObject->getHitbox(),m_player->getHitbox());
@@ -135,6 +140,8 @@ void SceneRestingContact::update(Window* window){
 		m_contactResolver.m_penetrationDepth = col2.m_penetrationDepth;
 		m_contactResolver.m_contactNormal = col2.m_contactNormal;
 		m_collisionBatchResolver.registerContact(m_contactResolver);
+		//line below and resolveContacts comment out are related
+		m_contactResolver.resolve(ImGui::GetIO().DeltaTime);
 	}
 
 
@@ -150,6 +157,8 @@ void SceneRestingContact::update(Window* window){
 				m_contactResolver.m_penetrationDepth = col3.m_penetrationDepth;
 				m_contactResolver.m_contactNormal = col3.m_contactNormal;
 				m_collisionBatchResolver.registerContact(m_contactResolver);
+				//line below and resolveContacts comment out are related
+				m_contactResolver.resolve(ImGui::GetIO().DeltaTime);
 			}
 		}
 	}
@@ -165,6 +174,8 @@ void SceneRestingContact::update(Window* window){
 			m_contactResolver.m_penetrationDepth = col4.m_penetrationDepth;
 			m_contactResolver.m_contactNormal = col4.m_contactNormal;
 			m_collisionBatchResolver.registerContact(m_contactResolver);
+			//line below and resolveContacts comment out are related
+			m_contactResolver.resolve(ImGui::GetIO().DeltaTime);
 
 		}
 
@@ -178,6 +189,8 @@ void SceneRestingContact::update(Window* window){
 			m_contactResolver.m_penetrationDepth = col5.m_penetrationDepth;
 			m_contactResolver.m_contactNormal = col5.m_contactNormal;
 			m_collisionBatchResolver.registerContact(m_contactResolver);
+			//line below and resolveContacts comment out are related
+			m_contactResolver.resolve(ImGui::GetIO().DeltaTime);
 		}
 
 		ObjectContact col6 = ObjectContact::detectContact(m_restingObject->getHitbox(),m_objects[i]->getHitbox());
@@ -190,10 +203,12 @@ void SceneRestingContact::update(Window* window){
 			m_contactResolver.m_penetrationDepth = col6.m_penetrationDepth;
 			m_contactResolver.m_contactNormal = col6.m_contactNormal;
 			m_collisionBatchResolver.registerContact(m_contactResolver);
+			//line below and resolveContacts comment out are related
+			m_contactResolver.resolve(ImGui::GetIO().DeltaTime);
 		}
 	}
 
-	m_collisionBatchResolver.resolveContacts(ImGui::GetIO().DeltaTime);
+	//m_collisionBatchResolver.resolveContacts(ImGui::GetIO().DeltaTime);
 	m_collisionBatchResolver.resetRegistry();
 
 	boundCheck(window,m_restingObject);

@@ -184,6 +184,7 @@ void ScenePhysicsSystem::generateContacts(){
 					m_tempContact.m_penetrationDepth = generatedContact.m_penetrationDepth;
 					m_tempContact.m_contactNormal = generatedContact.m_contactNormal;
 					
+					m_tempContact.resolve(ImGui::GetIO().DeltaTime);
 					m_collisionResolver->registerContact(m_tempContact);
 				}
 			}
@@ -220,7 +221,7 @@ void ScenePhysicsSystem::runPhysics(float dt){
 
 	//process contacts
 	
-	m_collisionResolver->resolveContacts(ImGui::GetIO().DeltaTime);
+	//m_collisionResolver->resolveContacts(ImGui::GetIO().DeltaTime);
 	m_numCollisions = m_collisionResolver->numOfCollisions();
 	m_collisionResolver->resetRegistry();
 }
