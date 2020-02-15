@@ -67,3 +67,8 @@ void Object::createHitbox(HitboxType type){
 void Object::getPosXY(glm::vec2& pos){
 	pos = glm::vec2(m_position.x,m_position.y);
 }
+
+void Object::setHalfExtents(float dx, float dy){
+		m_hitbox.m_halfExtent.x = dx;
+		m_hitbox.m_halfExtent.y = dy;
+	}

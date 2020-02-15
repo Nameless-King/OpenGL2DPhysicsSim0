@@ -34,7 +34,8 @@ public:
 	void addRigidBody2D(RigidBody2D* rb);
 	void addVertices(const float vertices[]);
 	void createHitbox(HitboxType type);
-	
+
+	void setHalfExtents(float dx, float dy);
 
 	void getPosXY(glm::vec2& pos);
 

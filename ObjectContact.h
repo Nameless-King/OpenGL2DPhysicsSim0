@@ -24,6 +24,7 @@ class ObjectContact{
         //calculate closing velocity
         float calculateClosingVelocity() const;
         static ObjectContact detectContact(Hitbox box1, Hitbox box2);
+        static bool isColliding(Hitbox box1, Hitbox box2);
         static bool hasInfiniteMass(Object* argObj);
     private:
         //calculates impulse

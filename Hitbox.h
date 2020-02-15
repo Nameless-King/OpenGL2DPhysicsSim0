@@ -16,10 +16,11 @@ enum HitboxType{
 };
 
 class Hitbox{
+public:
+	glm::vec2 m_halfExtent;
 private:
 	HitboxType m_hitboxType;
 	glm::vec3* m_center;
-	glm::vec2 m_halfExtent;
 	glm::vec3* m_scale;
 public:
 	Hitbox();
@@ -29,6 +30,8 @@ public:
 	const glm::vec2 getCenter() const { return glm::vec2(m_center->x,m_center->y);}
 	const glm::vec2 getHalfExtents() const {return m_halfExtent;}
 	const int getHitboxType() const {return m_hitboxType;}
+	
+	//void setHalfExtents(float dx, float dy);
 };
 
 

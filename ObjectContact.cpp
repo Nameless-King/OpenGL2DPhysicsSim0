@@ -166,6 +166,20 @@ glm::vec2 ObjectContact::calcContactNormal(ObjectContact contact){
     return normal;
 }
 
+bool ObjectContact::isColliding(Hitbox box1, Hitbox box2){
+    glm::vec2 dist = box2.getCenter() - box1.getCenter();
+    dist.x = fabs(dist.x);
+    dist.y = fabs(dist.y);
+    if(box1.getHitboxType() == HitboxType::AxisAligned && box2.getHitboxType() == HitboxType::AxisAligned){
+        glm::vec2 joinedExtents = box1.getHalfExtents() + box2.getHalfExtents();
+        return (dist.x < joinedExtents.x && dist.y < joinedExtents.y);
+    }else if(box1.getHitboxType() == HitboxType::Circle && box2.getHitboxType() == HitboxType::Circle){
+		float joinedExtent = box1.getHalfExtents().x + box2.getHalfExtents().x;
+		return (sqrt(pow(dist.x,2.0f)+pow(dist.y,2.0f)) < joinedExtent);
+    }else{
+        return false;
+    }
+}
 
 ObjectContact ObjectContact::detectContact(Hitbox box1, Hitbox box2){
     

@@ -34,6 +34,7 @@
 #include "SceneRestingContact.h"
 #include "ScenePhysicsSystem.h"
 #include "SceneMassAggregate.h"
+#include "SceneCollisionDetection.h"
 
 void input();
 void framebuffer_size_callback(GLFWwindow* window,int width,int height);
@@ -49,7 +50,6 @@ bool shouldShowDemoWindow = true;
 Window windowObj(WIDTH, HEIGHT,"Hello,World");
 
 int main(){
-	
 	if(windowObj.getWindow() == NULL){
 		return EXIT_FAILURE;
 	}
@@ -89,6 +89,7 @@ int main(){
 	SceneCollisions scene5(&shaderQuad, &textureCircle, StaticRenderer::getVertices());
 	SceneRestingContact scene6(&shaderQuad,&textureWhite,StaticRenderer::getVertices());
 	ScenePhysicsSystem scene7(&shaderQuad, &textureWhite, StaticRenderer::getVertices());
+	SceneCollisionDetection scene8(&shaderQuad, &textureWhite, StaticRenderer::getVertices());
 	
 
 	SceneManager::registerScene(&scene0);
@@ -99,6 +100,7 @@ int main(){
 	SceneManager::registerScene(&scene5);
 	SceneManager::registerScene(&scene6);
 	SceneManager::registerScene(&scene7);
+	SceneManager::registerScene(&scene8);
 	
 
 	//glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
