@@ -174,8 +174,13 @@ bool ObjectContact::isColliding(Hitbox box1, Hitbox box2){
         glm::vec2 joinedExtents = box1.getHalfExtents() + box2.getHalfExtents();
         return (dist.x < joinedExtents.x && dist.y < joinedExtents.y);
     }else if(box1.getHitboxType() == HitboxType::Circle && box2.getHitboxType() == HitboxType::Circle){
-		float joinedExtent = box1.getHalfExtents().x + box2.getHalfExtents().x;
-		return (sqrt(pow(dist.x,2.0f)+pow(dist.y,2.0f)) < joinedExtent);
+        float joinedExtent = box1.getHalfExtents().x + box2.getHalfExtents().x;
+        
+        //alternative to prevent expensive sqrt()
+        float dist2 = glm::dot(dist,dist);
+        return dist2 <= joinedExtent * joinedExtent;
+		
+		//return (sqrt(pow(dist.x,2.0f)+pow(dist.y,2.0f)) < joinedExtent);
     }else{
         return false;
     }
@@ -203,7 +208,13 @@ ObjectContact ObjectContact::detectContact(Hitbox box1, Hitbox box2){
 
 	}else if(box1.getHitboxType() == HitboxType::Circle && box2.getHitboxType() == HitboxType::Circle){
 		float joinedExtent = box1.getHalfExtents().x + box2.getHalfExtents().x;
-		contact.m_colliding = (sqrt(pow(contact.m_distance.x,2.0f)+pow(contact.m_distance.y,2.0f)) < joinedExtent);
+        
+        //alternative to prevent expensive sqrt()
+        float dist2 = glm::dot(contact.m_distance,contact.m_distance);
+        contact.m_colliding = dist2 <= joinedExtent * joinedExtent;
+		
+        //contact.m_colliding = (sqrt(pow(contact.m_distance.x,2.0f)+pow(contact.m_distance.y,2.0f)) < joinedExtent);
+
 		glm::vec2 penetrationVec = glm::vec2(joinedExtent,joinedExtent)-contact.m_distance;
 		contact.m_penetrationDepth = getSmallestComponent(penetrationVec);
 		if(contact.m_colliding){

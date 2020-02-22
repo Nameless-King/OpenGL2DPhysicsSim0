@@ -34,7 +34,6 @@ void Experimental::UpdateAABB(Hitbox a, float rotZ,glm::vec2* temp){
             extents[i] += abs(m[i][j]) * (a.getHalfExtents()[j]);
         }   
     }
-    std::cout << extents[0] << " " << extents[1] << std::endl;
     (*temp)[0] = extents[0];
     (*temp)[1] = extents[1];
     

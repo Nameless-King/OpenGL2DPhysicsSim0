@@ -1,9 +1,20 @@
-Dependencies/
-textures/
+#excluded directories
+Dependencies/*
 objectFiles/
+build/CMakeFiles/
+oldCompile/
+compilePy/*
+
+#excluded file types
 *.dll
 *.bat
 *.exe
 *.ini
 *.txt
-oldCompile
+*.cmake
+
+#excluded files
+build/Makefile
+
+#exceptions
+!CMakelists.txt
