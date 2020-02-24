@@ -48,6 +48,28 @@ SceneCollisionDetection::SceneCollisionDetection(Shader* shader, Texture* textur
 
 	addObject(floor);
 
+	Object* obb1 = new Object(
+		glm::vec3(20.0f,20.0f,0.0f),
+		glm::vec3(0.0f,0.0f,0.0f),
+		glm::vec3(1.0f,1.0f,1.0f)
+	);
+	obb1->addVertices(vertices);
+	obb1->addRigidBody2D(new RigidBody2D(1.0f));
+	obb1->addOBB();
+
+	Object* obb2 = new Object(
+		glm::vec3(-20.0f,-20.0f,0.0f),
+		glm::vec3(0.0f,0.0f,0.0f),
+		glm::vec3(1.0f,1.0f,1.0f)
+	);
+	obb2->addVertices(vertices);
+	obb2->addRigidBody2D(new RigidBody2D(1.0f));
+	obb2->addOBB();
+
+	addObject(obb1);
+	addObject(obb2);
+
+	m_player = obb1;
 
 }
 
@@ -125,11 +147,12 @@ void SceneCollisionDetection::input(Window* window){
 		//readjusts the size of the AABB to fully encapsulate the rotated object
 		{
 			float rotZ = m_player->getRotationXYZ().z;
-			glm::mat3 m(1.0f);
-			m[0][0] = cos((PI/180)*rotZ);
-			m[0][1] = -sin((PI/180)*rotZ);
-			m[1][0] = sin((PI/180)*rotZ);
-			m[1][1] = cos((PI/180)*rotZ);
+			glm::mat2 m = EngineMaths::getRotationMatrix(rotZ);
+			//m[0][0] = cos((PI/180)*rotZ);
+			//m[0][1] = -sin((PI/180)*rotZ);
+			//m[1][0] = sin((PI/180)*rotZ);
+			//m[1][1] = cos((PI/180)*rotZ);
+			
 			float extents[2];
 			for(int i = 0;i<2;i++){
 				for(int j = 0;j<2;j++){
@@ -166,7 +189,9 @@ void SceneCollisionDetection::generateContacts(){
 		while(hitter){
 			if(!(ObjectContact::hasInfiniteMass(hitter->object)==ObjectContact::hasInfiniteMass(hittee->object)&&
 			ObjectContact::hasInfiniteMass(hitter->object))){
-				if(ObjectContact::isColliding(hittee->object->getHitbox(),hitter->object->getHitbox())){
+				bool areOriented = hittee->object->getOBB();
+				bool areOriented1 = hitter->object->getOBB();
+				if(!areOriented && !areOriented1 && ObjectContact::isColliding(hittee->object->getHitbox(),hitter->object->getHitbox())){
 					ObjectContact generatedContact = ObjectContact::detectContact(hittee->object->getHitbox(),hitter->object->getHitbox());
 
 					m_tempContact.object[0] = hittee->object;
@@ -181,6 +206,13 @@ void SceneCollisionDetection::generateContacts(){
 
 					m_tempContact.resolve(ImGui::GetIO().DeltaTime);
 					m_collisionResolver->registerContact(m_tempContact);
+				}else if(areOriented && areOriented1){
+					bool colliding = ObjectContact::isColliding(
+						hittee->object->getOBB(),
+					 	hitter->object->getOBB()
+					);
+
+					std::cout << colliding << std::endl;
 				}
 			}
 			hitter = hitter->next;

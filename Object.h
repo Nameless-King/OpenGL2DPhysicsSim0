@@ -5,6 +5,8 @@
 #include "./VertexArrayObj.h"
 #include "./Hitbox.h"
 #include "./RigidBody2D.h"
+#include "./OBB.h"
+#include "./EngineMaths.h"
 
 #include "./Dependencies/glm/glm.hpp"
 #include "./Dependencies/glm/gtc/matrix_transform.hpp"
@@ -13,6 +15,7 @@
 class Object{
 private:
 	const float* m_vertices;
+	OBB* m_obb;
 	Hitbox m_hitbox;
 	RigidBody2D* m_rigidbody;
 	glm::vec3 m_position;
@@ -34,6 +37,7 @@ public:
 	void addRigidBody2D(RigidBody2D* rb);
 	void addVertices(const float vertices[]);
 	void createHitbox(HitboxType type);
+	void addOBB();
 
 	void setHalfExtents(float dx, float dy);
 
@@ -49,6 +53,7 @@ public:
 	
 	inline Hitbox getHitbox() const {return m_hitbox;}
 	inline RigidBody2D* getRigidBody2D() const {return m_rigidbody;}
+	inline OBB* getOBB() const {return m_obb;}
 	
 };
 

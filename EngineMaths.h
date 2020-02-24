@@ -7,6 +7,8 @@
 #include "./Dependencies/glm/gtc/matrix_transform.hpp"
 #include "./Dependencies/glm/gtc/type_ptr.hpp"
 
+#define PI 3.14159265
+
 /*The following calculations are provided by glm:
 	-cross (3D ONLY)
 	-distance
@@ -36,4 +38,8 @@ class EngineMaths{
 		static glm::vec3 componentProduct(glm::vec3* a, glm::vec3* b);
 		static float theta(glm::vec2* a,glm::vec2* b);
 		static float theta(glm::vec3* a,glm::vec3* b);
+		static glm::mat2 getRotationMatrix(float r);
+		static glm::vec2 projectOnto(glm::vec2 v, glm::vec2 l);
+		static glm::vec2 absVec2(glm::vec2 v);
+		static glm::vec2* calcHalfExtents(const float* vertices,glm::vec3* scale);
 };

@@ -27,6 +27,7 @@ add_executable(
 	StaticRenderer.cpp
 	SceneManager.cpp
 	Hitbox.cpp
+	OBB.cpp
 	Physics2D.cpp
 	EngineMaths.cpp
 	RigidBody2D.cpp

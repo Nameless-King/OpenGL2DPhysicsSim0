@@ -5,7 +5,8 @@ Object::Object():
 	m_scale(glm::vec3(1.0f,1.0f,1.0f)),
 	m_vertices(nullptr),
 	m_hitbox(Hitbox()),
-	m_rigidbody(NULL){
+	m_rigidbody(NULL),
+	m_obb(NULL){
 	}
 
 Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
@@ -14,11 +15,13 @@ Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
 	m_scale(scale),
 	m_vertices(nullptr),
 	m_hitbox(Hitbox()),
-	m_rigidbody(NULL){
+	m_rigidbody(NULL),
+	m_obb(NULL){
 	}
 	
 Object::~Object(){
 	delete m_rigidbody;
+	delete m_obb;
 }
 
 glm::mat4 Object::getModelMatrix(){
@@ -50,6 +53,13 @@ void Object::setRot(float xRot, float yRot, float zRot){
 
 void Object::setScl(float xScl, float yScl, float zScl){
 	m_scale = glm::vec3(xScl,yScl,zScl);
+}
+
+void Object::addOBB(){
+	OBB* obb = new OBB();
+	obb->setCenter(&m_position);
+	obb->setHalfExtents(EngineMaths::calcHalfExtents(m_vertices,&m_scale));
+	m_obb = obb;
 }
 
 void Object::addRigidBody2D(RigidBody2D* rb){
