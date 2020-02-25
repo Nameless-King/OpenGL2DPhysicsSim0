@@ -116,7 +116,7 @@ void SceneCollisionDetection::renderGUI(){
 void SceneCollisionDetection::input(Window* window){
 	
 	glm::vec2 velocity(0.0f,0.0f);
-	float speed = 100.0f;
+	float speed = 50.0f;
 	
 	if(glfwGetKey(window->getWindow(),GLFW_KEY_UP)){
 		velocity.y = speed;
@@ -143,9 +143,12 @@ void SceneCollisionDetection::input(Window* window){
 			m_player->getRotationXYZ().z + 0.5f
 		);
 
+		m_player->getOBB()->m_rotation = m_player->getRotationXYZ().z;
+		
+
 
 		//readjusts the size of the AABB to fully encapsulate the rotated object
-		{
+		if(false){
 			float rotZ = m_player->getRotationXYZ().z;
 			glm::mat2 m = EngineMaths::getRotationMatrix(rotZ);
 			//m[0][0] = cos((PI/180)*rotZ);

@@ -53,7 +53,7 @@ public:
 	
 	inline Hitbox getHitbox() const {return m_hitbox;}
 	inline RigidBody2D* getRigidBody2D() const {return m_rigidbody;}
-	inline OBB* getOBB() const {return m_obb;}
+	inline OBB* getOBB()  {return m_obb;}
 	
 };
 

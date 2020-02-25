@@ -253,52 +253,55 @@ bool ObjectContact::hasInfiniteMass(Object* argObj){
 
 bool ObjectContact::isColliding(OBB* a, OBB* b){
     glm::vec2 t = EngineMaths::absVec2(b->getCenterXYCopy() - a->getCenterXYCopy());
+
+    glm::mat2 a_rotMat = EngineMaths::getRotationMatrix(a->m_rotation);
+    glm::mat2 b_rotMat = EngineMaths::getRotationMatrix(b->m_rotation);
     
-    glm::vec2 curL = a->m_localX;
+    glm::vec2 curL = a_rotMat * a->m_localX;
     float curE = a->m_halfExtents->x;
 
     float curW = b->m_halfExtents->x;
     float curH = b->m_halfExtents->y;
-    glm::vec2 curX = b->m_localX;
-    glm::vec2 curY = b->m_localY;
+    glm::vec2 curX = b_rotMat * b->m_localX;
+    glm::vec2 curY = b_rotMat * b->m_localY;
 
 
     bool colliding0 = glm::length(EngineMaths::projectOnto(t,curL)) <
         curE 
-        + glm::length(EngineMaths::projectOnto(curW*curX,curL))
+        + glm::length(EngineMaths::projectOnto(curW  *curX,curL))
         + glm::length(EngineMaths::projectOnto(curH * curY,curL));
 
-    curL = a->m_localY;
+    curL =  a_rotMat * a->m_localY;
     curE = a->m_halfExtents->y;
     bool colliding1 = glm::length(EngineMaths::projectOnto(t,curL)) <
         curE
-        + glm::length(EngineMaths::projectOnto(curW*curX,curL))
-        + glm::length(EngineMaths::projectOnto(curH*curY,curL));
+        + glm::length(EngineMaths::projectOnto(curW * curX,curL))
+        + glm::length(EngineMaths::projectOnto(curH * curY,curL));
 
-    curL = b->m_localX;
+    curL = b_rotMat * b->m_localX;
     curE = b->m_halfExtents->x;
-    curX = a->m_localX;
-    curY = a->m_localY;
+    curX =  a_rotMat * a->m_localX;
+    curY =  a_rotMat * a->m_localY;
     curW = a->m_halfExtents->x;
     curH = a->m_halfExtents->y;
     bool colliding2 = glm::length(EngineMaths::projectOnto(t,curL)) <
         curE
-        + glm::length(EngineMaths::projectOnto(curW*curX,curL))
-        + glm::length(EngineMaths::projectOnto(curH*curY,curL));
+        + glm::length(EngineMaths::projectOnto(curW * curX,curL))
+        + glm::length(EngineMaths::projectOnto(curH * curY,curL));
 
-    curL = b->m_localY;
+    curL = b_rotMat * b->m_localY;
     curE = b->m_halfExtents->y;
     bool colliding3 = glm::length(EngineMaths::projectOnto(t,curL)) <
         curE
-        + glm::length(EngineMaths::projectOnto(curW*curX,curL))
-        + glm::length(EngineMaths::projectOnto(curH*curY,curL));
+        + glm::length(EngineMaths::projectOnto(curW * curX,curL))
+        + glm::length(EngineMaths::projectOnto(curH * curY,curL));
 
+    glm::vec2 rotlocalx = a_rotMat * a->m_localX;
+    glm::vec2 rotlocaly = a_rotMat * a->m_localY;
     // std::cout << "==========\n";
-    // std::cout << curW << " " << curH << "\n";
-    // std::cout << curX.x << ":" << curX.y << " " << curY.x << ":" << curY.y << "\n";
-    // std::cout << glm::length(EngineMaths::projectOnto(t,curL)) << "\n";
-    // std::cout << glm::length(EngineMaths::projectOnto((curX*curW),curL)) << "\n";
-    // std::cout << glm::length(EngineMaths::projectOnto((curY*curH),curL)) << std::endl;
+    // std::cout << a->m_rotation << "\n";
+    // std::cout << rotlocalx.x << " " << rotlocalx.y << "\n";
+    // std::cout << rotlocaly.x << " " << rotlocaly.y << std::endl;
 
     return colliding0 && colliding1 && colliding2 && colliding3;
 }
