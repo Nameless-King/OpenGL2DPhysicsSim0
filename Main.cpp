@@ -15,15 +15,8 @@
 #include "Window.h"
 #include "Shader.h"
 #include "Texture.h"
-#include "VertexArrayObj.h"
-#include "VertexBufferObj.h"
-#include "IndexBufferObj.h"
-#include "Object.h"
 #include "Renderer.h"
-#include "StaticRenderer.h"
 #include "SceneManager.h"
-#include "Hitbox.h"
-#include "Physics2D.h"
 
 #include "SceneIntegrator.h"
 #include "SceneForces.h"
@@ -72,12 +65,12 @@ int main(){
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	
-	Shader shaderQuad("./shaders/shaderQuad.vs","./shaders/shaderQuad.fs");	
-	Shader shaderPoint("./shaders/shaderPoint.vs","./shaders/shaderPoint.fs");
+	Shader shaderQuad("C:\\Users\\Timothy Deutsch\\Desktop\\GithubProjects\\OpenGLPhysics0\\shaders\\shaderQuad.vs","C:\\Users\\Timothy Deutsch\\Desktop\\GithubProjects\\OpenGLPhysics0\\shaders\\shaderQuad.fs");	
+	Shader shaderPoint("C:\\Users\\Timothy Deutsch\\Desktop\\GithubProjects\\OpenGLPhysics0\\shaders\\shaderPoint.vs","C:\\Users\\Timothy Deutsch\\Desktop\\GithubProjects\\OpenGLPhysics0\\shaders\\shaderPoint.fs");
 	
-	Texture textureCircle("./textures/circle.png");
-	Texture textureRectangle("./textures/rectangle.png");
-	Texture textureWhite("./textures/white.png");
+	Texture textureCircle("C:\\Users\\Timothy Deutsch\\Desktop\\GithubProjects\\OpenGLPhysics0\\textures\\circle.png");
+	Texture textureRectangle("C:\\Users\\Timothy Deutsch\\Desktop\\GithubProjects\\OpenGLPhysics0\\textures\\rectangle.png");
+	Texture textureWhite("C:\\Users\\Timothy Deutsch\\Desktop\\GithubProjects\\OpenGLPhysics0\\textures\\white.png");
 		
 	StaticRenderer::init();
 	

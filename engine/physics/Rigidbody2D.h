@@ -1,11 +1,11 @@
 #pragma once
 
-#include "./Dependencies/glm/glm.hpp"
-#include "./Dependencies/glm/gtc/matrix_transform.hpp"
-#include "./Dependencies/glm/gtc/type_ptr.hpp"
+#include "../../Dependencies/glm/glm.hpp"
+#include "../../Dependencies/glm/gtc/matrix_transform.hpp"
+#include "../../Dependencies/glm/gtc/type_ptr.hpp"
 
 
-class RigidBody2D{
+class Rigidbody2D{
 	private:
 		glm::vec2* m_sigmaForce;
 		glm::vec2* m_velocity;
@@ -19,9 +19,10 @@ class RigidBody2D{
 		float m_torque;
 	
 	public:
-		RigidBody2D();
-		RigidBody2D(float mass);
-		~RigidBody2D();
+		Rigidbody2D();
+		Rigidbody2D(const Rigidbody2D& rb);
+		Rigidbody2D(float mass);
+		~Rigidbody2D();
 
 		void addForce(float fx,float fy);
 		void addForce(glm::vec2 force);

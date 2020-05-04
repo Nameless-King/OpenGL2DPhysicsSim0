@@ -27,6 +27,8 @@ class ObjectContact{
         static ObjectContact detectContact(Hitbox box1, Hitbox box2);
         static bool isColliding(OBB* a, OBB* b);
         static bool isColliding(Hitbox box1, Hitbox box2);
+		
+		//should be moved to rigidbody
         static bool hasInfiniteMass(Object* argObj);
     private:
         //calculates impulse

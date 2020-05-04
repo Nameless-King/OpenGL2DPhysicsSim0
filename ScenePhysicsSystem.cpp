@@ -220,6 +220,7 @@ void ScenePhysicsSystem::generateContacts(){
 					//std::cout << hitter->object->getRigidBody2D()->getMass() << " " << hittee->object->getRigidBody2D()->getMass() << std::endl;
 					m_tempContact.m_restitution = 0.0f;
 					m_tempContact.m_penetrationDepth = generatedContact.m_penetrationDepth;
+					
 					//Order does matter for obj1 and obj2 of testBoxCollision
 					testBoxCollision(hittee->object,hitter->object,&generatedContact);
 					m_tempContact.m_contactNormal = generatedContact.m_contactNormal;

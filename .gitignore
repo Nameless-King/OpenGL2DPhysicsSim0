@@ -4,6 +4,9 @@ objectFiles/
 build/CMakeFiles/
 oldCompile/
 compilePy/*
+build/*
+build1/*
+.vscode/*
 
 #excluded file types
 *.dll
@@ -13,8 +16,6 @@ compilePy/*
 *.txt
 *.cmake
 
-#excluded files
-build/Makefile
-
 #exceptions
-!CMakelists.txt
+!CMakeLists.txt
+!CMakeLists_build.txt

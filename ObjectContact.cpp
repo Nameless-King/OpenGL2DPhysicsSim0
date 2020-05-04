@@ -20,7 +20,7 @@ void ObjectContact::resolve(float dt){
 
     if(correctObjects()){
         
-        resolveVelocity(dt);
+       resolveVelocity(dt);
         //resolveRestingContactVelocity(dt);
         
         resolveInterpenetration(dt);
@@ -30,7 +30,7 @@ void ObjectContact::resolve(float dt){
 
 void ObjectContact::resolveRestingContact(float dt){
     resolveRestingContactVelocity(dt);
-    resolveInterpenetration(dt);
+    //resolveInterpenetration(dt);
 }
 
 
@@ -212,8 +212,6 @@ ObjectContact ObjectContact::detectContact(Hitbox box1, Hitbox box2){
         //alternative to prevent expensive sqrt()
         float dist2 = glm::dot(contact.m_distance,contact.m_distance);
         contact.m_colliding = dist2 <= joinedExtent * joinedExtent;
-		
-        //contact.m_colliding = (sqrt(pow(contact.m_distance.x,2.0f)+pow(contact.m_distance.y,2.0f)) < joinedExtent);
 
 		glm::vec2 penetrationVec = glm::vec2(joinedExtent,joinedExtent)-contact.m_distance;
 		contact.m_penetrationDepth = getSmallestComponent(penetrationVec);

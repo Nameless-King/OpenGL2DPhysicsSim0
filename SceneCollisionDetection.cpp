@@ -204,7 +204,6 @@ void SceneCollisionDetection::generateContacts(){
 					m_tempContact.m_penetrationDepth = generatedContact.m_penetrationDepth;
 
 					testBoxCollision(hittee->object, hitter->object,&generatedContact);
-
 					m_tempContact.m_contactNormal = generatedContact.m_contactNormal;
 
 					m_tempContact.resolve(ImGui::GetIO().DeltaTime);

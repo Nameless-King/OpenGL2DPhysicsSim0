@@ -6,6 +6,7 @@ public:
     //m_center referenced from parent object
     glm::vec3* m_center;
     float m_rotation;
+    //float* m_rotation; for rb integration
     glm::vec2* m_halfExtents;
     glm::vec2 m_localX;
     glm::vec2 m_localY;
