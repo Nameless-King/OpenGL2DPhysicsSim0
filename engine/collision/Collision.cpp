@@ -56,16 +56,11 @@ bool Collision::isColliding( Bound* a,  Bound* b){
 }
 
 void Collision::resolve(float dt,CollisionData* col){
-	std::cout << "enter" << std::endl;
 	if(correctObjects(col)){
-		std::cout << "if" << std::endl;
 		Collision::resolveVelocity(dt, col);
 		//Collision::resolveRestingContactVelocity(dt);
-		std::cout << "post velocity" << std::endl;
 		Collision::resolveInterpenetration(dt,col);
-		std::cout << "post interpenetration" << std::endl;
 	}
-	std::cout << "exit" << std::endl;
 }
 
 void Collision::resolveInterpenetration(float dt, CollisionData* col){
@@ -74,7 +69,7 @@ void Collision::resolveInterpenetration(float dt, CollisionData* col){
 		totalInverseMass += col->object[1]->getRigidbody2D()->getInverseMass();
 	}
 	
-	glm::vec2 movePerMass = col->collisionNormal * (-col->penetrationDepth/totalInverseMass);
+	glm::vec2 movePerMass = col->collisionNormal * (-getSmallestComponent(&col->penetrationDepth)/totalInverseMass);
 	
 	//affects the magnitude at which the interpenetration resolving affects the position
 	//of the objects
@@ -84,6 +79,10 @@ void Collision::resolveInterpenetration(float dt, CollisionData* col){
 	if(col->object[1]){
 		col->object[1]->setPos(col->object[1]->getPositionXY() + percent * movePerMass * col->object[1]->getRigidbody2D()->getInverseMass());
 	}
+}
+
+float Collision::getSmallestComponent(glm::vec2* vec){
+	return (vec->x < vec->y) ? vec->x : vec->y;
 }
 
 void Collision::resolveRestingContactVelocity(float dt, CollisionData* col){

@@ -19,10 +19,8 @@ struct CollisionData {
 		collisionNormal(glm::vec2(data.collisionNormal)),
 		penetrationDepth(glm::vec2(data.penetrationDepth)),
 		distance(glm::vec2(data.distance)){
-		
-		object[0] = new Object(*data.object[0]);
-		object[1] = new Object(*data.object[1]);
-
+		object[0] = data.object[0];
+		object[1] = data.object[1];
 	}
 
 	Object* object[2];
@@ -35,6 +33,7 @@ struct CollisionData {
 class Collision{
 	public:
 		static float calculateClosingVelocity( CollisionData* col); // COMPLETE
+		static float getSmallestComponent(glm::vec2* vec); //complete
 		static CollisionData calculateCollision( Bound* a,  Bound* b); // COMPLETE
 		static bool isColliding( Bound* a,  Bound* b); // COMPLETE
 		static bool SATTest( OBB* a,  OBB* b); // COMPLETE

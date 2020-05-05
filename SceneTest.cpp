@@ -27,7 +27,7 @@ SceneTest::SceneTest(Shader* shader, Texture* texture):
         m_firstObject = new ObjectRegistration();
 
         Object* player = new Object(
-            glm::vec3(0.0f,0.0f,0.0f),
+            glm::vec3(0.0f,10.0f,0.0f),
             glm::vec3(0.0f,0.0f,0.0f),
             glm::vec3(1.0f,1.0f,1.0f)
         );
@@ -40,7 +40,7 @@ SceneTest::SceneTest(Shader* shader, Texture* texture):
         m_player = player;
 
         Object* floor = new Object(
-            glm::vec3(0.0f,-300.0f,0.0f),
+            glm::vec3(0.0f,0.0f,0.0f),
             glm::vec3(0.0f,0.0f,0.0f),
             glm::vec3(30.0f,1.0f,1.0f)
         );
@@ -190,7 +190,7 @@ void SceneTest::generateContacts(){
 
                     Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
                     
-                    //m_collisionResolver->registerContact(generatedCol);
+                    m_collisionResolver->registerContact(generatedCol);
                 }
             }
             hitter = hitter->next;

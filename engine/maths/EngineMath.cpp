@@ -15,7 +15,7 @@ glm::vec2* EngineMath::calcHalfExtents(const float* vertices, glm::vec3* scale){
 			}
 		}else{
 			if(*(vertices+i) != currentY){
-				halfExtents->y = (fabs(currentY - *(vertices+i)) * scale->x)/2.0f;
+				halfExtents->y = (fabs(currentY - *(vertices+i)) * scale->y)/2.0f;
 			}
 		}
 	}
