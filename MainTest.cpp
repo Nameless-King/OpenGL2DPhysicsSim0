@@ -18,7 +18,7 @@
 #include "./SceneTest.h"
 
 void input();
-void windowInput(GWindow* window);
+void cameraInput(GWindow* window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userparam);
 
@@ -66,9 +66,10 @@ int main(){
     std::cout << "Initial Error Code: " << glGetError() << std::endl;
 
     while(!gameWindow.windowShouldClose()){
+        GInput::update();
         gameWindow.pollEvents();
         input();
-        windowInput(&gameWindow);
+        cameraInput(&gameWindow);
 
         SceneManager::updateCurrentScene(&gameWindow);
         SceneManager::start();
@@ -112,7 +113,7 @@ void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
             type, severity, message );
 }
 
-void windowInput(GWindow* window){
+void cameraInput(GWindow* window){
     float camSpeed = 2.0f;
     float zoomSpeed = 0.1f;
 

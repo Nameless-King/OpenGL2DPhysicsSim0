@@ -51,10 +51,12 @@ glm::mat4 GWindow::getProjectionMatrix(){
 		m_sizeChanged = false;
 		m_zoom = m_camera.getCameraZoom();
 		m_projection = glm::ortho(
-			-(m_width/2.0f)/m_zoom,
-			(m_width/2.0f)/m_zoom,
-			-(m_height/2.0f)/m_zoom,
-			(m_height/2.0f)/m_zoom
+			-(m_width)/m_zoom,
+			(m_width)/m_zoom,
+			-(m_height)/m_zoom,
+			(m_height)/m_zoom,
+			-1.0f,
+			1.0f
 		);
 	}
 	return m_projection;

@@ -38,6 +38,7 @@ class Collision{
 		static CollisionData calculateCollision( Bound* a,  Bound* b); // COMPLETE
 		static bool isColliding( Bound* a,  Bound* b); // COMPLETE
 		static bool SATTest( OBB* a,  OBB* b); // COMPLETE
+		static bool correctObjects(CollisionData* data); //complete
 		static void resolve(float dt, CollisionData* col); // COMPLETE
 		static void resolveInterpenetration(float dt, CollisionData* col); // COMPLETE
 		static void resolveRestingContactVelocity(float dt, CollisionData* col); // COMPLETE

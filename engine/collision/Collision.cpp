@@ -10,14 +10,17 @@ float Collision::calculateClosingVelocity( CollisionData* col) {
 
 CollisionData Collision::calculateCollision( Bound* a,  Bound* b){
 	CollisionData data;
-	
+
 	data.distance = *(b->getCenter()) - *(a->getCenter());
 	
 	//TODO : is this fucking up everything
+	//TODO : but is it though?
 	data.distance.x = fabs(data.distance.x);
 	data.distance.y = fabs(data.distance.y);
 	
 	glm::vec2 joinedExtents = *(a->getHalfExtents()) + *(b->getHalfExtents());
+
+	//TODO : original code takes smallest component
 	data.penetrationDepth = joinedExtents - data.distance;
 	
 	//TODO : above TODO if corrected will result in below simplification
@@ -28,7 +31,8 @@ CollisionData Collision::calculateCollision( Bound* a,  Bound* b){
 
 bool Collision::isColliding( Bound* a,  Bound* b){
 	bool isColliding = false;
-	glm::vec2 dist = b->getCopyCenterXY() - a->getCopyCenterXY();
+	//TODO : copy may not be necessary
+	glm::vec2 dist = *(b->getCenter()) - *(a->getCenter());
     dist.x = fabs(dist.x);
     dist.y = fabs(dist.y);
 	
@@ -39,6 +43,7 @@ bool Collision::isColliding( Bound* a,  Bound* b){
 			isColliding = dist.x < joinedExtents.x && dist.y < joinedExtents.y;
 		}else if(a->getBoundingType() == BoundingType::Circle){
 			float dotDist = glm::dot(dist,dist);
+			//circles will have equal extents in x and y direction
 			isColliding = dotDist <= joinedExtents.x * joinedExtents.x;
 		}else if(a->getBoundingType() == BoundingType::Oriented){
 			OBB* aOBB = static_cast<OBB*>(a);
@@ -51,9 +56,16 @@ bool Collision::isColliding( Bound* a,  Bound* b){
 }
 
 void Collision::resolve(float dt,CollisionData* col){
-	Collision::resolveVelocity(dt, col);
-	//Collision::resolveRestingContactVelocity(dt);
-	Collision::resolveInterpenetration(dt,col);
+	std::cout << "enter" << std::endl;
+	if(correctObjects(col)){
+		std::cout << "if" << std::endl;
+		Collision::resolveVelocity(dt, col);
+		//Collision::resolveRestingContactVelocity(dt);
+		std::cout << "post velocity" << std::endl;
+		Collision::resolveInterpenetration(dt,col);
+		std::cout << "post interpenetration" << std::endl;
+	}
+	std::cout << "exit" << std::endl;
 }
 
 void Collision::resolveInterpenetration(float dt, CollisionData* col){
@@ -144,10 +156,31 @@ void Collision::resolveVelocity(float dt, CollisionData* col){
 	
 	glm::vec2 impulsePerMass = col->collisionNormal * impulse;
 	
-	col->object[0]->getRigidbody2D()->setVelocity(*(col->object[0]->getRigidbody2D()->getVelocity()) + impulsePerMass * -col->object[0]->getRigidbody2D()->getInverseMass());
+	col->object[0]->getRigidbody2D()->setVelocity(*(col->object[0]->getRigidbody2D()->getVelocity()) + impulsePerMass * col->object[0]->getRigidbody2D()->getInverseMass());
 	if(col->object[1]){
 		col->object[1]->getRigidbody2D()->setVelocity(*(col->object[1]->getRigidbody2D()->getVelocity()) + impulsePerMass * -col->object[1]->getRigidbody2D()->getInverseMass());
 	}
+}
+
+bool Collision::correctObjects(CollisionData* data){
+	if(data->object[0] && data->object[1]){
+		bool obj0InfMass = data->object[0]->getRigidbody2D()->hasInfiniteMass();
+		bool obj1InfMass = data->object[1]->getRigidbody2D()->hasInfiniteMass();
+		if(obj0InfMass && obj1InfMass){
+			return false;
+		}
+		if(obj0InfMass || obj1InfMass){
+			if(obj0InfMass){
+				data->object[0] = data->object[1];
+				data->object[1] = NULL;
+			} else {
+				data->object[1] = NULL;
+			}
+		}
+	}else{
+		return false;
+	}
+	return true;
 }
 
 bool Collision::SATTest( OBB* a,  OBB* b){

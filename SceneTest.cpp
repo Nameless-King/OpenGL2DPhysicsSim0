@@ -181,17 +181,16 @@ void SceneTest::generateContacts(){
                 if(Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
                     CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(),hitter->object->getBound());
 
-                    m_tempContact.object[0] = hittee->object;
-                    m_tempContact.object[1] = hitter->object;
+                    generatedCol.object[0] = hittee->object;
+                    generatedCol.object[1] = hitter->object;
 
-                    m_tempContact.restitution = 0.0f;
-                    m_tempContact.penetrationDepth = generatedCol.penetrationDepth;
+                    generatedCol.restitution = 0.0f;
 
                     testBoxCollision(hittee->object,hitter->object,&generatedCol);
-                    m_tempContact.collisionNormal = generatedCol.collisionNormal;
 
-                    Collision::resolve(ImGui::GetIO().DeltaTime,&m_tempContact);
-                    m_collisionResolver->registerContact(m_tempContact);
+                    Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
+                    
+                    //m_collisionResolver->registerContact(generatedCol);
                 }
             }
             hitter = hitter->next;
