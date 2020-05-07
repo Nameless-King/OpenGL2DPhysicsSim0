@@ -16,6 +16,7 @@
 #include "./engine/graphics/Renderer.h"
 
 #include "./SceneTest.h"
+#include "./SceneOBB.h"
 
 void input();
 void cameraInput(GWindow* window);
@@ -56,8 +57,10 @@ int main(){
     Renderer::init();
 
     SceneTest scene0(&shader, &textureWhite);
+    SceneOBB scene1(&shader, &textureWhite);
 
     SceneManager::registerScene(&scene0);
+    SceneManager::registerScene(&scene1);
 
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 

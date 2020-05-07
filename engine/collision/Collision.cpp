@@ -46,9 +46,9 @@ bool Collision::isColliding( Bound* a,  Bound* b){
 			//circles will have equal extents in x and y direction
 			isColliding = dotDist <= joinedExtents.x * joinedExtents.x;
 		}else if(a->getBoundingType() == BoundingType::Oriented){
-			OBB* aOBB = static_cast<OBB*>(a);
-			OBB* bOBB = static_cast<OBB*>(b);
-			isColliding = Collision::SATTest(aOBB,bOBB);
+			OBB testA = (OBB)*a;
+			OBB testB = (OBB)*b;
+			isColliding = Collision::SATTest(&testA,&testB);
 		}
 	}
 	
@@ -230,5 +230,7 @@ bool Collision::SATTest( OBB* a,  OBB* b){
     glm::vec2 rotlocalx = a_rotMat * a->m_localX;
     glm::vec2 rotlocaly = a_rotMat * a->m_localY;
 	
+	
+
 	return colliding0 && colliding1 && colliding2 && colliding3;
 }

@@ -18,6 +18,9 @@ public:
 	glm::vec2* m_halfExtents;
 	glm::vec3* m_center;
 	glm::vec3* m_scale;
+	float m_rotation;
+	glm::vec2 m_localX;
+	glm::vec2 m_localY;
 
 	Bound(); // COMPLETE
 	Bound(glm::vec3* center, glm::vec3* scale, const float* pvertices, BoundingType type); // COMPLETE

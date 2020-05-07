@@ -1,53 +1,48 @@
-#include "./SceneTest.h"
+#include "./SceneOBB.h"
 
-SceneTest::SceneTest():
-    Scene("SceneTest"),
+SceneOBB::SceneOBB():
+    Scene("SceneOBB"),
     m_shader(NULL),
     m_texture(NULL),
     m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 1.0f))),
     m_collisionResolver(new CollisionBatchResolver(1)),
-    m_tempContact(CollisionData()),
     m_numCollisions(0),
     m_numObjects(0){
-    }
+}
 
-SceneTest::SceneTest(Shader* shader, Texture* texture):
-    Scene("SceneTest"),
+SceneOBB::SceneOBB(Shader* shader, Texture* texture):
+    Scene("SceneOBB"),
     m_shader(shader),
     m_texture(texture),
     m_maxContacts(0),
     m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 0.0f))),
     m_collisionResolver(new CollisionBatchResolver(1)),
-    m_tempContact(CollisionData()),
     m_numCollisions(0),
     m_numObjects(0){
         m_firstObject = new ObjectRegistration();
 
         Object* player = new Object(
-            glm::vec3(0.0f,10.0f,0.0f),
+            glm::vec3(0.0f,0.0f,0.0f),
             glm::vec3(0.0f,0.0f,0.0f),
             glm::vec3(1.0f,1.0f,1.0f)
         );
-        //player->addVertices(vertices);
-        player->createBound(BoundingType::AxisAligned);
+        player->createBound(BoundingType::Oriented);
         player->addRigidbody2D(new Rigidbody2D(5.0f));
-
-
         addObject(player);
         m_player = player;
 
-        Object* floor = new Object(
+        Object* testBlock = new Object(
+            glm::vec3(0.0f,-10.0f,0.0f),
             glm::vec3(0.0f,0.0f,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
-            glm::vec3(30.0f,1.0f,1.0f)
+            glm::vec3(1.0f,1.0f,1.0f)
         );
-        floor->createBound(BoundingType::AxisAligned);
-        floor->addRigidbody2D(new Rigidbody2D(-1.0f));
+        testBlock->createBound(BoundingType::Oriented);
+        testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
+        addObject(testBlock);
 
-        addObject(floor);
     }
 
-SceneTest::~SceneTest(){
+    SceneOBB::~SceneOBB(){
     ObjectRegistration* currentRegistry = m_firstObject;
     while(currentRegistry){
         delete currentRegistry->object;
@@ -56,7 +51,7 @@ SceneTest::~SceneTest(){
     delete m_collisionResolver;
 }
 
-void SceneTest::render(GWindow* window){
+void SceneOBB::render(GWindow* window){
     Renderer::bind();
     m_shader->use();
     m_texture->bind();
@@ -73,19 +68,19 @@ void SceneTest::render(GWindow* window){
     Renderer::unbind();
 }
 
-void SceneTest::update(GWindow* window){
+void SceneOBB::update(GWindow* window){
     runPhysics(ImGui::GetIO().DeltaTime);
     input(window);
 }
 
-void SceneTest::renderGUI(){
+void SceneOBB::renderGUI(){
     ImGui::Begin(getSceneTitle().c_str());
     ImGui::Text("Number of collision: %d",m_numCollisions);
     ImGui::Text("Number of objects: %d",m_numObjects);
     ImGui::End();
 }
 
-void SceneTest::input(GWindow* window){
+void SceneOBB::input(GWindow* window){
     glm::vec2 velocity(0.0f,0.0f);
     float speed = 100.0f;
 
@@ -159,7 +154,7 @@ void SceneTest::input(GWindow* window){
     }
 }
 
-void SceneTest::startFrame(){
+void SceneOBB::startFrame(){
     ObjectRegistration* currentRegister = m_firstObject;
 
     while(currentRegister){
@@ -169,7 +164,7 @@ void SceneTest::startFrame(){
     }
 }
 
-void SceneTest::generateContacts(){
+void SceneOBB::generateContacts(){
     ObjectRegistration* hittee = m_firstObject;
     while(hittee){
         ObjectRegistration* hitter = hittee->next;
@@ -196,7 +191,7 @@ void SceneTest::generateContacts(){
     }
 }
 
-void SceneTest::integrate(float dt){
+void SceneOBB::integrate(float dt){
     ObjectRegistration* currentRegister = m_firstObject;
     while(currentRegister){
         Physics2D::integrate(currentRegister->object,dt);
@@ -204,7 +199,7 @@ void SceneTest::integrate(float dt){
     }
 }
 
-void SceneTest::runPhysics(float dt){
+void SceneOBB::runPhysics(float dt){
     //force generators
     ObjectRegistration* currentRegister = m_firstObject;
     while(currentRegister){
@@ -220,7 +215,7 @@ void SceneTest::runPhysics(float dt){
     m_collisionResolver->resetRegistry();
 }
 
-void SceneTest::addObject(Object* newObject){
+void SceneOBB::addObject(Object* newObject){
     if(!m_firstObject->object){
         m_firstObject->object = newObject;
     }else{
@@ -235,7 +230,7 @@ void SceneTest::addObject(Object* newObject){
     m_numObjects++;
 }
 
-void SceneTest::testBoxCollision(Object* obj1, Object* obj2, CollisionData* col){
+void SceneOBB::testBoxCollision(Object* obj1, Object* obj2, CollisionData* col){
     if(obj1->getRigidbody2D()->hasInfiniteMass()){
         Object* temp = obj2;
         obj2 = obj1;
@@ -260,4 +255,3 @@ void SceneTest::testBoxCollision(Object* obj1, Object* obj2, CollisionData* col)
 		}
     }
 }
-
