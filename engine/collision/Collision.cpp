@@ -33,8 +33,8 @@ bool Collision::isColliding( Bound* a,  Bound* b){
 	bool isColliding = false;
 	//TODO : copy may not be necessary
 	glm::vec2 dist = *(b->getCenter()) - *(a->getCenter());
-    dist.x = fabs(dist.x);
-    dist.y = fabs(dist.y);
+    //dist.x = fabs(dist.x);
+    //dist.y = fabs(dist.y);
 	
 	glm::vec2 joinedExtents = *(b->getHalfExtents()) + *(a->getHalfExtents());
 	
@@ -184,6 +184,7 @@ bool Collision::correctObjects(CollisionData* data){
 
 bool Collision::SATTest( OBB* a,  OBB* b){
 	glm::vec2 t = EngineMath::absVec2(b->getCopyCenterXY() - a->getCopyCenterXY());
+	
 
     glm::mat2 a_rotMat = EngineMath::rotationMatrix(a->m_rotation);
     glm::mat2 b_rotMat = EngineMath::rotationMatrix(b->m_rotation);
@@ -227,10 +228,16 @@ bool Collision::SATTest( OBB* a,  OBB* b){
         + glm::length(EngineMath::projectOnto(curW * curX,curL))
         + glm::length(EngineMath::projectOnto(curH * curY,curL));
 
-    glm::vec2 rotlocalx = a_rotMat * a->m_localX;
-    glm::vec2 rotlocaly = a_rotMat * a->m_localY;
+	//these lines are kinda just existing IDK what they are for
+    //glm::vec2 rotlocalx = a_rotMat * a->m_localX;
+    //glm::vec2 rotlocaly = a_rotMat * a->m_localY;
 	
 	
 
-	return colliding0 && colliding1 && colliding2 && colliding3;
+	return colliding0 && colliding1 && 1 && 1;
 }
+
+//bool Collision::SATTest2(OBB* a, OBB* b){
+	
+
+//}

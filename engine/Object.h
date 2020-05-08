@@ -6,6 +6,7 @@
 #include "./collision/AABB.h"
 #include "./collision/OBB.h"
 #include "./collision/Circle.h"
+#include "./maths/EngineMath.h"
 #include "./physics/Rigidbody2D.h"
 #include "./graphics/Renderer.h"
 
@@ -27,6 +28,8 @@ public:
 	
 	glm::mat4 getModelMatrix();
 	
+	void rotateDegrees(float degrees);
+
 	void setPos(float xPos, float yPos, float zPos);
 	void setPos(float xPos, float yPos);
 	void setPos(glm::vec2 pos);

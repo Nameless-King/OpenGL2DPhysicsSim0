@@ -60,6 +60,13 @@ glm::mat4 Object::getModelMatrix(){
 	return model;
 }
 
+void Object::rotateDegrees(float degrees){
+	m_rotation.z += degrees;
+	if(m_bound){
+		m_bound->m_rotation +=  degrees; 
+	}
+}
+
 void Object::setPos(float xPos, float yPos, float zPos){
 	m_position = glm::vec3(xPos,yPos,zPos);
 }

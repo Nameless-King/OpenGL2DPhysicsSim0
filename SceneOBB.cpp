@@ -82,7 +82,7 @@ void SceneOBB::renderGUI(){
 
 void SceneOBB::input(GWindow* window){
     glm::vec2 velocity(0.0f,0.0f);
-    float speed = 100.0f;
+    float speed = 10.0f;
 
     if(GInput::isKeyDown(GLFW_KEY_UP)){
         velocity.y = speed;
@@ -98,59 +98,8 @@ void SceneOBB::input(GWindow* window){
 
     m_player->getRigidbody2D()->setVelocity(velocity);
 
-    //creates infinite mass objects upon left click at mouse position
-    if(GInput::isMouseButtonPressed(GLFW_MOUSE_BUTTON_1)){
-        glm::vec2 mousePos = GInput::getMouseXY();
-
-        mousePos.x -= window->getWidth() / 2.0f;
-        mousePos.y = window->getHeight() / 2.0f - mousePos.y;
-
-        mousePos.x /= window->getZoom() / 2.0f;
-        mousePos.y /= window->getZoom() / 2.0f;
-
-        int camX = window->getCamera()->getCameraPos().x;
-        int camY = window->getCamera()->getCameraPos().y;
-
-        mousePos.x += camX;
-        mousePos.y += camY;
-
-        Object* newObject = new Object(
-            glm::vec3(mousePos.x,mousePos.y,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
-            glm::vec3(1.0f,1.0f,1.0f)
-        );
-        newObject->createBound(BoundingType::AxisAligned);
-        newObject->addRigidbody2D(new Rigidbody2D(-1.0f));
-
-        addObject(newObject);
-    }
-
-    //creates finite mass objects upon right click at mouse position
-    if(GInput::isMouseButtonPressed(GLFW_MOUSE_BUTTON_2)){
-        glm::vec2 mousePos = GInput::getMouseXY();
-
-        mousePos.x -= window->getWidth() / 2.0f;
-        mousePos.y = window->getHeight() / 2.0f - mousePos.y;
-
-        mousePos.x /= window->getZoom() / 2.0f;
-        mousePos.y /= window->getZoom() / 2.0f;
-
-        int camX = window->getCamera()->getCameraPos().x;
-        int camY = window->getCamera()->getCameraPos().y;
-
-        mousePos.x += camX;
-        mousePos.y += camY;
-
-        Object* newObject = new Object(
-            glm::vec3(mousePos.x,mousePos.y,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
-            glm::vec3(1.0f,1.0f,1.0f)
-        );
-        newObject->createBound(BoundingType::AxisAligned);
-        newObject->addRigidbody2D(new Rigidbody2D(1.0f));
-
-        addObject(newObject);
-
+    if(GInput::isKeyDown(GLFW_KEY_R)){
+       m_player->rotateDegrees(0.5f);
     }
 }
 
@@ -171,18 +120,22 @@ void SceneOBB::generateContacts(){
         while(hitter){
             if(!(hitter->object->getRigidbody2D()->hasInfiniteMass() && hittee->object->getRigidbody2D()->hasInfiniteMass())){
                 if(Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
-                    CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(),hitter->object->getBound());
+                    std::cout << "Colliding " << ImGui::GetIO().DeltaTime<< std::endl;
+                    if(hitter->object->getBound()->m_type != BoundingType::Oriented){
+                        CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(),hitter->object->getBound());
 
-                    generatedCol.object[0] = hittee->object;
-                    generatedCol.object[1] = hitter->object;
+                        generatedCol.object[0] = hittee->object;
+                        generatedCol.object[1] = hitter->object;
 
-                    generatedCol.restitution = 0.0f;
+                        generatedCol.restitution = 0.0f;
 
-                    testBoxCollision(hittee->object,hitter->object,&generatedCol);
+                        testBoxCollision(hittee->object,hitter->object,&generatedCol);
 
-                    Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
+                        Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
+                        
+                        m_collisionResolver->registerContact(generatedCol);
+                    }
                     
-                    m_collisionResolver->registerContact(generatedCol);
                 }
             }
             hitter = hitter->next;
