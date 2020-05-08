@@ -39,6 +39,17 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture):
         testBlock->createBound(BoundingType::Oriented);
         testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
         addObject(testBlock);
+        m_test = testBlock;
+
+        testBlock = new Object(
+            glm::vec3(0.0f,-50.0f,0.0f),
+            glm::vec3(0.0f,0.0f,0.0f),
+            glm::vec3(2.0f,1.0f,1.0f)
+        );
+        testBlock->createBound(BoundingType::Oriented);
+        testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
+        addObject(testBlock);
+
 
     }
 
@@ -69,6 +80,7 @@ void SceneOBB::render(GWindow* window){
 }
 
 void SceneOBB::update(GWindow* window){
+
     runPhysics(ImGui::GetIO().DeltaTime);
     input(window);
 }
@@ -100,6 +112,10 @@ void SceneOBB::input(GWindow* window){
 
     if(GInput::isKeyDown(GLFW_KEY_R)){
        m_player->rotateDegrees(0.5f);
+    }
+
+    if(GInput::isKeyDown(GLFW_KEY_C)){
+        m_test->rotateDegrees(0.5f);
     }
 }
 
