@@ -31,7 +31,7 @@ CollisionData Collision::calculateCollision( Bound* a,  Bound* b){
 
 bool Collision::isColliding( Bound* a,  Bound* b){
 	bool isColliding = false;
-	
+
 	glm::vec2 dist = *(b->getCenter()) - *(a->getCenter());
     dist.x = fabs(dist.x);
     dist.y = fabs(dist.y);
@@ -57,7 +57,8 @@ bool Collision::isColliding( Bound* a,  Bound* b){
 
 void Collision::resolve(float dt,CollisionData* col){
 	if(correctObjects(col)){
-		Collision::resolveVelocity(dt, col);
+		float impulse = Collision::resolveVelocity(dt, col);
+		Collision::resolveFriction(dt,impulse,col);
 		//Collision::resolveRestingContactVelocity(dt);
 		Collision::resolveInterpenetration(dt,col);
 	}
@@ -132,11 +133,11 @@ void Collision::resolveRestingContactVelocity(float dt, CollisionData* col){
 	}
 }
 
-void Collision::resolveVelocity(float dt, CollisionData* col){
+float Collision::resolveVelocity(float dt, CollisionData* col){
 	float closingVelocity = Collision::calculateClosingVelocity(col);
 	
 	if(closingVelocity > 0){
-		return;
+		return 0;
 	}
 	
 	float newClosingVelocity = -closingVelocity * col->restitution;
@@ -148,7 +149,7 @@ void Collision::resolveVelocity(float dt, CollisionData* col){
 	}
 	
 	if(totalInverseMass <= 0){
-		return;
+		return 0;
 	}
 	
 	float impulse = deltaVelocity / totalInverseMass;
@@ -158,6 +159,52 @@ void Collision::resolveVelocity(float dt, CollisionData* col){
 	col->object[0]->getRigidbody2D()->setVelocity(*(col->object[0]->getRigidbody2D()->getVelocity()) + impulsePerMass * col->object[0]->getRigidbody2D()->getInverseMass());
 	if(col->object[1]){
 		col->object[1]->getRigidbody2D()->setVelocity(*(col->object[1]->getRigidbody2D()->getVelocity()) + impulsePerMass * -col->object[1]->getRigidbody2D()->getInverseMass());
+	}
+
+	return impulse;
+}
+
+void Collision::resolveFriction(float dt, float impulse, CollisionData* col){
+	glm::vec2 relativeVelocity = *(col->object[0]->getRigidbody2D()->getVelocity());
+	if(col->object[1]){
+		relativeVelocity -= *(col->object[1]->getRigidbody2D()->getVelocity());
+	}
+
+	glm::vec2 frictionVector = relativeVelocity - glm::dot(relativeVelocity,col->collisionNormal) * col->collisionNormal;
+	if(glm::length(frictionVector) > 0){
+		frictionVector = glm::normalize(frictionVector);
+	}
+	
+	
+
+	float frictionImpulse = -glm::dot(relativeVelocity,frictionVector);
+	
+	float totalInverseMass = col->object[0]->getRigidbody2D()->getInverseMass();
+	if(col->object[1]){
+		totalInverseMass += col->object[1]->getRigidbody2D()->getInverseMass();
+	}
+	
+	if(totalInverseMass <= 0){
+		return;
+	}
+
+	frictionImpulse = frictionImpulse / totalInverseMass;
+	
+
+	//TODO : if this method works find out how to make this changable
+	float frictionCoefficient = 0.5f;
+
+	glm::vec2 frictionImpulseVector;
+	if(fabs(frictionImpulse) < impulse * frictionCoefficient){
+		frictionImpulseVector = frictionImpulse * frictionVector;
+	}else{
+		//idk if this works, not what example had
+		frictionImpulseVector = -impulse * frictionVector * frictionCoefficient;
+	}
+
+	col->object[0]->getRigidbody2D()->setVelocity(*(col->object[0]->getRigidbody2D()->getVelocity()) + col->object[0]->getRigidbody2D()->getInverseMass() * frictionImpulseVector);
+	if(col->object[1]){
+		col->object[1]->getRigidbody2D()->setVelocity(*(col->object[1]->getRigidbody2D()->getVelocity()) + col->object[1]->getRigidbody2D()->getInverseMass() * frictionImpulseVector);
 	}
 }
 

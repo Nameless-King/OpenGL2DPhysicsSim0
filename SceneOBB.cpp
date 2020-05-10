@@ -4,7 +4,7 @@ SceneOBB::SceneOBB():
     Scene("SceneOBB"),
     m_shader(NULL),
     m_texture(NULL),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 1.0f))),
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 0.0f))),
     m_collisionResolver(new CollisionBatchResolver(1)),
     m_numCollisions(0),
     m_numObjects(0){
@@ -15,7 +15,7 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture):
     m_shader(shader),
     m_texture(texture),
     m_maxContacts(0),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 1.0f))),
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 0.0f))),
     m_collisionResolver(new CollisionBatchResolver(1)),
     m_numCollisions(0),
     m_numObjects(0){
@@ -124,7 +124,7 @@ void SceneOBB::startFrame(){
 
     while(currentRegister){
         currentRegister->object->getRigidbody2D()->zeroForce();
-
+        currentRegister->object->getRigidbody2D()->setAngularVelocity(0.0f);
         currentRegister = currentRegister->next;
     }
 }
@@ -148,6 +148,22 @@ void SceneOBB::generateContacts(){
                     testBoxCollision(hittee->object,hitter->object,&generatedCol);
 
                     Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
+
+                    if(generatedCol.object[0]){
+                        Physics2D::applyImpulse(
+                            generatedCol.object[0],
+                            glm::vec2(1.0f,0.0f),
+                            generatedCol.collisionNormal
+                        );
+                    }
+                    if(generatedCol.object[1]){
+                        Physics2D::applyImpulse(
+                            generatedCol.object[1],
+                            glm::vec2(1.0f,0.0f),
+                            generatedCol.collisionNormal
+                        );
+                    }
+                    
                         
                     m_collisionResolver->registerContact(generatedCol);
                 }

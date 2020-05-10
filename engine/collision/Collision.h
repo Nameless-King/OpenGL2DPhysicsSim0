@@ -41,5 +41,6 @@ class Collision{
 		static void resolve(float dt, CollisionData* col); // COMPLETE
 		static void resolveInterpenetration(float dt, CollisionData* col); // COMPLETE
 		static void resolveRestingContactVelocity(float dt, CollisionData* col); // COMPLETE
-		static void resolveVelocity(float dt, CollisionData* col); // COMPLETE
+		static float resolveVelocity(float dt, CollisionData* col); // COMPLETE
+		static void resolveFriction(float dt, float impulse, CollisionData* col);
 };

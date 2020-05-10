@@ -49,10 +49,16 @@ void Physics2D::integrate(Object* obj, float dt){
 	//not needed, the resulting value will by much too low to make a difference
 	//objPos += dt*dt*0.5f*objRb->getAcceleration();
 
-	
+
 	
 	objRb->setVelocity(objVel.x,objVel.y);
 	obj->setPos(objPos.x,objPos.y);
 	
 	objRb->zeroForce();
+}
+
+void Physics2D::applyImpulse(Object* a, glm::vec2 impulse, glm::vec2 contactVector){
+	float inertia = EngineMath::calcRectInertia(a->getRigidbody2D()->getMass(), a->getBound()->getHalfExtents()->x * 2, a->getBound()->getHalfExtents()->y * 2);
+	//a->getRigidbody2D()->setAngularVelocity(a->getRigidbody2D()->getAnguarVelocity() + 1);
+	a->rotateDegrees( (180.0f/PI) * (1.0f / inertia * (contactVector.x * impulse.y - contactVector.y * impulse.x)));
 }

@@ -8,7 +8,8 @@ SceneTest::SceneTest():
     m_collisionResolver(new CollisionBatchResolver(1)),
     m_tempContact(CollisionData()),
     m_numCollisions(0),
-    m_numObjects(0){
+    m_numObjects(0),
+    m_playerSpeed(100.0f){
     }
 
 SceneTest::SceneTest(Shader* shader, Texture* texture):
@@ -16,11 +17,12 @@ SceneTest::SceneTest(Shader* shader, Texture* texture):
     m_shader(shader),
     m_texture(texture),
     m_maxContacts(0),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 0.0f))),
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * -10.0f))),
     m_collisionResolver(new CollisionBatchResolver(1)),
     m_tempContact(CollisionData()),
     m_numCollisions(0),
-    m_numObjects(0){
+    m_numObjects(0),
+    m_playerSpeed(100.0f){
         m_firstObject = new ObjectRegistration();
 
         Object* player = new Object(
@@ -82,12 +84,16 @@ void SceneTest::renderGUI(){
     ImGui::Begin(getSceneTitle().c_str());
     ImGui::Text("Number of collision: %d",m_numCollisions);
     ImGui::Text("Number of objects: %d",m_numObjects);
+    int playerSpeed = (int)m_playerSpeed;
+    if(ImGui::SliderInt("Player Speed",&playerSpeed,1,100)){
+		m_playerSpeed = (float)playerSpeed;
+	}
     ImGui::End();
 }
 
 void SceneTest::input(GWindow* window){
     glm::vec2 velocity(0.0f,0.0f);
-    float speed = 100.0f;
+    float speed = m_playerSpeed;
 
     if(GInput::isKeyDown(GLFW_KEY_UP)){
         velocity.y = speed;

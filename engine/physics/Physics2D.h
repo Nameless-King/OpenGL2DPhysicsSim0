@@ -6,6 +6,7 @@
 #include <assert.h>
 
 #include "../Object.h"
+#include "../maths/EngineMath.h"
 
 #include "../../Dependencies/glm/glm.hpp"
 #include "../../Dependencies/glm/gtc/matrix_transform.hpp"
@@ -21,4 +22,5 @@ public:
 	static glm::vec2 getGravity(); // COMPLETE
 	static void integrate(Object* obj,float dt); // COMPLETE
 	static void gravitate(glm::vec2 dir,float mag, Object* obj); // COMPLETE
+	static void applyImpulse(Object* a, glm::vec2 impulse, glm::vec2 contactVector); //COMPLETE
 };

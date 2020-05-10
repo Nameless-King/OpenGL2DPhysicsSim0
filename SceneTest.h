@@ -36,6 +36,7 @@ class SceneTest : public Scene{
         ForceGravity m_forceGravity;
         unsigned int m_numCollisions;
         unsigned int m_numObjects;
+        float m_playerSpeed;
 
     public:
         SceneTest();
