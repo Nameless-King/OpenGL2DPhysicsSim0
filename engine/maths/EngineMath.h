@@ -40,6 +40,7 @@ class EngineMath{
 		//theta returns the angle between two vectors
 		static float theta(const glm::vec2* a, const glm::vec2* b); // COMPLETE
 		static float theta(const glm::vec3* a, const glm::vec3* b); // COMPLETE
+		static float calcRectInertia(float mass,float width, float height); //COMPLETE
 		
 		
 		

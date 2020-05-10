@@ -15,7 +15,7 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture):
     m_shader(shader),
     m_texture(texture),
     m_maxContacts(0),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 0.0f))),
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 1.0f))),
     m_collisionResolver(new CollisionBatchResolver(1)),
     m_numCollisions(0),
     m_numObjects(0){
@@ -137,21 +137,19 @@ void SceneOBB::generateContacts(){
             if(!(hitter->object->getRigidbody2D()->hasInfiniteMass() && hittee->object->getRigidbody2D()->hasInfiniteMass())){
                 if(Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
                     std::cout << "Colliding " << ImGui::GetIO().DeltaTime<< std::endl;
-                    if(hitter->object->getBound()->m_type != BoundingType::Oriented){
-                        CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(),hitter->object->getBound());
+                   
+                    CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(),hitter->object->getBound());
 
-                        generatedCol.object[0] = hittee->object;
-                        generatedCol.object[1] = hitter->object;
+                    generatedCol.object[0] = hittee->object;
+                    generatedCol.object[1] = hitter->object;
 
-                        generatedCol.restitution = 0.0f;
+                    generatedCol.restitution = 0.0f;
 
-                        testBoxCollision(hittee->object,hitter->object,&generatedCol);
+                    testBoxCollision(hittee->object,hitter->object,&generatedCol);
 
-                        Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
+                    Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
                         
-                        m_collisionResolver->registerContact(generatedCol);
-                    }
-                    
+                    m_collisionResolver->registerContact(generatedCol);
                 }
             }
             hitter = hitter->next;

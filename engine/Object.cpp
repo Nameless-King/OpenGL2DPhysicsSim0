@@ -65,6 +65,9 @@ void Object::rotateDegrees(float degrees){
 	if(m_bound){
 		m_bound->m_rotation +=  degrees; 
 	}
+	if(m_rigidbody){
+		m_rigidbody->setOrientation(m_rigidbody->getOrientation() + degrees);
+	}
 }
 
 void Object::setPos(float xPos, float yPos, float zPos){

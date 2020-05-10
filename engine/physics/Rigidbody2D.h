@@ -32,6 +32,9 @@ class Rigidbody2D{
 		void setForce(float fx,float fy);
 		void setMass(float mass);
 		void setDamping(float damping);
+		void setOrientation(float rot);
+		void setAngularVelocity(float vel);
+		void setTorque(float tor);
 		void setAcceleration(float ax, float ay);
 		void setVelocity(float vx, float vy);
 		void setVelocity(glm::vec2 vel);
@@ -39,6 +42,9 @@ class Rigidbody2D{
 		inline float getMass() {return m_mass;}
 		inline float getInverseMass() {return 1.0f/m_mass;}
 		inline float getDamping() { return m_damping;}
+		inline float getOrientation() {return m_orientation;}
+		inline float getAngularVelocity() {return m_angularVelocity;}
+		inline float getTorque() {return m_torque;}
 
 		inline glm::vec2* getVelocity()  {return m_velocity;}
 		inline glm::vec2* getAcceleration()  {return m_acceleration;}

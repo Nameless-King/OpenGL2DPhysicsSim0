@@ -31,10 +31,10 @@ CollisionData Collision::calculateCollision( Bound* a,  Bound* b){
 
 bool Collision::isColliding( Bound* a,  Bound* b){
 	bool isColliding = false;
-	//TODO : copy may not be necessary
+	
 	glm::vec2 dist = *(b->getCenter()) - *(a->getCenter());
-    //dist.x = fabs(dist.x);
-    //dist.y = fabs(dist.y);
+    dist.x = fabs(dist.x);
+    dist.y = fabs(dist.y);
 	
 	glm::vec2 joinedExtents = *(b->getHalfExtents()) + *(a->getHalfExtents());
 	

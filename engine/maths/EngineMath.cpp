@@ -64,4 +64,7 @@ float EngineMath::theta(const glm::vec3* a, const glm::vec3* b){
 	return acos(dotProd/lengthProd);
 }
 
+float EngineMath::calcRectInertia(float mass, float width, float height){
+	return mass * (width * width + height * height) / 12.0f;
+}
 
