@@ -136,7 +136,6 @@ void SceneOBB::generateContacts(){
         while(hitter){
             if(!(hitter->object->getRigidbody2D()->hasInfiniteMass() && hittee->object->getRigidbody2D()->hasInfiniteMass())){
                 if(Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
-                    std::cout << "Colliding " << ImGui::GetIO().DeltaTime<< std::endl;
                    
                     CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(),hitter->object->getBound());
 
@@ -148,23 +147,6 @@ void SceneOBB::generateContacts(){
                     testBoxCollision(hittee->object,hitter->object,&generatedCol);
 
                     Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
-
-                    if(generatedCol.object[0]){
-                        Physics2D::applyImpulse(
-                            generatedCol.object[0],
-                            glm::vec2(1.0f,0.0f),
-                            generatedCol.collisionNormal
-                        );
-                    }
-                    if(generatedCol.object[1]){
-                        Physics2D::applyImpulse(
-                            generatedCol.object[1],
-                            glm::vec2(1.0f,0.0f),
-                            generatedCol.collisionNormal
-                        );
-                    }
-                    
-                        
                     m_collisionResolver->registerContact(generatedCol);
                 }
             }

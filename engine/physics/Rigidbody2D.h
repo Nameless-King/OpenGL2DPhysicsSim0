@@ -14,7 +14,7 @@ class Rigidbody2D{
 		float m_mass;
 
 		//angular components
-		float m_orientation;
+		float m_orientation; // radians
 		float m_angularVelocity;
 		float m_torque;
 	

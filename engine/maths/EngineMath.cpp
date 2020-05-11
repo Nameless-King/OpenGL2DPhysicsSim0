@@ -52,6 +52,16 @@ glm::mat2 EngineMath::rotationMatrix(float r){
 	return rm;
 }
 
+glm::mat2 EngineMath::rotationMatrixRadians(float r){
+	glm::mat2 rm(1.0f);
+	rm[0][0] = cos(r);
+	rm[0][1] = -sin(r);
+	rm[1][0] = sin(r);
+	rm[1][1] = cos(r);
+
+	return rm;
+}
+
 float EngineMath::theta(const glm::vec2* a, const glm::vec2* b){
 	float dotProd = glm::dot(*a,*b);
 	float lengthProd = glm::length(*a) * glm::length(*b);

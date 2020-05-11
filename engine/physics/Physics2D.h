@@ -22,5 +22,4 @@ public:
 	static glm::vec2 getGravity(); // COMPLETE
 	static void integrate(Object* obj,float dt); // COMPLETE
 	static void gravitate(glm::vec2 dir,float mag, Object* obj); // COMPLETE
-	static void applyImpulse(Object* a, glm::vec2 impulse, glm::vec2 contactVector); //COMPLETE
 };

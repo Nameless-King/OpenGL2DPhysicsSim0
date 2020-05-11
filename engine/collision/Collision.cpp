@@ -57,11 +57,35 @@ bool Collision::isColliding( Bound* a,  Bound* b){
 
 void Collision::resolve(float dt,CollisionData* col){
 	if(correctObjects(col)){
+		
 		float impulse = Collision::resolveVelocity(dt, col);
 		Collision::resolveFriction(dt,impulse,col);
 		//Collision::resolveRestingContactVelocity(dt);
+		if(col->object[0]->getBound()->getBoundingType() == BoundingType::Oriented){
+			
+		}
+		//Collision::positionalCorrection(col);//exact same as resolveInterpenetration
 		Collision::resolveInterpenetration(dt,col);
 	}
+}
+
+void Collision::positionalCorrection(CollisionData* col){
+	float percent = 1.0f; //20 to 80 percent
+	float slope = 0.1; // 0.01 to 0.1
+
+	float totalInverseMass = col->object[0]->getRigidbody2D()->getInverseMass();
+	if(col->object[1]){
+		totalInverseMass += col->object[1]->getRigidbody2D()->getInverseMass();
+	}
+
+	glm::vec2 correction = (std::max( Collision::getSmallestComponent(&col->penetrationDepth) - slope,0.0f) / totalInverseMass ) * percent * col->collisionNormal;
+
+	col->object[0]->setPos(col->object[0]->getPositionXY() + col->object[0]->getRigidbody2D()->getInverseMass() * correction);
+	if(col->object[1]){
+		col->object[1]->setPos(col->object[1]->getPositionXY() - col->object[1]->getRigidbody2D()->getInverseMass() * correction);
+	}
+
+
 }
 
 void Collision::resolveInterpenetration(float dt, CollisionData* col){
@@ -204,7 +228,7 @@ void Collision::resolveFriction(float dt, float impulse, CollisionData* col){
 
 	col->object[0]->getRigidbody2D()->setVelocity(*(col->object[0]->getRigidbody2D()->getVelocity()) + col->object[0]->getRigidbody2D()->getInverseMass() * frictionImpulseVector);
 	if(col->object[1]){
-		col->object[1]->getRigidbody2D()->setVelocity(*(col->object[1]->getRigidbody2D()->getVelocity()) + col->object[1]->getRigidbody2D()->getInverseMass() * frictionImpulseVector);
+		col->object[1]->getRigidbody2D()->setVelocity(*(col->object[1]->getRigidbody2D()->getVelocity()) - col->object[1]->getRigidbody2D()->getInverseMass() * frictionImpulseVector);
 	}
 }
 
@@ -274,6 +298,10 @@ bool Collision::SATTest( OBB* a,  OBB* b){
         + glm::length(EngineMath::projectOnto(curH * curY,curL));
 
 	return colliding0 && colliding1 && colliding2 && colliding3;
+}
+
+void Collision::rotationImpulse(glm::vec2 impulse, CollisionData* col){
+
 }
 
 

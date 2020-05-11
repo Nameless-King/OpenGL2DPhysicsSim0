@@ -37,6 +37,7 @@ class EngineMath{
 		static glm::vec3 componentProduct(const glm::vec3* a, const glm::vec3* b); // COMPLETE
 		static glm::vec2 projectOnto(glm::vec2 v, glm::vec2 l); // TODO
 		static glm::mat2 rotationMatrix(float r); // COMPLETE
+		static glm::mat2 rotationMatrixRadians(float r); // COMPLETE
 		//theta returns the angle between two vectors
 		static float theta(const glm::vec2* a, const glm::vec2* b); // COMPLETE
 		static float theta(const glm::vec3* a, const glm::vec3* b); // COMPLETE

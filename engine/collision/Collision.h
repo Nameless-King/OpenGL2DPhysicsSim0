@@ -40,7 +40,9 @@ class Collision{
 		static bool correctObjects(CollisionData* data); //complete
 		static void resolve(float dt, CollisionData* col); // COMPLETE
 		static void resolveInterpenetration(float dt, CollisionData* col); // COMPLETE
+		static void positionalCorrection(CollisionData* col); 
 		static void resolveRestingContactVelocity(float dt, CollisionData* col); // COMPLETE
 		static float resolveVelocity(float dt, CollisionData* col); // COMPLETE
-		static void resolveFriction(float dt, float impulse, CollisionData* col);
+		static void resolveFriction(float dt, float impulse, CollisionData* col); // COMPLETE
+		static void rotationImpulse(glm::vec2 impulse, CollisionData* col);
 };
