@@ -3,6 +3,7 @@
 #include "./OBB.h"
 #include "./Bound.h"
 #include "../Object.h"
+#include <vector>
 
 struct CollisionData {
 	CollisionData():
@@ -30,6 +31,13 @@ struct CollisionData {
 	glm::vec2 distance;
 };
 
+enum SimplexStatus{
+	NotIntersecting = 0,
+	AreIntersecting = 1,
+	Searching = 2
+};
+
+
 class Collision{
 	public:
 		static float calculateClosingVelocity( CollisionData* col); // COMPLETE
@@ -44,5 +52,9 @@ class Collision{
 		static void resolveRestingContactVelocity(float dt, CollisionData* col); // COMPLETE
 		static float resolveVelocity(float dt, CollisionData* col); // COMPLETE
 		static void resolveFriction(float dt, float impulse, CollisionData* col); // COMPLETE
-		static void rotationImpulse(glm::vec2 impulse, CollisionData* col);
+		static bool GJKTest(Object* a, Object* b);
+		
+		static glm::vec2 getSupport(Object* object, glm::vec2 direction); // TODO
+		static SimplexStatus updateSimplex(std::vector<glm::vec2>& simplexVertices, Object* a, Object* b, glm::vec2* direction, glm::vec2* newVertex); // TODO
+		static bool addSupport(Object* a, Object* b, glm::vec2 direction, glm::vec2* newVertex);
 };

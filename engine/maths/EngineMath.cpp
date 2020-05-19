@@ -78,3 +78,40 @@ float EngineMath::calcRectInertia(float mass, float width, float height){
 	return mass * (width * width + height * height) / 12.0f;
 }
 
+
+glm::vec2 EngineMath::circleSupport(glm::vec2 center, float radius, glm::vec2 direction){
+	return center + radius * glm::normalize(direction);
+}
+
+glm::vec2 EngineMath::polygonSupport(const float* vertices, glm::vec2 direction){
+	float distance = -INFINITY;
+	glm::vec2 vertex;
+
+	for(int i=0;i<8;i+=2){
+		glm::vec2 currentVertex(*(vertices+i),*(vertices+i+1));
+
+		float currentDistance = glm::dot(currentVertex,direction);
+
+		if(currentDistance > distance){
+			distance = currentDistance;
+			vertex = currentVertex;
+		}
+	}
+	return vertex;
+}
+
+glm::vec2 EngineMath::tripleCrossProduct(glm::vec2 a,glm::vec2 b,glm::vec2 c){
+	//return b * glm::dot(a,c) - c * glm::dot(a,b);
+	
+	glm::vec3 a3(a.x,a.y,0.0f);
+	glm::vec3 b3(b.x,b.y,0.0f);
+	glm::vec3 c3(c.x,c.y,0.0f);
+
+	glm::vec3 first = glm::cross(a3,b3);
+	glm::vec3 second = glm::cross(first,c3);
+
+	return glm::vec2(second.x,second.y);
+	
+	
+}
+

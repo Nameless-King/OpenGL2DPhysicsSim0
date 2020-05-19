@@ -21,6 +21,7 @@ public:
 	static void updateCurrentScene(GWindow* window);
 	static void renderCurrentSceneGUI();
 	static void renderCurrentScene(GWindow* window);
+	static void setCurrentScene(int sceneIndex);
 private:
 	static void listScene(Scene* scene,int sceneIndex);
 };

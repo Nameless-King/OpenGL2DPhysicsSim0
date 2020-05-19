@@ -63,3 +63,7 @@ void SceneManager::renderCurrentScene(GWindow* window){
 		s_scenes[s_currentScene]->render(window);
 	}
 }
+
+void SceneManager::setCurrentScene(int sceneIndex){
+	s_currentScene = sceneIndex;
+}

@@ -66,6 +66,8 @@ int main(){
 
     GInput::setContext(gameWindow.getWindow());
 
+    SceneManager::setCurrentScene(1);
+
     std::cout << "Initial Error Code: " << glGetError() << std::endl;
 
     while(!gameWindow.windowShouldClose()){

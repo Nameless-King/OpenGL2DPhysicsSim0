@@ -22,7 +22,7 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture):
         m_firstObject = new ObjectRegistration();
 
         Object* player = new Object(
-            glm::vec3(0.0f,0.0f,0.0f),
+            glm::vec3(0.0f,10.0f,0.0f),
             glm::vec3(0.0f,0.0f,0.0f),
             glm::vec3(1.0f,1.0f,1.0f)
         );
@@ -41,14 +41,14 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture):
         addObject(testBlock);
         m_test = testBlock;
 
-        testBlock = new Object(
-            glm::vec3(0.0f,-50.0f,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
-            glm::vec3(2.0f,1.0f,1.0f)
-        );
-        testBlock->createBound(BoundingType::Oriented);
-        testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
-        addObject(testBlock);
+        //testBlock = new Object(
+        //    glm::vec3(0.0f,-50.0f,0.0f),
+        //    glm::vec3(0.0f,0.0f,0.0f),
+        //    glm::vec3(2.0f,1.0f,1.0f)
+        //);
+        //testBlock->createBound(BoundingType::Oriented);
+        //testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
+        //addObject(testBlock);
 
 
     }
@@ -98,25 +98,33 @@ void SceneOBB::input(GWindow* window){
 
     if(GInput::isKeyDown(GLFW_KEY_UP)){
         velocity.y = speed;
+        m_player->m_transformationChanged = true;
     }else if(GInput::isKeyDown(GLFW_KEY_DOWN)){
         velocity.y = -speed;
+        m_player->m_transformationChanged = true;
     }
 
     if(GInput::isKeyDown(GLFW_KEY_RIGHT)){
         velocity.x = speed;
+        m_player->m_transformationChanged = true;
     }else if(GInput::isKeyDown(GLFW_KEY_LEFT)){
         velocity.x = -speed;
+        m_player->m_transformationChanged = true;
     }
 
     m_player->getRigidbody2D()->setVelocity(velocity);
 
     if(GInput::isKeyDown(GLFW_KEY_R)){
        m_player->rotateDegrees(0.5f);
+       m_player->m_transformationChanged = true;
     }
 
     if(GInput::isKeyDown(GLFW_KEY_C)){
         m_test->rotateDegrees(0.5f);
+        m_player->m_transformationChanged = true;
     }
+
+   
 }
 
 void SceneOBB::startFrame(){
@@ -135,19 +143,27 @@ void SceneOBB::generateContacts(){
         ObjectRegistration* hitter = hittee->next;
         while(hitter){
             if(!(hitter->object->getRigidbody2D()->hasInfiniteMass() && hittee->object->getRigidbody2D()->hasInfiniteMass())){
-                if(Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
-                   
-                    CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(),hitter->object->getBound());
+                if(Collision::GJKTest(hittee->object,hitter->object)){
+                    std::cout << "Colliding " << ImGui::GetIO().DeltaTime << std::endl;
+                }else{
+                    //std::cout << "Not Colliding" << std::endl;
+                }
+                
+                if(0&&Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
+                    if(hittee->object->getBound()->getBoundingType()!=BoundingType::Oriented){
 
-                    generatedCol.object[0] = hittee->object;
-                    generatedCol.object[1] = hitter->object;
+                        CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(),hitter->object->getBound());
 
-                    generatedCol.restitution = 0.0f;
+                        generatedCol.object[0] = hittee->object;
+                        generatedCol.object[1] = hitter->object;
 
-                    testBoxCollision(hittee->object,hitter->object,&generatedCol);
+                        generatedCol.restitution = 0.0f;
 
-                    Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
-                    m_collisionResolver->registerContact(generatedCol);
+                        testBoxCollision(hittee->object,hitter->object,&generatedCol);
+
+                        Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
+                        m_collisionResolver->registerContact(generatedCol);
+                    }
                 }
             }
             hitter = hitter->next;

@@ -51,7 +51,6 @@ bool Collision::isColliding( Bound* a,  Bound* b){
 			isColliding = Collision::SATTest(&testA,&testB);
 		}
 	}
-	
 	return isColliding;
 }
 
@@ -272,12 +271,20 @@ bool Collision::SATTest( OBB* a,  OBB* b){
         + (glm::length(EngineMath::projectOnto(curW  *curX,curL)))
         + (glm::length(EngineMath::projectOnto(curH * curY,curL)));
 
+	if(!colliding0){
+		return 0;
+	}
+
     curL =  glm::normalize(a_rotMat * a->m_localY);
     curE = a->m_halfExtents->y;
     bool colliding1 = glm::length(EngineMath::projectOnto(t,curL)) <
         curE
         + glm::length(EngineMath::projectOnto(curW * curX,curL))
         + glm::length(EngineMath::projectOnto(curH * curY,curL));
+
+	if(!colliding1){
+		return 0;
+	}
 
     curL = glm::normalize(b_rotMat * b->m_localX);
     curE = b->m_halfExtents->x;
@@ -289,6 +296,10 @@ bool Collision::SATTest( OBB* a,  OBB* b){
         curE
         + glm::length(EngineMath::projectOnto(curW * curX,curL))
         + glm::length(EngineMath::projectOnto(curH * curY,curL));
+	
+	if(!colliding2){
+		return 0;
+	}
 
     curL = glm::normalize(b_rotMat * b->m_localY);
     curE = b->m_halfExtents->y;
@@ -297,12 +308,100 @@ bool Collision::SATTest( OBB* a,  OBB* b){
         + glm::length(EngineMath::projectOnto(curW * curX,curL))
         + glm::length(EngineMath::projectOnto(curH * curY,curL));
 
-	return colliding0 && colliding1 && colliding2 && colliding3;
+	return colliding3;
 }
 
-void Collision::rotationImpulse(glm::vec2 impulse, CollisionData* col){
-
+glm::vec2 Collision::getSupport(Object* object, glm::vec2 direction){
+	if(object->getBound()->getBoundingType() == BoundingType::Circle){
+		//TODO : implement circle bound
+		return glm::vec2(0.0f,0.0f);
+	}else{
+		return EngineMath::polygonSupport(object->getGlobalVertices(), direction);
+	}
 }
 
+bool Collision::addSupport(Object* a, Object* b, glm::vec2 direction, glm::vec2* newVertex){
+	*newVertex = Collision::getSupport(a,direction) - Collision::getSupport(b, -direction);
+	
+	return glm::dot(direction,*newVertex) > 0;
+}
 
+SimplexStatus Collision::updateSimplex(std::vector<glm::vec2>& simplexVertices, Object* a, Object* b, glm::vec2* direction,glm::vec2* newVertex){
+	bool containsOrigin = false;
+	switch(simplexVertices.size()){
+		case 0:{
+			*(direction) = b->getBound()->getCopyCenterXY() - a->getBound()->getCopyCenterXY();
+			break;
+		}
+		case 1:{
+			*(direction) = -*(direction);
+		}
+		case 2:{
+			glm::vec2 point1 = simplexVertices[1];
+			glm::vec2 point2 = simplexVertices[0];
+
+			glm::vec2 line21 = point1 - point2;
+			glm::vec2 line20 = -point2;
+
+			*(direction) = EngineMath::tripleCrossProduct(line21,line20,line21);
+			break;
+		}
+		case 3:{
+			//calc if simplex contains the origin
+			glm::vec2 a = simplexVertices[2];
+			glm::vec2 b = simplexVertices[1];
+			glm::vec2 c = simplexVertices[0];
+
+			glm::vec2 a0 = -a; //v2 to origin
+			glm::vec2 ab = b - a; //v2 to v1
+			glm::vec2 ac = c - a;// v2 to v0
+
+			glm::vec2 abPerp = EngineMath::tripleCrossProduct(ac, ab, ab);
+			glm::vec2 acPerp = EngineMath::tripleCrossProduct(ab, ac, ac);
+			
+			if(glm::dot(abPerp,a0) > 0.0f){
+				//the origin is outside ab
+				simplexVertices.erase(simplexVertices.begin());
+				*(direction) = abPerp;
+				
+			}else if(glm::dot(acPerp, a0) > 0.0f){
+				//the origin is outside ac
+				simplexVertices.erase(simplexVertices.begin()+1);
+				*(direction) = acPerp;
+				
+			}else{
+				//origin is inside both ab and ac
+				return SimplexStatus::AreIntersecting;
+			}
+		}
+			break;
+		default:
+			break;
+	}
+	return Collision::addSupport(a,b,*(direction),newVertex) ? SimplexStatus::Searching : SimplexStatus::NotIntersecting;
+}
+
+bool Collision::GJKTest(Object* a, Object* b){
+	glm::vec2 direction(0.0f,0.0f);
+	std::vector<glm::vec2> simplexVertices;
+	SimplexStatus status = SimplexStatus::Searching;
+	glm::vec2 newVertex;
+	int iterations = 0;
+	while(status == SimplexStatus::Searching){
+		iterations++;
+		status = updateSimplex(
+			simplexVertices,
+			a,
+			b,
+			&direction,
+			&newVertex
+		);
+		simplexVertices.push_back(newVertex);
+		//std::cout << iterations << std::endl;
+		if(iterations > 5){
+			break;
+		}
+	}
+	return status == SimplexStatus::AreIntersecting;
+}
 
