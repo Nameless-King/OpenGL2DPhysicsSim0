@@ -31,10 +31,21 @@ struct CollisionData {
 	glm::vec2 distance;
 };
 
+struct Edge{
+	float distance;
+	glm::vec2 normal;
+	int index;
+};
+
 enum SimplexStatus{
 	NotIntersecting = 0,
 	AreIntersecting = 1,
 	Searching = 2
+};
+
+enum RotatingDirection{
+	Clockwise = 0,
+	CounterClockwise = 1
 };
 
 
@@ -54,7 +65,10 @@ class Collision{
 		static void resolveFriction(float dt, float impulse, CollisionData* col); // COMPLETE
 		static bool GJKTest(Object* a, Object* b);
 		
+		
 		static glm::vec2 getSupport(Object* object, glm::vec2 direction); // TODO
 		static SimplexStatus updateSimplex(std::vector<glm::vec2>& simplexVertices, Object* a, Object* b, glm::vec2* direction, glm::vec2* newVertex); // TODO
 		static bool addSupport(Object* a, Object* b, glm::vec2 direction, glm::vec2* newVertex);
+		static void EPATest();
+		static Edge findClosestEdge(std::vector<glm::vec2> polytopeVertices, RotatingDirection rotDir);
 };

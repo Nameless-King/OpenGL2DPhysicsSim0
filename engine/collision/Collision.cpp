@@ -322,8 +322,10 @@ glm::vec2 Collision::getSupport(Object* object, glm::vec2 direction){
 
 bool Collision::addSupport(Object* a, Object* b, glm::vec2 direction, glm::vec2* newVertex){
 	*newVertex = Collision::getSupport(a,direction) - Collision::getSupport(b, -direction);
-	
-	return glm::dot(direction,*newVertex) > 0;
+	/*IDK why, even though the tutorial had only less than
+	, the GJK collision test will only work if it's less than or
+	equal to*/
+	return glm::dot(direction,*newVertex) >= 0;
 }
 
 SimplexStatus Collision::updateSimplex(std::vector<glm::vec2>& simplexVertices, Object* a, Object* b, glm::vec2* direction,glm::vec2* newVertex){
@@ -381,6 +383,7 @@ SimplexStatus Collision::updateSimplex(std::vector<glm::vec2>& simplexVertices, 
 	return Collision::addSupport(a,b,*(direction),newVertex) ? SimplexStatus::Searching : SimplexStatus::NotIntersecting;
 }
 
+//TODO : look at Minkowski Portal Refinement and how it compares to GJK
 bool Collision::GJKTest(Object* a, Object* b){
 	glm::vec2 direction(0.0f,0.0f);
 	std::vector<glm::vec2> simplexVertices;
@@ -405,3 +408,50 @@ bool Collision::GJKTest(Object* a, Object* b){
 	return status == SimplexStatus::AreIntersecting;
 }
 
+void Collision::EPATest(){
+}
+
+Edge Collision::findClosestEdge(std::vector<glm::vec2> polytopeVertices, RotatingDirection rotDir){
+	float closestDistance  = INFINITY;
+	glm::vec2 closestNormal;
+	int closestIndex = 0;
+
+	glm::vec2 edge;
+	Edge closestEdge;
+
+	for(int i = 0;i<polytopeVertices.size();i++){
+		int j = i + 1;
+
+		if(j>=polytopeVertices.size()){
+			j = 0;
+		}
+
+		edge = polytopeVertices[j] - polytopeVertices[i];
+
+		glm::vec2 normal;
+		switch(rotDir){
+			case Clockwise:
+				normal = glm::vec2(edge.y,-edge.x);
+				break;
+			case CounterClockwise:
+				normal = glm::vec2(-edge.y, edge.x);
+				break;
+			default:
+				//this should never happen
+				break;
+		}
+		normal = glm::normalize(normal);
+
+
+		float dist = glm::dot(normal,polytopeVertices[i]);
+
+		if(dist < closestDistance){
+			closestEdge.distance = dist;
+			closestEdge.normal = normal;
+			closestEdge.index = j;
+		}
+
+
+	}
+	return closestEdge;
+}

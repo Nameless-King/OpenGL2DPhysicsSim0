@@ -101,8 +101,8 @@ glm::vec2 EngineMath::polygonSupport(const float* vertices, glm::vec2 direction)
 }
 
 glm::vec2 EngineMath::tripleCrossProduct(glm::vec2 a,glm::vec2 b,glm::vec2 c){
-	//return b * glm::dot(a,c) - c * glm::dot(a,b);
-	
+	return b * glm::dot(a,c) - a * glm::dot(b,c);
+	/*
 	glm::vec3 a3(a.x,a.y,0.0f);
 	glm::vec3 b3(b.x,b.y,0.0f);
 	glm::vec3 c3(c.x,c.y,0.0f);
@@ -111,7 +111,7 @@ glm::vec2 EngineMath::tripleCrossProduct(glm::vec2 a,glm::vec2 b,glm::vec2 c){
 	glm::vec3 second = glm::cross(first,c3);
 
 	return glm::vec2(second.x,second.y);
-	
+	*/
 	
 }
 
