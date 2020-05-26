@@ -253,23 +253,24 @@ bool Collision::correctObjects(CollisionData* data){
 }
 
 bool Collision::SATTest( OBB* a,  OBB* b){
-	glm::vec2 t = EngineMath::absVec2(b->getCopyCenterXY() - a->getCopyCenterXY());
+	glm::vec2 t = b->getCopyCenterXY() - a->getCopyCenterXY();
+	//glm::vec2 t = EngineMath::absVec2(b->getCopyCenterXY() - a->getCopyCenterXY());
 
-    glm::mat2 a_rotMat = EngineMath::rotationMatrix(a->m_rotation);
-    glm::mat2 b_rotMat = EngineMath::rotationMatrix(b->m_rotation);
+    glm::mat2 a_rotMat = EngineMath::rotationMatrix(-a->m_rotation);
+    glm::mat2 b_rotMat = EngineMath::rotationMatrix(-b->m_rotation);
     
     glm::vec2 curL = glm::normalize(a_rotMat * a->m_localX);
     float curE = a->m_halfExtents->x;
 
     float curW = b->m_halfExtents->x;
     float curH = b->m_halfExtents->y;
-    glm::vec2 curX = glm::normalize(b_rotMat * b->m_localX);
-    glm::vec2 curY = glm::normalize(b_rotMat * b->m_localY);
+    glm::vec2 curX = b_rotMat * b->m_localX;
+    glm::vec2 curY = b_rotMat * b->m_localY;
 
-    bool colliding0 = (glm::length(EngineMath::projectOnto(t,curL))) <
+    bool colliding0 = fabs(glm::length(EngineMath::projectOnto(t,curL))) <
         curE 
-        + (glm::length(EngineMath::projectOnto(curW  *curX,curL)))
-        + (glm::length(EngineMath::projectOnto(curH * curY,curL)));
+        + fabs(glm::length(EngineMath::projectOnto(curW * curX,curL)))
+        + fabs(glm::length(EngineMath::projectOnto(curH * curY,curL)));
 
 	if(!colliding0){
 		return 0;
@@ -277,10 +278,10 @@ bool Collision::SATTest( OBB* a,  OBB* b){
 
     curL =  glm::normalize(a_rotMat * a->m_localY);
     curE = a->m_halfExtents->y;
-    bool colliding1 = glm::length(EngineMath::projectOnto(t,curL)) <
+    bool colliding1 = fabs(glm::length(EngineMath::projectOnto(t,curL))) <
         curE
-        + glm::length(EngineMath::projectOnto(curW * curX,curL))
-        + glm::length(EngineMath::projectOnto(curH * curY,curL));
+        + fabs(glm::length(EngineMath::projectOnto(curW * curX,curL)))
+        + fabs(glm::length(EngineMath::projectOnto(curH * curY,curL)));
 
 	if(!colliding1){
 		return 0;
@@ -288,14 +289,14 @@ bool Collision::SATTest( OBB* a,  OBB* b){
 
     curL = glm::normalize(b_rotMat * b->m_localX);
     curE = b->m_halfExtents->x;
-    curX =  glm::normalize(a_rotMat * a->m_localX);
-    curY =  glm::normalize(a_rotMat * a->m_localY);
+    curX =  a_rotMat * a->m_localX;
+    curY =  a_rotMat * a->m_localY;
     curW = a->m_halfExtents->x;
     curH = a->m_halfExtents->y;
-    bool colliding2 = glm::length(EngineMath::projectOnto(t,curL)) <
+    bool colliding2 = fabs(glm::length(EngineMath::projectOnto(t,curL))) <
         curE
-        + glm::length(EngineMath::projectOnto(curW * curX,curL))
-        + glm::length(EngineMath::projectOnto(curH * curY,curL));
+        + fabs(glm::length(EngineMath::projectOnto(curW * curX,curL)))
+        + fabs(glm::length(EngineMath::projectOnto(curH * curY,curL)));
 	
 	if(!colliding2){
 		return 0;
@@ -303,10 +304,10 @@ bool Collision::SATTest( OBB* a,  OBB* b){
 
     curL = glm::normalize(b_rotMat * b->m_localY);
     curE = b->m_halfExtents->y;
-    bool colliding3 = glm::length(EngineMath::projectOnto(t,curL)) <
+    bool colliding3 = fabs(glm::length(EngineMath::projectOnto(t,curL))) <
         curE
-        + glm::length(EngineMath::projectOnto(curW * curX,curL))
-        + glm::length(EngineMath::projectOnto(curH * curY,curL));
+        + fabs(glm::length(EngineMath::projectOnto(curW * curX,curL)))
+        + fabs(glm::length(EngineMath::projectOnto(curH * curY,curL)));
 
 	return colliding3;
 }
@@ -316,7 +317,7 @@ glm::vec2 Collision::getSupport(Object* object, glm::vec2 direction){
 		//TODO : implement circle bound
 		return glm::vec2(0.0f,0.0f);
 	}else{
-		return EngineMath::polygonSupport(object->getGlobalVertices(), direction);
+		return EngineMath::polygonSupport(object->getGlobalVertices(), direction,object->getNumVertices()*2);
 	}
 }
 
@@ -384,7 +385,7 @@ SimplexStatus Collision::updateSimplex(std::vector<glm::vec2>& simplexVertices, 
 }
 
 //TODO : look at Minkowski Portal Refinement and how it compares to GJK
-bool Collision::GJKTest(Object* a, Object* b){
+bool Collision::GJKTest(Object* a, Object* b, std::vector<glm::vec2>& simplexVertices2){
 	glm::vec2 direction(0.0f,0.0f);
 	std::vector<glm::vec2> simplexVertices;
 	SimplexStatus status = SimplexStatus::Searching;
@@ -405,10 +406,8 @@ bool Collision::GJKTest(Object* a, Object* b){
 			break;
 		}
 	}
+	simplexVertices2 = simplexVertices;
 	return status == SimplexStatus::AreIntersecting;
-}
-
-void Collision::EPATest(){
 }
 
 Edge Collision::findClosestEdge(std::vector<glm::vec2> polytopeVertices, RotatingDirection rotDir){
@@ -416,7 +415,7 @@ Edge Collision::findClosestEdge(std::vector<glm::vec2> polytopeVertices, Rotatin
 	glm::vec2 closestNormal;
 	int closestIndex = 0;
 
-	glm::vec2 edge;
+	glm::vec2 line;
 	Edge closestEdge;
 
 	for(int i = 0;i<polytopeVertices.size();i++){
@@ -426,15 +425,15 @@ Edge Collision::findClosestEdge(std::vector<glm::vec2> polytopeVertices, Rotatin
 			j = 0;
 		}
 
-		edge = polytopeVertices[j] - polytopeVertices[i];
+		line = polytopeVertices[i] - polytopeVertices[j];
 
 		glm::vec2 normal;
 		switch(rotDir){
 			case Clockwise:
-				normal = glm::vec2(edge.y,-edge.x);
+				normal = glm::vec2(line.y,-line.x);
 				break;
 			case CounterClockwise:
-				normal = glm::vec2(-edge.y, edge.x);
+				normal = glm::vec2(-line.y, line.x);
 				break;
 			default:
 				//this should never happen
@@ -455,3 +454,40 @@ Edge Collision::findClosestEdge(std::vector<glm::vec2> polytopeVertices, Rotatin
 	}
 	return closestEdge;
 }
+
+glm::vec2 Collision::EPATest(std::vector<glm::vec2> simplexVertices){
+
+	RotatingDirection rotDir;
+	float e0 = (simplexVertices[1].x - simplexVertices[0].x) * (simplexVertices[1].y + simplexVertices[0].y);
+	float e1 = (simplexVertices[2].x - simplexVertices[1].x) * (simplexVertices[2].y + simplexVertices[1].y);
+	float e2 = (simplexVertices[0].x - simplexVertices[2].x) * (simplexVertices[0].y + simplexVertices[2].y);
+	if(e0 + e1 + e2 >= 0.0f){
+		rotDir = RotatingDirection::Clockwise;
+	}else{
+		rotDir = RotatingDirection::CounterClockwise;
+	}
+
+	glm::vec2 penetrationVector;
+	for(int i = 0;i<32;i++){
+		Edge edge = findClosestEdge(simplexVertices,rotDir);
+		//claculate support
+		float verts[] = {
+			simplexVertices[0].x,simplexVertices[0].y,
+			simplexVertices[1].x,simplexVertices[1].y,
+			simplexVertices[2].x,simplexVertices[2].y
+		};
+		glm::vec2 support = EngineMath::polygonSupport(verts,edge.normal,sizeof(verts)/sizeof(float));
+		float distance = glm::dot(support,edge.normal);
+
+		penetrationVector = glm::vec2(edge.normal);
+		penetrationVector *= distance;
+
+		if(fabs(distance - edge.distance) <= 0.000001){
+			break;
+		}else{
+			simplexVertices.insert(simplexVertices.begin() + edge.index,support);
+		}
+	}
+	return penetrationVector;	
+}
+

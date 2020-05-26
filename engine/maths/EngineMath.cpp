@@ -83,11 +83,11 @@ glm::vec2 EngineMath::circleSupport(glm::vec2 center, float radius, glm::vec2 di
 	return center + radius * glm::normalize(direction);
 }
 
-glm::vec2 EngineMath::polygonSupport(const float* vertices, glm::vec2 direction){
+glm::vec2 EngineMath::polygonSupport(const float* vertices, glm::vec2 direction,int arraySize){
 	float distance = -INFINITY;
 	glm::vec2 vertex;
 
-	for(int i=0;i<8;i+=2){
+	for(int i=0;i<arraySize;i+=2){
 		glm::vec2 currentVertex(*(vertices+i),*(vertices+i+1));
 
 		float currentDistance = glm::dot(currentVertex,direction);

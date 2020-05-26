@@ -5,7 +5,7 @@
 #include "../../Dependencies/glm/glm.hpp"
 #include "../../Dependencies/glm/gtc/matrix_transform.hpp"
 
-#define PI 3.14159265
+#define PI 3.14159265358979
 
 /*The following calculations are provided by glm:
 	-cross (3D ONLY)
@@ -35,7 +35,7 @@ class EngineMath{
 		//returns furthest point in a direction on a given circle
 		static glm::vec2 circleSupport(glm::vec2 center, float radius, glm::vec2 direction); // COMPLETE
 		//returns furthest point in a direction from the given vertices
-		static glm::vec2 polygonSupport(const float* vertices, glm::vec2 direction); // COMPLETE
+		static glm::vec2 polygonSupport(const float* vertices, glm::vec2 direction, int arraySize); // COMPLETE
 		static glm::vec2 absVec2(const glm::vec2 v); // COMPLETE
 		static glm::vec2* calcHalfExtents(const float* vertices,glm::vec3* scale); // COMPLETE
 		static glm::vec2 componentProduct(const glm::vec2* a, const glm::vec2* b); // COMPLETE

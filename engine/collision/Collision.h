@@ -63,12 +63,13 @@ class Collision{
 		static void resolveRestingContactVelocity(float dt, CollisionData* col); // COMPLETE
 		static float resolveVelocity(float dt, CollisionData* col); // COMPLETE
 		static void resolveFriction(float dt, float impulse, CollisionData* col); // COMPLETE
-		static bool GJKTest(Object* a, Object* b);
+		static bool GJKTest(Object* a, Object* b, std::vector<glm::vec2>& simplexVertices2);
 		
 		
 		static glm::vec2 getSupport(Object* object, glm::vec2 direction); // TODO
 		static SimplexStatus updateSimplex(std::vector<glm::vec2>& simplexVertices, Object* a, Object* b, glm::vec2* direction, glm::vec2* newVertex); // TODO
 		static bool addSupport(Object* a, Object* b, glm::vec2 direction, glm::vec2* newVertex);
-		static void EPATest();
 		static Edge findClosestEdge(std::vector<glm::vec2> polytopeVertices, RotatingDirection rotDir);
+		static glm::vec2 EPATest(std::vector<glm::vec2> simplexVertices);
+		
 };

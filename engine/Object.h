@@ -24,6 +24,7 @@ private:
 	glm::vec3 m_scale;
 	const float* m_localVertices;
 	float* m_globalVertices;
+	int m_numVertices;
 public:
 	Object();
 	Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
@@ -53,6 +54,8 @@ public:
 	glm::vec2 getPositionXY();
 	glm::vec2 getRotationXY();
 	glm::vec2 getScaleXY();
+
+	int getNumVertices();
 	
 	inline Bound* getBound(){ return m_bound;}
 	inline Rigidbody2D* getRigidbody2D() {return m_rigidbody;}

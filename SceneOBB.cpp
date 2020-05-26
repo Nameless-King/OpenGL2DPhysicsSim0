@@ -143,12 +143,17 @@ void SceneOBB::generateContacts(){
         ObjectRegistration* hitter = hittee->next;
         while(hitter){
             if(!(hitter->object->getRigidbody2D()->hasInfiniteMass() && hittee->object->getRigidbody2D()->hasInfiniteMass())){
-                if(Collision::GJKTest(hittee->object,hitter->object)){
+                std::vector<glm::vec2> verts;
+                if(0&&Collision::GJKTest(hittee->object,hitter->object, verts)){
                     std::cout << "Colliding " << ImGui::GetIO().DeltaTime << std::endl;
-                }else{
-                    //std::cout << "Not Colliding" << std::endl;
+                    glm::vec2 penetrationVector = Collision::EPATest(verts);
+                    std::cout << penetrationVector.x << " " << penetrationVector.y << std::endl;
                 }
-                
+
+                if(Collision::SATTest((OBB*)hittee->object->getBound(),(OBB*)hitter->object->getBound())){
+                    std::cout << "Colliding" << ImGui::GetIO().DeltaTime << std::endl;
+                }
+
                 if(0&&Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
                     if(hittee->object->getBound()->getBoundingType()!=BoundingType::Oriented){
 

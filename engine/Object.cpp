@@ -5,7 +5,8 @@ Object::Object():
 	m_rotation(glm::vec3(0.0f,0.0f,0.0f)),
 	m_scale(glm::vec3(1.0f,1.0f,1.0f)),
 	m_localVertices(Renderer::getVertices()),
-	m_globalVertices(new float[8]()),
+	m_numVertices(4),
+	m_globalVertices(new float[m_numVertices*2]()),
 	m_transformationChanged(true),
 	m_bound(NULL),
 	m_rigidbody(NULL){
@@ -17,7 +18,8 @@ Object::Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale):
 	m_rotation(rotation),
 	m_scale(scale),
 	m_localVertices(Renderer::getVertices()),
-	m_globalVertices(new float[8]()),
+	m_numVertices(4),
+	m_globalVertices(new float[m_numVertices*2]()),
 	m_transformationChanged(true),
 	m_bound(NULL),
 	m_rigidbody(NULL){
@@ -28,7 +30,8 @@ Object::Object(const Object& object):
 	m_rotation(glm::vec3(object.m_rotation)),
 	m_scale(glm::vec3(object.m_scale)),
 	m_localVertices(Renderer::getVertices()),
-	m_globalVertices(new float[8]()),
+	m_numVertices(4),
+	m_globalVertices(new float[m_numVertices*2]()),
 	m_transformationChanged(true),
 	m_rigidbody(new Rigidbody2D(*object.m_rigidbody)){
 	switch(object.m_bound->getBoundingType()){
@@ -121,10 +124,14 @@ glm::vec2 Object::getScaleXY(){
 	return glm::vec2(m_scale.x,m_scale.y);
 }
 
+int Object::getNumVertices(){
+	return m_numVertices;
+}
+
 const float* Object::getGlobalVertices(){
 	if(m_transformationChanged){
 		glm::mat4 modelMatrix = getModelMatrix();
-		for(int i = 0;i<8/*sizeof(m_localVertices)/sizeof(float)*/;i+=2){
+		for(int i = 0;i<8;i+=2){
 			glm::vec4 pos(*(m_localVertices+i),*(m_localVertices+i+1),0.0f,1.0f);
 			glm::vec4 worldPos = modelMatrix * pos;
 			*(m_globalVertices+i) = worldPos.x;
