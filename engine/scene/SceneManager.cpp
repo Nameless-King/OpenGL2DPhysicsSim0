@@ -29,19 +29,30 @@ void SceneManager::renderMenu(){
 }
 
 void SceneManager::registerScene(Scene* scene){
-	s_scenes.push_back(scene);
+	if(scene){
+		s_scenes.push_back(scene);
+	}else{
+		std::cout << "ERROR: Cannot register null scene" << std::endl;
+	}
+	
+}
+
+void SceneManager::render(){
+	ImGui::Render();
+	
 }
 
 void SceneManager::finalize(){
-	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void SceneManager::listScene(Scene* scene,int sceneIndex){
 	if(!scene){
 		ImGui::RadioButton("Default",&s_currentScene,sceneIndex);
+	}else{
+		ImGui::RadioButton(scene->getSceneTitle().c_str(),&s_currentScene,sceneIndex);
 	}
-	ImGui::RadioButton(scene->getSceneTitle().c_str(),&s_currentScene,sceneIndex);
+	
 }
 
 void SceneManager::updateCurrentScene(GWindow* window){
@@ -66,4 +77,10 @@ void SceneManager::renderCurrentScene(GWindow* window){
 
 void SceneManager::setCurrentScene(int sceneIndex){
 	s_currentScene = sceneIndex;
+}
+
+void SceneManager::destroy(){
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 }

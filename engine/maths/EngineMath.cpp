@@ -94,10 +94,10 @@ glm::vec2 EngineMath::polygonSupport(const float* vertices, glm::vec2 direction,
 
 		if(currentDistance > distance){
 			distance = currentDistance;
-			vertex = currentVertex;
+			vertex = glm::vec2(currentVertex);
 		}
 	}
-	return vertex;
+	return glm::vec2(vertex);
 }
 
 glm::vec2 EngineMath::tripleCrossProduct(glm::vec2 a,glm::vec2 b,glm::vec2 c){
@@ -112,6 +112,5 @@ glm::vec2 EngineMath::tripleCrossProduct(glm::vec2 a,glm::vec2 b,glm::vec2 c){
 
 	return glm::vec2(second.x,second.y);
 	*/
-	
 }
 

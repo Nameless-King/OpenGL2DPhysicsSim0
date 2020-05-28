@@ -17,11 +17,13 @@ public:
 	static void start();
 	static void registerScene(Scene* scene);
 	static void renderMenu();
+	static void render();
 	static void finalize();
 	static void updateCurrentScene(GWindow* window);
 	static void renderCurrentSceneGUI();
 	static void renderCurrentScene(GWindow* window);
 	static void setCurrentScene(int sceneIndex);
+	static void destroy();
 private:
 	static void listScene(Scene* scene,int sceneIndex);
 };

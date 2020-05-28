@@ -77,22 +77,27 @@ int main(){
         cameraInput(&gameWindow);
 
         SceneManager::updateCurrentScene(&gameWindow);
+
         SceneManager::start();
         SceneManager::renderMenu();
-
         gameWindow.displayWindowStats();
-
         SceneManager::renderCurrentSceneGUI();
 
-        gameWindow.clear();
+       gameWindow.clear();
 
         SceneManager::renderCurrentScene(&gameWindow);
+        SceneManager::render();
+        
+        
         SceneManager::finalize();
 
         gameWindow.swapBuffers();
+
+        
     }
 
     Renderer::destroy();
+    SceneManager::destroy();
 
     std::cout << "Terminating Error Code: " << glGetError() << std::endl;
 

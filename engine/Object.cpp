@@ -131,7 +131,7 @@ int Object::getNumVertices(){
 const float* Object::getGlobalVertices(){
 	if(m_transformationChanged){
 		glm::mat4 modelMatrix = getModelMatrix();
-		for(int i = 0;i<8;i+=2){
+		for(int i = 0;i<m_numVertices*2;i+=2){
 			glm::vec4 pos(*(m_localVertices+i),*(m_localVertices+i+1),0.0f,1.0f);
 			glm::vec4 worldPos = modelMatrix * pos;
 			*(m_globalVertices+i) = worldPos.x;

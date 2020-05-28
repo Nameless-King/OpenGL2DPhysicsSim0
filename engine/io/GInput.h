@@ -10,8 +10,8 @@ private:
 	
 	static GLFWwindow* s_window;
 	
-	static bool s_keys[GLFW_KEY_LAST];
-	static bool s_mouseButtons[GLFW_MOUSE_BUTTON_LAST];
+	static bool s_keys[];
+	static bool s_mouseButtons[];
 	
 	static float s_mouseWheelX;
 	static float s_mouseWheelY;

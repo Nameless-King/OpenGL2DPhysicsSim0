@@ -4,8 +4,8 @@ const int GInput::FIRST_KEY_CODE = 32;
 
 GLFWwindow* GInput::s_window;
 
-bool GInput::s_keys[GLFW_KEY_LAST];
-bool GInput::s_mouseButtons[GLFW_MOUSE_BUTTON_LAST];
+bool GInput::s_keys[GLFW_KEY_LAST + 1];
+bool GInput::s_mouseButtons[GLFW_MOUSE_BUTTON_LAST + 1];
 
 float GInput::s_mouseWheelX = 0;
 float GInput::s_mouseWheelY = 0;
@@ -13,11 +13,11 @@ float GInput::s_mouseWheelY = 0;
 void GInput::setContext(GLFWwindow* win) {
 	s_window = win;
 
-	for (int i = 0; i < GLFW_KEY_LAST; i++) {
+	for (int i = FIRST_KEY_CODE; i <= GLFW_KEY_LAST; i++) {
 		s_keys[i] = false;
 	}
 
-	for (int i = 0; i < GLFW_MOUSE_BUTTON_LAST; i++) {
+	for (int i = 0; i <= GLFW_MOUSE_BUTTON_LAST; i++) {
 		s_mouseButtons[i] = false;
 	}
 }
@@ -87,11 +87,11 @@ glm::vec2 GInput::getWheelXY() {
 }
 
 void GInput::update() {
-	for (int i = FIRST_KEY_CODE; i < GLFW_KEY_LAST; i++) {
+	for (int i = FIRST_KEY_CODE; i <= GLFW_KEY_LAST; i++) {
 		s_keys[i] = isKeyDown(i);
 	}
 
-	for (int i = 0; i < GLFW_MOUSE_BUTTON_LAST; i++) {
+	for (int i = 0; i <= GLFW_MOUSE_BUTTON_LAST; i++) {
 		s_mouseButtons[i] = isMouseButtonDown(i);
 	}
 }

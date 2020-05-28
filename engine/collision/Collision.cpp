@@ -254,8 +254,8 @@ bool Collision::correctObjects(CollisionData* data){
 
 bool Collision::SATTest( OBB* a,  OBB* b){
 	glm::vec2 t = b->getCopyCenterXY() - a->getCopyCenterXY();
-	//glm::vec2 t = EngineMath::absVec2(b->getCopyCenterXY() - a->getCopyCenterXY());
 
+	//has to be negative rotations to line up with rendered object IDK why
     glm::mat2 a_rotMat = EngineMath::rotationMatrix(-a->m_rotation);
     glm::mat2 b_rotMat = EngineMath::rotationMatrix(-b->m_rotation);
     
@@ -321,39 +321,39 @@ glm::vec2 Collision::getSupport(Object* object, glm::vec2 direction){
 	}
 }
 
-bool Collision::addSupport(Object* a, Object* b, glm::vec2 direction, glm::vec2* newVertex){
-	*newVertex = Collision::getSupport(a,direction) - Collision::getSupport(b, -direction);
+bool Collision::addSupport(Object* a, Object* b, glm::vec2 direction, std::vector<glm::vec2>* simplexVertices){
+	glm::vec2 newVertex = Collision::getSupport(a,direction) - Collision::getSupport(b, -direction);
+	simplexVertices->push_back(newVertex);
 	/*IDK why, even though the tutorial had only less than
 	, the GJK collision test will only work if it's less than or
 	equal to*/
-	return glm::dot(direction,*newVertex) >= 0;
+	return glm::dot(direction,newVertex) >= 0;
 }
 
-SimplexStatus Collision::updateSimplex(std::vector<glm::vec2>& simplexVertices, Object* a, Object* b, glm::vec2* direction,glm::vec2* newVertex){
+SimplexStatus Collision::updateSimplex(std::vector<glm::vec2>* simplexVertices, Object* a, Object* b, glm::vec2* direction){
 	bool containsOrigin = false;
-	switch(simplexVertices.size()){
-		case 0:{
-			*(direction) = b->getBound()->getCopyCenterXY() - a->getBound()->getCopyCenterXY();
+	switch(simplexVertices->size()){
+		case 0:
+			*(direction) = glm::vec2(b->getBound()->getCopyCenterXY() - a->getBound()->getCopyCenterXY());
 			break;
-		}
-		case 1:{
-			*(direction) = -*(direction);
-		}
+		case 1:
+			*(direction) = glm::vec2(-*(direction));
+			break;
 		case 2:{
-			glm::vec2 point1 = simplexVertices[1];
-			glm::vec2 point2 = simplexVertices[0];
+			glm::vec2 point1 = (*simplexVertices)[1];
+			glm::vec2 point2 = (*simplexVertices)[0];
 
 			glm::vec2 line21 = point1 - point2;
 			glm::vec2 line20 = -point2;
 
-			*(direction) = EngineMath::tripleCrossProduct(line21,line20,line21);
+			*(direction) = glm::vec2(EngineMath::tripleCrossProduct(line21,line20,line21));
 			break;
 		}
 		case 3:{
 			//calc if simplex contains the origin
-			glm::vec2 a = simplexVertices[2];
-			glm::vec2 b = simplexVertices[1];
-			glm::vec2 c = simplexVertices[0];
+			glm::vec2 a = (*simplexVertices)[2];
+			glm::vec2 b = (*simplexVertices)[1];
+			glm::vec2 c = (*simplexVertices)[0];
 
 			glm::vec2 a0 = -a; //v2 to origin
 			glm::vec2 ab = b - a; //v2 to v1
@@ -364,49 +364,121 @@ SimplexStatus Collision::updateSimplex(std::vector<glm::vec2>& simplexVertices, 
 			
 			if(glm::dot(abPerp,a0) > 0.0f){
 				//the origin is outside ab
-				simplexVertices.erase(simplexVertices.begin());
-				*(direction) = abPerp;
+				simplexVertices->erase(simplexVertices->begin());
+				*(direction) = glm::vec2(abPerp);
 				
 			}else if(glm::dot(acPerp, a0) > 0.0f){
 				//the origin is outside ac
-				simplexVertices.erase(simplexVertices.begin()+1);
-				*(direction) = acPerp;
+				simplexVertices->erase(simplexVertices->begin()+1);
+				*(direction) = glm::vec2(acPerp);
 				
 			}else{
 				//origin is inside both ab and ac
 				return SimplexStatus::AreIntersecting;
 			}
+		
+			break;
 		}
-			break;
 		default:
+			std::cout << "ERROR: 2D GJK test fourth vertex reached!" << std::endl;
 			break;
-	}
-	return Collision::addSupport(a,b,*(direction),newVertex) ? SimplexStatus::Searching : SimplexStatus::NotIntersecting;
+	}	
+	SimplexStatus stat = Collision::addSupport(a,b,*(direction),simplexVertices) ? SimplexStatus::Searching : SimplexStatus::NotIntersecting;
+	return stat;
 }
 
+/*
+"I have been defeated. The program has undefined behavior that will occur about
+one out of every twelve runs where it will crash either on imgui rendering or 
+during the gjk collision test. I is unsolvable and i've spent more than a week trying to fix it.
+*/
 //TODO : look at Minkowski Portal Refinement and how it compares to GJK
-bool Collision::GJKTest(Object* a, Object* b, std::vector<glm::vec2>& simplexVertices2){
+bool Collision::GJKTest(Object* a, Object* b, std::vector<glm::vec2>* simplexVertices){
 	glm::vec2 direction(0.0f,0.0f);
-	std::vector<glm::vec2> simplexVertices;
 	SimplexStatus status = SimplexStatus::Searching;
-	glm::vec2 newVertex;
-	int iterations = 0;
 	while(status == SimplexStatus::Searching){
-		iterations++;
 		status = updateSimplex(
 			simplexVertices,
 			a,
 			b,
-			&direction,
-			&newVertex
+			&direction
 		);
-		simplexVertices.push_back(newVertex);
-		//std::cout << iterations << std::endl;
-		if(iterations > 5){
-			break;
-		}
 	}
-	simplexVertices2 = simplexVertices;
+	//simplexVertices2 = simplexVertices;
+	return status == SimplexStatus::AreIntersecting;
+}
+
+bool Collision::GJKTest2(Object* a, Object* b){
+	glm::vec2 direction;
+	std::vector<float> simplexVertices;
+	SimplexStatus status = SimplexStatus::Searching;
+	while(status == SimplexStatus::Searching){
+		switch(simplexVertices.size()){
+			case 0:{
+				Bound* boundB = b->getBound();
+				Bound* boundA = a->getBound();
+				direction = boundB->getCopyCenterXY() - boundA->getCopyCenterXY();
+				break;
+			}
+			case 2:
+				direction = -direction;
+				break;
+			case 4:{
+				glm::vec2 point1(simplexVertices[2],simplexVertices[3]);
+				glm::vec2 point2(simplexVertices[0],simplexVertices[1]);
+
+				glm::vec2 line21 = point1 - point2;
+				glm::vec2 line20 = -point2;
+
+				direction = EngineMath::tripleCrossProduct(line21,line20,line21);
+				break;
+			}
+			case 6:{
+				//calc if simplex contains the origin
+				glm::vec2 a(simplexVertices[4],simplexVertices[5]);
+				glm::vec2 b(simplexVertices[2],simplexVertices[3]);
+				glm::vec2 c(simplexVertices[0],simplexVertices[1]);
+
+				glm::vec2 a0 = -a; //v2 to origin
+				glm::vec2 ab = b - a; //v2 to v1
+				glm::vec2 ac = c - a;// v2 to v0
+
+				glm::vec2 abPerp = EngineMath::tripleCrossProduct(ac, ab, ab);
+				glm::vec2 acPerp = EngineMath::tripleCrossProduct(ab, ac, ac);
+				
+				if(glm::dot(abPerp,a0) > 0.0f){
+					//the origin is outside ab
+					simplexVertices.erase(simplexVertices.begin()+1);
+					simplexVertices.erase(simplexVertices.begin());
+
+					direction = abPerp;
+					
+				}else if(glm::dot(acPerp, a0) > 0.0f){
+					//the origin is outside ac
+					simplexVertices.erase(simplexVertices.begin()+3);
+					simplexVertices.erase(simplexVertices.begin()+2);
+
+					direction = acPerp;
+
+				}else{
+					//origin is inside both ab and ac
+					status = SimplexStatus::AreIntersecting;
+				}
+			
+				break;
+			}
+			default:
+				std::cout << "ERROR: 2D GJK test fourth vertex reached!" << std::endl;
+				break;
+		}
+		if(status != SimplexStatus::AreIntersecting){
+			glm::vec2 newVertex = Collision::getSupport(a,direction) - Collision::getSupport(b, -direction);
+			simplexVertices.push_back(newVertex.x);
+			simplexVertices.push_back(newVertex.y);
+			status = glm::dot(direction,newVertex) >= 0.0f ? SimplexStatus::Searching : SimplexStatus::NotIntersecting;
+		}	
+		
+	}
 	return status == SimplexStatus::AreIntersecting;
 }
 

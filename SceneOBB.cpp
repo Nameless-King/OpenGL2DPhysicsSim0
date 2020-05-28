@@ -80,7 +80,6 @@ void SceneOBB::render(GWindow* window){
 }
 
 void SceneOBB::update(GWindow* window){
-
     runPhysics(ImGui::GetIO().DeltaTime);
     input(window);
 }
@@ -123,8 +122,6 @@ void SceneOBB::input(GWindow* window){
         m_test->rotateDegrees(0.5f);
         m_player->m_transformationChanged = true;
     }
-
-   
 }
 
 void SceneOBB::startFrame(){
@@ -143,17 +140,13 @@ void SceneOBB::generateContacts(){
         ObjectRegistration* hitter = hittee->next;
         while(hitter){
             if(!(hitter->object->getRigidbody2D()->hasInfiniteMass() && hittee->object->getRigidbody2D()->hasInfiniteMass())){
-                std::vector<glm::vec2> verts;
-                if(0&&Collision::GJKTest(hittee->object,hitter->object, verts)){
+                //there is still undefined behavior in GJKTest
+                if(Collision::GJKTest2(hittee->object,hitter->object)){
                     std::cout << "Colliding " << ImGui::GetIO().DeltaTime << std::endl;
-                    glm::vec2 penetrationVector = Collision::EPATest(verts);
-                    std::cout << penetrationVector.x << " " << penetrationVector.y << std::endl;
+                    //need to make sure no undefined behavior is occuring in EPATest
+                    //glm::vec2 penetrationVector = Collision::EPATest(verts);
+                    //std::cout << penetrationVector.x << " " << penetrationVector.y << std::endl;
                 }
-
-                if(Collision::SATTest((OBB*)hittee->object->getBound(),(OBB*)hitter->object->getBound())){
-                    std::cout << "Colliding" << ImGui::GetIO().DeltaTime << std::endl;
-                }
-
                 if(0&&Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
                     if(hittee->object->getBound()->getBoundingType()!=BoundingType::Oriented){
 
