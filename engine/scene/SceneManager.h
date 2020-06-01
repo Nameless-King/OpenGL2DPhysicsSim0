@@ -11,13 +11,12 @@
 #include "../../Dependencies/imgui/imgui_impl_glfw.h"
 #include "../../Dependencies/imgui/imgui_impl_opengl3.h"
 
-class SceneManager{
+class SceneManager {
 public:
 	static void init(GLFWwindow* window, bool installCallbacks);
 	static void start();
 	static void registerScene(Scene* scene);
 	static void renderMenu();
-	static void render();
 	static void finalize();
 	static void updateCurrentScene(GWindow* window);
 	static void renderCurrentSceneGUI();
@@ -25,5 +24,5 @@ public:
 	static void setCurrentScene(int sceneIndex);
 	static void destroy();
 private:
-	static void listScene(Scene* scene,int sceneIndex);
+	static void listScene(Scene* scene, int sceneIndex);
 };

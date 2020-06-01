@@ -19,41 +19,41 @@
 #include "./engine/physics/forces/ForceGravity.h"
 #include "./engine/scene/Scene.h"
 
-class SceneOBB : public Scene{
-    struct ObjectRegistration{
+class SceneOBB : public Scene {
+    struct ObjectRegistration {
         Object* object;
         ObjectRegistration* next;
     };
 
-    private:
-        Shader* m_shader;
-        Texture* m_texture;
-        ObjectRegistration* m_firstObject;
-        Object* m_player;
-        Object* m_test;
+private:
+    Shader* m_shader;
+    Texture* m_texture;
+    ObjectRegistration* m_firstObject;
+    Object* m_player;
+    Object* m_test;
 
-        CollisionBatchResolver* m_collisionResolver;
-        unsigned int m_maxContacts;
-        ForceGravity m_forceGravity;
-        unsigned int m_numCollisions;
-        unsigned int m_numObjects;
+    CollisionBatchResolver* m_collisionResolver;
+    unsigned int m_maxContacts;
+    ForceGravity m_forceGravity;
+    unsigned int m_numCollisions;
+    unsigned int m_numObjects;
 
-    public:
-        SceneOBB();
-        SceneOBB(Shader* shader, Texture* texture);
-        ~SceneOBB();
+public:
+    SceneOBB();
+    SceneOBB(Shader* shader, Texture* texture);
+    ~SceneOBB();
 
-        void render(GWindow* window);
-        void update(GWindow* window);
-        void renderGUI();
+    void render(GWindow* window);
+    void update(GWindow* window);
+    void renderGUI();
 
-    private:
-        void input(GWindow* window);
-        void addObject(Object* newObject);
-        void startFrame();
-        void generateContacts();
-        void integrate(float dt);
-        void runPhysics(float dt);
-        void testBoxCollision(Object* obj1, Object* obj2, CollisionData* col);
-        
+private:
+    void input(GWindow* window);
+    void addObject(Object* newObject);
+    void startFrame();
+    void generateContacts();
+    void integrate(float dt);
+    void runPhysics(float dt);
+    void testBoxCollision(Object* obj1, Object* obj2, CollisionData* col);
+
 };

@@ -21,7 +21,7 @@
 void input();
 void cameraInput(GWindow* window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userparam);
+void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userparam);
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -31,7 +31,7 @@ GWindow gameWindow(WIDTH, HEIGHT, "Game");
 
 int main(){
 
-    gameWindow.setFramebufferSizeCallback(framebuffer_size_callback);
+    //gameWindow.setFramebufferSizeCallback(framebuffer_size_callback);
     gameWindow.setClearColor(glm::vec4(0.0f,1.0f,0.0f,1.0f));
 
     if(glewInit() != GLEW_OK){
@@ -39,8 +39,8 @@ int main(){
         return EXIT_FAILURE;
     }
 
-    glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(MessageCallback,0);
+    //glEnable(GL_DEBUG_OUTPUT);
+    //glDebugMessageCallback(MessageCallback,0);
 
     SceneManager::init(gameWindow.getWindow(), true);
 
@@ -56,6 +56,8 @@ int main(){
 
     Renderer::init();
 
+    GInput::setContext(gameWindow.getWindow());
+
     SceneTest scene0(&shader, &textureWhite);
     SceneOBB scene1(&shader, &textureWhite);
 
@@ -64,31 +66,26 @@ int main(){
 
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
-    GInput::setContext(gameWindow.getWindow());
-
     SceneManager::setCurrentScene(1);
 
     std::cout << "Initial Error Code: " << glGetError() << std::endl;
 
     while(!gameWindow.windowShouldClose()){
+        SceneManager::start();
+        SceneManager::renderMenu();
+        gameWindow.displayWindowStats();
+        SceneManager::renderCurrentSceneGUI();
+
         GInput::update();
         gameWindow.pollEvents();
         input();
         cameraInput(&gameWindow);
 
         SceneManager::updateCurrentScene(&gameWindow);
-
-        SceneManager::start();
-        SceneManager::renderMenu();
-        gameWindow.displayWindowStats();
-        SceneManager::renderCurrentSceneGUI();
-
-       gameWindow.clear();
-
+       
+        gameWindow.clear();
         SceneManager::renderCurrentScene(&gameWindow);
-        SceneManager::render();
-        
-        
+
         SceneManager::finalize();
 
         gameWindow.swapBuffers();
@@ -101,7 +98,7 @@ int main(){
 
     std::cout << "Terminating Error Code: " << glGetError() << std::endl;
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height){
@@ -115,7 +112,7 @@ void input(){
     }
 }
 
-void MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 	GLsizei length, const GLchar* message, const void* userParam){
 	
 	 fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",

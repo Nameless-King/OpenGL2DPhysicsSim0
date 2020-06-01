@@ -1,77 +1,84 @@
 #include "./SceneOBB.h"
 
-SceneOBB::SceneOBB():
+SceneOBB::SceneOBB() :
     Scene("SceneOBB"),
     m_shader(NULL),
     m_texture(NULL),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 0.0f))),
+    m_forceGravity(ForceGravity(glm::vec2(0.0f, Physics2D::G * 0.0f))),
     m_collisionResolver(new CollisionBatchResolver(1)),
     m_numCollisions(0),
-    m_numObjects(0){
+    m_numObjects(0),
+    m_maxContacts(0),
+    m_firstObject(0),
+    m_player(0),
+    m_test(0) {
 }
 
-SceneOBB::SceneOBB(Shader* shader, Texture* texture):
+SceneOBB::SceneOBB(Shader* shader, Texture* texture) :
     Scene("SceneOBB"),
     m_shader(shader),
     m_texture(texture),
     m_maxContacts(0),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 0.0f))),
+    m_forceGravity(ForceGravity(glm::vec2(0.0f, Physics2D::G * 0.0f))),
     m_collisionResolver(new CollisionBatchResolver(1)),
     m_numCollisions(0),
-    m_numObjects(0){
-        m_firstObject = new ObjectRegistration();
+    m_numObjects(0) {
+    m_firstObject = new ObjectRegistration();
 
-        Object* player = new Object(
-            glm::vec3(0.0f,10.0f,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
-            glm::vec3(1.0f,1.0f,1.0f)
-        );
-        player->createBound(BoundingType::Oriented);
-        player->addRigidbody2D(new Rigidbody2D(5.0f));
-        addObject(player);
-        m_player = player;
+    Object* player = new Object(
+        glm::vec3(0.0f, 10.0f, 0.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f)
+    );
+    player->createBound(BoundingType::Oriented);
+    player->addRigidbody2D(new Rigidbody2D(5.0f));
+    addObject(player);
+    m_player = player;
 
-        Object* testBlock = new Object(
-            glm::vec3(0.0f,-10.0f,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
-            glm::vec3(1.0f,1.0f,1.0f)
-        );
-        testBlock->createBound(BoundingType::Oriented);
-        testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
-        addObject(testBlock);
-        m_test = testBlock;
+    Object* testBlock = new Object(
+        glm::vec3(0.0f, -10.0f, 0.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(1.0f, 1.0f, 1.0f)
+    );
+    testBlock->createBound(BoundingType::Oriented);
+    testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
+    addObject(testBlock);
+    m_test = testBlock;
 
-        //testBlock = new Object(
-        //    glm::vec3(0.0f,-50.0f,0.0f),
-        //    glm::vec3(0.0f,0.0f,0.0f),
-        //    glm::vec3(2.0f,1.0f,1.0f)
-        //);
-        //testBlock->createBound(BoundingType::Oriented);
-        //testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
-        //addObject(testBlock);
+    //testBlock = new Object(
+    //    glm::vec3(0.0f,-50.0f,0.0f),
+    //    glm::vec3(0.0f,0.0f,0.0f),
+    //    glm::vec3(2.0f,1.0f,1.0f)
+    //);
+    //testBlock->createBound(BoundingType::Oriented);
+    //testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
+    //addObject(testBlock);
 
 
-    }
+}
 
-    SceneOBB::~SceneOBB(){
+SceneOBB::~SceneOBB() {
     ObjectRegistration* currentRegistry = m_firstObject;
-    while(currentRegistry){
+    ObjectRegistration* temp = NULL;
+    while (currentRegistry) {
         delete currentRegistry->object;
+        temp = currentRegistry;
         currentRegistry = currentRegistry->next;
+        delete temp;
     }
     delete m_collisionResolver;
 }
 
-void SceneOBB::render(GWindow* window){
+void SceneOBB::render(GWindow* window) {
     Renderer::bind();
     m_shader->use();
     m_texture->bind();
-    m_shader->setUniformMat4f("u_projection",window->getProjectionMatrix());
-    m_shader->setUniformMat4f("u_view",window->getCamera()->getViewMatrix());
+    m_shader->setUniformMat4f("u_projection", window->getProjectionMatrix());
+    m_shader->setUniformMat4f("u_view", window->getCamera()->getViewMatrix());
 
     ObjectRegistration* currentRegistry = m_firstObject;
-    while(currentRegistry){
-        m_shader->setUniformMat4f("u_model",currentRegistry->object->getModelMatrix());
+    while (currentRegistry) {
+        m_shader->setUniformMat4f("u_model", currentRegistry->object->getModelMatrix());
         Renderer::renderObject();
         currentRegistry = currentRegistry->next;
     }
@@ -79,87 +86,108 @@ void SceneOBB::render(GWindow* window){
     Renderer::unbind();
 }
 
-void SceneOBB::update(GWindow* window){
+void SceneOBB::update(GWindow* window) {
     runPhysics(ImGui::GetIO().DeltaTime);
     input(window);
 }
 
-void SceneOBB::renderGUI(){
+void SceneOBB::renderGUI() {
     ImGui::Begin(getSceneTitle().c_str());
-    ImGui::Text("Number of collision: %d",m_numCollisions);
-    ImGui::Text("Number of objects: %d",m_numObjects);
+    ImGui::Text("Number of collision: %d", m_numCollisions);
+    ImGui::Text("Number of objects: %d", m_numObjects);
     ImGui::End();
 }
 
-void SceneOBB::input(GWindow* window){
-    glm::vec2 velocity(0.0f,0.0f);
+void SceneOBB::input(GWindow* window) {
+    glm::vec2 velocity(0.0f, 0.0f);
     float speed = 10.0f;
 
-    if(GInput::isKeyDown(GLFW_KEY_UP)){
+    if (GInput::isKeyDown(GLFW_KEY_UP)) {
         velocity.y = speed;
         m_player->m_transformationChanged = true;
-    }else if(GInput::isKeyDown(GLFW_KEY_DOWN)){
+    }
+    else if (GInput::isKeyDown(GLFW_KEY_DOWN)) {
         velocity.y = -speed;
         m_player->m_transformationChanged = true;
     }
 
-    if(GInput::isKeyDown(GLFW_KEY_RIGHT)){
+    if (GInput::isKeyDown(GLFW_KEY_RIGHT)) {
         velocity.x = speed;
         m_player->m_transformationChanged = true;
-    }else if(GInput::isKeyDown(GLFW_KEY_LEFT)){
+    }
+    else if (GInput::isKeyDown(GLFW_KEY_LEFT)) {
         velocity.x = -speed;
         m_player->m_transformationChanged = true;
     }
 
     m_player->getRigidbody2D()->setVelocity(velocity);
 
-    if(GInput::isKeyDown(GLFW_KEY_R)){
-       m_player->rotateDegrees(0.5f);
-       m_player->m_transformationChanged = true;
+    if (GInput::isKeyDown(GLFW_KEY_R)) {
+        m_player->rotateDegrees(0.5f);
     }
 
-    if(GInput::isKeyDown(GLFW_KEY_C)){
+    if (GInput::isKeyDown(GLFW_KEY_C)) {
         m_test->rotateDegrees(0.5f);
-        m_player->m_transformationChanged = true;
     }
 }
 
-void SceneOBB::startFrame(){
+void SceneOBB::startFrame() {
     ObjectRegistration* currentRegister = m_firstObject;
 
-    while(currentRegister){
+    while (currentRegister) {
         currentRegister->object->getRigidbody2D()->zeroForce();
         currentRegister->object->getRigidbody2D()->setAngularVelocity(0.0f);
         currentRegister = currentRegister->next;
     }
 }
 
-void SceneOBB::generateContacts(){
+void SceneOBB::generateContacts() {
     ObjectRegistration* hittee = m_firstObject;
-    while(hittee){
+    while (hittee) {
         ObjectRegistration* hitter = hittee->next;
-        while(hitter){
-            if(!(hitter->object->getRigidbody2D()->hasInfiniteMass() && hittee->object->getRigidbody2D()->hasInfiniteMass())){
+        while (hitter) {
+            if (!(hitter->object->getRigidbody2D()->hasInfiniteMass() && hittee->object->getRigidbody2D()->hasInfiniteMass())) {
                 //there is still undefined behavior in GJKTest
-                if(Collision::GJKTest2(hittee->object,hitter->object)){
+                std::vector<glm::vec2> verts;
+                if (Collision::GJKTest(hittee->object, hitter->object, &verts)) {
                     std::cout << "Colliding " << ImGui::GetIO().DeltaTime << std::endl;
                     //need to make sure no undefined behavior is occuring in EPATest
-                    //glm::vec2 penetrationVector = Collision::EPATest(verts);
-                    //std::cout << penetrationVector.x << " " << penetrationVector.y << std::endl;
-                }
-                if(0&&Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
-                    if(hittee->object->getBound()->getBoundingType()!=BoundingType::Oriented){
+                    glm::vec2 penetrationVector = Collision::EPATest(verts);
+                    std::cout << penetrationVector.x << " " << penetrationVector.y << std::endl;
 
-                        CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(),hitter->object->getBound());
+                    CollisionData generatedCol;
+
+                    generatedCol.distance = *(hitter->object->getBound()->getCenter()) - *(hittee->object->getBound()->getCenter());
+                    //generatedCol.distance.x = fabs(generatedCol.distance.x);
+                    //generatedCol.distance.y = fabs(generatedCol.distance.y);
+
+
+                    generatedCol.penetrationDepth = penetrationVector;
+                    if (penetrationVector.x == penetrationVector.y && penetrationVector.x < 0.0000001f) {
+                        break;
+                    }
+
+                    generatedCol.collisionNormal = glm::normalize(penetrationVector);
+
+                    generatedCol.object[0] = hittee->object;
+                    generatedCol.object[1] = hitter->object;
+
+                    Collision::resolve(ImGui::GetIO().DeltaTime, &generatedCol);
+                    m_collisionResolver->registerContact(generatedCol);
+                }
+                if (0 && Collision::isColliding(hittee->object->getBound(), hitter->object->getBound())) {
+                    if (hittee->object->getBound()->getBoundingType() != BoundingType::Oriented) {
+
+                        CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(), hitter->object->getBound());
 
                         generatedCol.object[0] = hittee->object;
                         generatedCol.object[1] = hitter->object;
 
                         generatedCol.restitution = 0.0f;
 
-                        testBoxCollision(hittee->object,hitter->object,&generatedCol);
+                        testBoxCollision(hittee->object, hitter->object, &generatedCol);
 
-                        Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
+                        Collision::resolve(ImGui::GetIO().DeltaTime, &generatedCol);
                         m_collisionResolver->registerContact(generatedCol);
                     }
                 }
@@ -170,19 +198,19 @@ void SceneOBB::generateContacts(){
     }
 }
 
-void SceneOBB::integrate(float dt){
+void SceneOBB::integrate(float dt) {
     ObjectRegistration* currentRegister = m_firstObject;
-    while(currentRegister){
-        Physics2D::integrate(currentRegister->object,dt);
+    while (currentRegister) {
+        Physics2D::integrate(currentRegister->object, dt);
         currentRegister = currentRegister->next;
     }
 }
 
-void SceneOBB::runPhysics(float dt){
+void SceneOBB::runPhysics(float dt) {
     //force generators
     ObjectRegistration* currentRegister = m_firstObject;
-    while(currentRegister){
-        m_forceGravity.updateForce(currentRegister->object,ImGui::GetIO().DeltaTime);
+    while (currentRegister) {
+        m_forceGravity.updateForce(currentRegister->object, ImGui::GetIO().DeltaTime);
         currentRegister = currentRegister->next;
     }
 
@@ -194,14 +222,15 @@ void SceneOBB::runPhysics(float dt){
     m_collisionResolver->resetRegistry();
 }
 
-void SceneOBB::addObject(Object* newObject){
-    if(!m_firstObject->object){
+void SceneOBB::addObject(Object* newObject) {
+    if (!m_firstObject->object) {
         m_firstObject->object = newObject;
-    }else{
+    }
+    else {
         ObjectRegistration* lastRegister = new ObjectRegistration();
         lastRegister->object = newObject;
         ObjectRegistration* currentRegistry = m_firstObject;
-        while(currentRegistry->next){
+        while (currentRegistry->next) {
             currentRegistry = currentRegistry->next;
         }
         currentRegistry->next = lastRegister;
@@ -209,28 +238,31 @@ void SceneOBB::addObject(Object* newObject){
     m_numObjects++;
 }
 
-void SceneOBB::testBoxCollision(Object* obj1, Object* obj2, CollisionData* col){
-    if(obj1->getRigidbody2D()->hasInfiniteMass()){
+void SceneOBB::testBoxCollision(Object* obj1, Object* obj2, CollisionData* col) {
+    if (obj1->getRigidbody2D()->hasInfiniteMass()) {
         Object* temp = obj2;
         obj2 = obj1;
         obj1 = temp;
     }
 
-    if(col->distance.x / (obj1->getScaleXYZ().x * obj2->getScaleXYZ().x) > col->distance.y / (obj1->getScaleXYZ().y * obj2->getScaleXYZ().y)){
-        if(obj1->getPositionXY().x > obj2->getPositionXY().x){
-			col->collisionNormal.x = 1;
-			col->collisionNormal.y = 0;
-		}else{
-			col->collisionNormal.x = -1;
-			col->collisionNormal.y = 0;
-		}
-    }else{
-        if(obj1->getPositionXY().y > obj2->getPositionXY().y){
-			col->collisionNormal.x = 0;
-			col->collisionNormal.y = 1;
-		}else{
-			col->collisionNormal.x = 0;
-			col->collisionNormal.y = -1;
-		}
+    if (col->distance.x / (obj1->getScaleXYZ().x * obj2->getScaleXYZ().x) > col->distance.y / (obj1->getScaleXYZ().y * obj2->getScaleXYZ().y)) {
+        if (obj1->getPositionXY().x > obj2->getPositionXY().x) {
+            col->collisionNormal.x = 1;
+            col->collisionNormal.y = 0;
+        }
+        else {
+            col->collisionNormal.x = -1;
+            col->collisionNormal.y = 0;
+        }
+    }
+    else {
+        if (obj1->getPositionXY().y > obj2->getPositionXY().y) {
+            col->collisionNormal.x = 0;
+            col->collisionNormal.y = 1;
+        }
+        else {
+            col->collisionNormal.x = 0;
+            col->collisionNormal.y = -1;
+        }
     }
 }

@@ -5,8 +5,8 @@ glm::vec2 EngineMath::absVec2(const glm::vec2 v){
 }
 
 glm::vec2* EngineMath::calcHalfExtents(const float* vertices, glm::vec3* scale){
-	int currentX = *(vertices);
-	int currentY = *(vertices+1);
+	int currentX = (int) *(vertices);
+	int currentY = (int) *(vertices+1);
 	glm::vec2* halfExtents = new glm::vec2(0.0f,0.0f);
 	for(int i = 2;i<8;i++){
 		if(i%2==0){
@@ -44,10 +44,10 @@ glm::vec2 EngineMath::projectOnto(glm::vec2 v, glm::vec2 l){
 glm::mat2 EngineMath::rotationMatrix(float r){
 	glm::mat2 rm(1.0f);
 	
-	rm[0][0] = cos((PI/180.0) * r);
-	rm[0][1] = -sin((PI/180.0) * r);
-	rm[1][0] = sin((PI/180.0) * r);
-	rm[1][1] = cos((PI/180.0) * r);
+	rm[0][0] = (float) cos((PI/180.0) * r);
+	rm[0][1] = (float) -sin((PI/180.0) * r);
+	rm[1][0] = (float) sin((PI/180.0) * r);
+	rm[1][1] = (float) cos((PI/180.0) * r);
 	
 	return rm;
 }
@@ -85,7 +85,11 @@ glm::vec2 EngineMath::circleSupport(glm::vec2 center, float radius, glm::vec2 di
 
 glm::vec2 EngineMath::polygonSupport(const float* vertices, glm::vec2 direction,int arraySize){
 	float distance = -INFINITY;
-	glm::vec2 vertex;
+	glm::vec2 vertex(0.0f,0.0f);
+
+	if(((float)arraySize) < 0.000001f){
+		std::cout << "ERROR(polyognSupport): array size is practically zero" << std::endl;
+	}
 
 	for(int i=0;i<arraySize;i+=2){
 		glm::vec2 currentVertex(*(vertices+i),*(vertices+i+1));

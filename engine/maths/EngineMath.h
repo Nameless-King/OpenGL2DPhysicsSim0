@@ -1,9 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include <cmath>
 #include "../../Dependencies/glm/glm.hpp"
-#include "../../Dependencies/glm/gtc/matrix_transform.hpp"
 
 #define PI 3.14159265358979
 

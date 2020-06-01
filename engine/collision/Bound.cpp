@@ -60,7 +60,3 @@ void Bound::setHalfExtents(glm::vec2* halfExtents)  {
 	delete m_halfExtents;
 	m_halfExtents = halfExtents;
 }
-
-				
-
-	

@@ -11,23 +11,25 @@
 #include <sstream>
 #include <iostream>
 
-class Shader{
+class Shader
+{
 public:
-	unsigned int m_ID;
-	
-	Shader (const char* vertexPath, const char* fragmentPath);
+	GLuint  m_ID;
+	GLuint m_vertex;
+	GLuint m_fragment;
+
+	Shader(const char* vertexPath, const char* fragmentPath);
 	~Shader();
-	
+
 	void use();
-	
+
 	void setUniformBool(const std::string& name, bool value) const;
 	void setUniform1i(const std::string& name, int value) const;
 	void setUniform1f(const std::string& name, float value) const;
-	void setUniformMat4f(const std::string &name, const glm::mat4 &matrix) const;
+	void setUniformMat4f(const std::string& name, const glm::mat4& matrix) const;
 
 private:
 	std::string readShaderFile(const char* path);
 	unsigned int compileShaderCode(const char* sourceCode, GLenum shaderType);
-	
-		
 };
+

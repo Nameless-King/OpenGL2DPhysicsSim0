@@ -13,7 +13,7 @@
 #include "../Dependencies/glm/glm.hpp"
 #include "../Dependencies/glm/gtc/matrix_transform.hpp"
 
-class Object{
+class Object {
 public:
 	bool m_transformationChanged;
 private:
@@ -30,9 +30,9 @@ public:
 	Object(glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 	Object(const Object& object);
 	~Object();
-	
+
 	glm::mat4 getModelMatrix();
-	
+
 	void rotateDegrees(float degrees);
 
 	void setPos(float xPos, float yPos, float zPos);
@@ -40,25 +40,26 @@ public:
 	void setPos(glm::vec2 pos);
 	void setRot(float xRot, float yRot, float zRot);
 	void setScl(float xScl, float yScl, float zScl);
-	
+
 	void addRigidbody2D(Rigidbody2D* rb);
 	void createBound(BoundingType type);
-	
-	
-	inline glm::vec3 getPositionXYZ() {return m_position;}
-	inline glm::vec3 getRotationXYZ() {return m_rotation;}
-	inline glm::vec3 getScaleXYZ() {return m_scale;}
-	inline const float* getVertices() {return m_localVertices;}
+
+
+	inline glm::vec3 getPositionXYZ() { return m_position; }
+	inline glm::vec3 getRotationXYZ() { return m_rotation; }
+	inline glm::vec3 getScaleXYZ() { return m_scale; }
+	inline const float* getVertices() { return m_localVertices; }
 	const float* getGlobalVertices();
-	
+
 	glm::vec2 getPositionXY();
 	glm::vec2 getRotationXY();
 	glm::vec2 getScaleXY();
 
 	int getNumVertices();
-	
-	inline Bound* getBound(){ return m_bound;}
-	inline Rigidbody2D* getRigidbody2D() {return m_rigidbody;}
-	
+
+	inline Bound* getBound() { return m_bound; }
+	inline Rigidbody2D* getRigidbody2D() { return m_rigidbody; }
+private:
+	void updateGlobalVertices();
 };
 	

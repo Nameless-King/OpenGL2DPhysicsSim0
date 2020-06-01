@@ -1,7 +1,7 @@
 #include "./IBO.h"
 
 
-IBO::IBO():m_vertexCount(0),m_data(nullptr),m_byteSize(0){}
+IBO::IBO():m_id(0), m_vertexCount(0),m_data(nullptr),m_byteSize(0){}
 
 IBO::IBO(unsigned vertexCount,const void *data,size_t byteSize)
 	:m_vertexCount(vertexCount),

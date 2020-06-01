@@ -5,7 +5,7 @@
 #include "../../Dependencies/glm/glm.hpp"
 #include "../maths/EngineMath.h"
 
-enum BoundingType{
+enum class BoundingType{
 	NA = 0,
 	AxisAligned = 1,
 	Circle = 2,
@@ -31,8 +31,6 @@ public:
 	inline const glm::vec3* getCenter() const {return m_center;} // COMPLETE
 	inline const glm::vec2* getHalfExtents() const {return m_halfExtents;} // COMPLETE
 	inline const glm::vec3* getScale() const {return m_scale;} // COMPLETE
-
-	void getPositionXY(glm::vec2& pos);
 
 	glm::vec2 getCopyCenterXY() const; // COMPLETE
 	glm::vec3 getCopyCenterXYZ() const; // COMPLETE
