@@ -6,10 +6,7 @@ SceneOBB::SceneOBB() :
     m_texture(NULL),
     m_forceGravity(ForceGravity(glm::vec2(0.0f, Physics2D::G * 0.0f))),
     m_collisionResolver(new CollisionBatchResolver(1)),
-    m_numCollisions(0),
-    m_numObjects(0),
     m_maxContacts(0),
-    m_firstObject(0),
     m_player(0),
     m_test(0) {
 }
@@ -20,10 +17,7 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture) :
     m_texture(texture),
     m_maxContacts(0),
     m_forceGravity(ForceGravity(glm::vec2(0.0f, Physics2D::G * 0.0f))),
-    m_collisionResolver(new CollisionBatchResolver(1)),
-    m_numCollisions(0),
-    m_numObjects(0) {
-    m_firstObject = new ObjectRegistration();
+    m_collisionResolver(new CollisionBatchResolver(1)){
 
     Object* player = new Object(
         glm::vec3(0.0f, 10.0f, 0.0f),
@@ -131,15 +125,7 @@ void SceneOBB::input(GWindow* window) {
     }
 }
 
-void SceneOBB::startFrame() {
-    ObjectRegistration* currentRegister = m_firstObject;
 
-    while (currentRegister) {
-        currentRegister->object->getRigidbody2D()->zeroForce();
-        currentRegister->object->getRigidbody2D()->setAngularVelocity(0.0f);
-        currentRegister = currentRegister->next;
-    }
-}
 
 void SceneOBB::generateContacts() {
     ObjectRegistration* hittee = m_firstObject;
@@ -147,37 +133,9 @@ void SceneOBB::generateContacts() {
         ObjectRegistration* hitter = hittee->next;
         while (hitter) {
             if (!(hitter->object->getRigidbody2D()->hasInfiniteMass() && hittee->object->getRigidbody2D()->hasInfiniteMass())) {
-                //there is still undefined behavior in GJKTest
-                std::vector<glm::vec2> verts;
-                if (Collision::GJKTest(hittee->object, hitter->object, &verts)) {
-                    std::cout << "Colliding " << ImGui::GetIO().DeltaTime << std::endl;
-                    //need to make sure no undefined behavior is occuring in EPATest
-                    glm::vec2 penetrationVector = Collision::EPATest(verts);
-                    std::cout << penetrationVector.x << " " << penetrationVector.y << std::endl;
-
-                    CollisionData generatedCol;
-
-                    generatedCol.distance = *(hitter->object->getBound()->getCenter()) - *(hittee->object->getBound()->getCenter());
-                    //generatedCol.distance.x = fabs(generatedCol.distance.x);
-                    //generatedCol.distance.y = fabs(generatedCol.distance.y);
-
-
-                    generatedCol.penetrationDepth = penetrationVector;
-                    if (penetrationVector.x == penetrationVector.y && penetrationVector.x < 0.0000001f) {
-                        break;
-                    }
-
-                    generatedCol.collisionNormal = glm::normalize(penetrationVector);
-
-                    generatedCol.object[0] = hittee->object;
-                    generatedCol.object[1] = hitter->object;
-
-                    Collision::resolve(ImGui::GetIO().DeltaTime, &generatedCol);
-                    m_collisionResolver->registerContact(generatedCol);
-                }
-                if (0 && Collision::isColliding(hittee->object->getBound(), hitter->object->getBound())) {
-                    if (hittee->object->getBound()->getBoundingType() != BoundingType::Oriented) {
-
+               
+                if (hittee->object->getBound()->getBoundingType() != BoundingType::Oriented &&
+                Collision::isColliding(hittee->object->getBound(), hitter->object->getBound())) {
                         CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(), hitter->object->getBound());
 
                         generatedCol.object[0] = hittee->object;
@@ -185,7 +143,32 @@ void SceneOBB::generateContacts() {
 
                         generatedCol.restitution = 0.0f;
 
-                        testBoxCollision(hittee->object, hitter->object, &generatedCol);
+                        Collision::calculateAABBNormals(&generatedCol);
+
+                        Collision::resolve(ImGui::GetIO().DeltaTime, &generatedCol);
+                        m_collisionResolver->registerContact(generatedCol);
+                }else{ 
+                    std::vector<glm::vec2> verts;
+                    if (Collision::GJKTest(hittee->object, hitter->object, &verts)) {
+                        //need to make sure no undefined behavior is occuring in EPATest
+                        glm::vec2 penetrationVector = Collision::EPATest(verts);
+
+                        CollisionData generatedCol;
+
+                        generatedCol.distance = *(hitter->object->getBound()->getCenter()) - *(hittee->object->getBound()->getCenter());
+                        //generatedCol.distance.x = fabs(generatedCol.distance.x);
+                        //generatedCol.distance.y = fabs(generatedCol.distance.y);
+
+
+                        generatedCol.penetrationDepth = penetrationVector;
+                        if (penetrationVector.x == penetrationVector.y && penetrationVector.x < 0.00001f) {
+                            break;
+                        }
+
+                        generatedCol.collisionNormal = glm::normalize(penetrationVector);
+
+                        generatedCol.object[0] = hittee->object;
+                        generatedCol.object[1] = hitter->object;
 
                         Collision::resolve(ImGui::GetIO().DeltaTime, &generatedCol);
                         m_collisionResolver->registerContact(generatedCol);
@@ -198,13 +181,7 @@ void SceneOBB::generateContacts() {
     }
 }
 
-void SceneOBB::integrate(float dt) {
-    ObjectRegistration* currentRegister = m_firstObject;
-    while (currentRegister) {
-        Physics2D::integrate(currentRegister->object, dt);
-        currentRegister = currentRegister->next;
-    }
-}
+
 
 void SceneOBB::runPhysics(float dt) {
     //force generators
@@ -220,49 +197,4 @@ void SceneOBB::runPhysics(float dt) {
 
     m_numCollisions = m_collisionResolver->numOfCollisions();
     m_collisionResolver->resetRegistry();
-}
-
-void SceneOBB::addObject(Object* newObject) {
-    if (!m_firstObject->object) {
-        m_firstObject->object = newObject;
-    }
-    else {
-        ObjectRegistration* lastRegister = new ObjectRegistration();
-        lastRegister->object = newObject;
-        ObjectRegistration* currentRegistry = m_firstObject;
-        while (currentRegistry->next) {
-            currentRegistry = currentRegistry->next;
-        }
-        currentRegistry->next = lastRegister;
-    }
-    m_numObjects++;
-}
-
-void SceneOBB::testBoxCollision(Object* obj1, Object* obj2, CollisionData* col) {
-    if (obj1->getRigidbody2D()->hasInfiniteMass()) {
-        Object* temp = obj2;
-        obj2 = obj1;
-        obj1 = temp;
-    }
-
-    if (col->distance.x / (obj1->getScaleXYZ().x * obj2->getScaleXYZ().x) > col->distance.y / (obj1->getScaleXYZ().y * obj2->getScaleXYZ().y)) {
-        if (obj1->getPositionXY().x > obj2->getPositionXY().x) {
-            col->collisionNormal.x = 1;
-            col->collisionNormal.y = 0;
-        }
-        else {
-            col->collisionNormal.x = -1;
-            col->collisionNormal.y = 0;
-        }
-    }
-    else {
-        if (obj1->getPositionXY().y > obj2->getPositionXY().y) {
-            col->collisionNormal.x = 0;
-            col->collisionNormal.y = 1;
-        }
-        else {
-            col->collisionNormal.x = 0;
-            col->collisionNormal.y = -1;
-        }
-    }
 }

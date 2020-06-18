@@ -6,9 +6,6 @@ SceneTest::SceneTest():
     m_texture(NULL),
     m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 1.0f))),
     m_collisionResolver(new CollisionBatchResolver(1)),
-    m_tempContact(CollisionData()),
-    m_numCollisions(0),
-    m_numObjects(0),
     m_playerSpeed(100.0f){
     }
 
@@ -19,11 +16,7 @@ SceneTest::SceneTest(Shader* shader, Texture* texture):
     m_maxContacts(0),
     m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * -10.0f))),
     m_collisionResolver(new CollisionBatchResolver(1)),
-    m_tempContact(CollisionData()),
-    m_numCollisions(0),
-    m_numObjects(0),
     m_playerSpeed(100.0f){
-        m_firstObject = new ObjectRegistration();
 
         Object* player = new Object(
             glm::vec3(0.0f,10.0f,0.0f),
@@ -32,7 +25,7 @@ SceneTest::SceneTest(Shader* shader, Texture* texture):
         );
         //player->addVertices(vertices);
         player->createBound(BoundingType::AxisAligned);
-        player->addRigidbody2D(new Rigidbody2D(5.0f));
+        player->addRigidbody2D(new Rigidbody2D(1.0f));
 
 
         addObject(player);
@@ -50,11 +43,6 @@ SceneTest::SceneTest(Shader* shader, Texture* texture):
     }
 
 SceneTest::~SceneTest(){
-    ObjectRegistration* currentRegistry = m_firstObject;
-    while(currentRegistry){
-        delete currentRegistry->object;
-        currentRegistry = currentRegistry->next;
-    }
     delete m_collisionResolver;
 }
 
@@ -85,29 +73,27 @@ void SceneTest::renderGUI(){
     ImGui::Text("Number of collision: %d",m_numCollisions);
     ImGui::Text("Number of objects: %d",m_numObjects);
     int playerSpeed = (int)m_playerSpeed;
-    if(ImGui::SliderInt("Player Speed",&playerSpeed,1,100)){
+    if(ImGui::SliderInt("Player Speed",&playerSpeed,1,200)){
 		m_playerSpeed = (float)playerSpeed;
 	}
     ImGui::End();
 }
 
 void SceneTest::input(GWindow* window){
-    glm::vec2 velocity(0.0f,0.0f);
+    glm::vec2* playerVel = m_player->getRigidbody2D()->getVelocity();
     float speed = m_playerSpeed;
 
-    if(GInput::isKeyDown(GLFW_KEY_UP)){
-        velocity.y = speed;
-    }else if(GInput::isKeyDown(GLFW_KEY_DOWN)){
-        velocity.y = -speed;
+    if(GInput::isKeyDown(GLFW_KEY_UP) || GInput::isKeyReleased(GLFW_KEY_UP)){
+        playerVel->y = speed;
+    }else if(GInput::isKeyDown(GLFW_KEY_DOWN) || GInput::isKeyReleased(GLFW_KEY_DOWN)){
+        playerVel->y = -speed;
     }
 
     if(GInput::isKeyDown(GLFW_KEY_RIGHT)){
-        velocity.x = speed;
+        playerVel->x = speed;
     }else if(GInput::isKeyDown(GLFW_KEY_LEFT)){
-        velocity.x = -speed;
+        playerVel->x = -speed;
     }
-
-    m_player->getRigidbody2D()->setVelocity(velocity);
 
     //creates infinite mass objects upon left click at mouse position
     if(GInput::isMouseButtonPressed(GLFW_MOUSE_BUTTON_1)){
@@ -165,16 +151,6 @@ void SceneTest::input(GWindow* window){
     }
 }
 
-void SceneTest::startFrame(){
-    ObjectRegistration* currentRegister = m_firstObject;
-
-    while(currentRegister){
-        currentRegister->object->getRigidbody2D()->zeroForce();
-
-        currentRegister = currentRegister->next;
-    }
-}
-
 void SceneTest::generateContacts(){
     ObjectRegistration* hittee = m_firstObject;
     while(hittee){
@@ -189,7 +165,7 @@ void SceneTest::generateContacts(){
 
                     generatedCol.restitution = 0.0f;
 
-                    testBoxCollision(hittee->object,hitter->object,&generatedCol);
+                    Collision::calculateAABBNormals(&generatedCol);
 
                     Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
                     
@@ -202,14 +178,6 @@ void SceneTest::generateContacts(){
     }
 }
 
-void SceneTest::integrate(float dt){
-    ObjectRegistration* currentRegister = m_firstObject;
-    while(currentRegister){
-        Physics2D::integrate(currentRegister->object,dt);
-        currentRegister = currentRegister->next;
-    }
-}
-
 void SceneTest::runPhysics(float dt){
     //force generators
     ObjectRegistration* currentRegister = m_firstObject;
@@ -217,53 +185,19 @@ void SceneTest::runPhysics(float dt){
         m_forceGravity.updateForce(currentRegister->object,ImGui::GetIO().DeltaTime);
         currentRegister = currentRegister->next;
     }
+     integrate(ImGui::GetIO().DeltaTime);
+   
 
-    integrate(ImGui::GetIO().DeltaTime);
+    for(int i = 0;i<1;i++)
+    {
 
-    generateContacts();
+        generateContacts();
 
-    m_numCollisions = m_collisionResolver->numOfCollisions();
-    m_collisionResolver->resetRegistry();
-}
-
-void SceneTest::addObject(Object* newObject){
-    if(!m_firstObject->object){
-        m_firstObject->object = newObject;
-    }else{
-        ObjectRegistration* lastRegister = new ObjectRegistration();
-        lastRegister->object = newObject;
-        ObjectRegistration* currentRegistry = m_firstObject;
-        while(currentRegistry->next){
-            currentRegistry = currentRegistry->next;
-        }
-        currentRegistry->next = lastRegister;
-    }
-    m_numObjects++;
-}
-
-void SceneTest::testBoxCollision(Object* obj1, Object* obj2, CollisionData* col){
-    if(obj1->getRigidbody2D()->hasInfiniteMass()){
-        Object* temp = obj2;
-        obj2 = obj1;
-        obj1 = temp;
+        m_numCollisions = m_collisionResolver->numOfCollisions();
+        //m_collisionResolver->resolveContacts(ImGui::GetIO().DeltaTime);
+        m_collisionResolver->resetRegistry();
     }
 
-    if(col->distance.x / (obj1->getScaleXYZ().x * obj2->getScaleXYZ().x) > col->distance.y / (obj1->getScaleXYZ().y * obj2->getScaleXYZ().y)){
-        if(obj1->getPositionXY().x > obj2->getPositionXY().x){
-			col->collisionNormal.x = 1;
-			col->collisionNormal.y = 0;
-		}else{
-			col->collisionNormal.x = -1;
-			col->collisionNormal.y = 0;
-		}
-    }else{
-        if(obj1->getPositionXY().y > obj2->getPositionXY().y){
-			col->collisionNormal.x = 0;
-			col->collisionNormal.y = 1;
-		}else{
-			col->collisionNormal.x = 0;
-			col->collisionNormal.y = -1;
-		}
-    }
+    
 }
 

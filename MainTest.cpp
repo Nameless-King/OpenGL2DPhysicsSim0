@@ -31,7 +31,7 @@ GWindow gameWindow(WIDTH, HEIGHT, "Game");
 
 int main(){
 
-    //gameWindow.setFramebufferSizeCallback(framebuffer_size_callback);
+    gameWindow.setFramebufferSizeCallback(framebuffer_size_callback);
     gameWindow.setClearColor(glm::vec4(0.0f,1.0f,0.0f,1.0f));
 
     if(glewInit() != GLEW_OK){
@@ -66,7 +66,7 @@ int main(){
 
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
-    SceneManager::setCurrentScene(1);
+    SceneManager::setCurrentScene(0);
 
     std::cout << "Initial Error Code: " << glGetError() << std::endl;
 
@@ -92,7 +92,6 @@ int main(){
 
         
     }
-
     Renderer::destroy();
     SceneManager::destroy();
 

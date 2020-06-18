@@ -24,9 +24,36 @@ CollisionData Collision::calculateCollision(Bound* a, Bound* b) {
 	data.penetrationDepth = joinedExtents - data.distance;
 
 	//TODO : above TODO if corrected will result in below simplification
-	data.collisionNormal = glm::normalize(*(b->getCenter()) - *(a->getCenter()));
+	//Collision::calculateAABBNormals(&data);
+	//data.collisionNormal =glm::normalize(data.penetrationDepth);// glm::normalize(*(b->getCenter()) - *(a->getCenter()));
 
 	return data;
+}
+
+void Collision::calculateAABBNormals(CollisionData* col){
+	if(col->object[0]->getRigidbody2D()->hasInfiniteMass()){
+        Object* temp = col->object[1];
+        col->object[1] = col->object[0];
+        col->object[0] = temp;
+    }
+
+    if(col->distance.x / (col->object[0]->getScaleXYZ().x * col->object[1]->getScaleXYZ().x) > col->distance.y / (col->object[0]->getScaleXYZ().y * col->object[1]->getScaleXYZ().y)){
+        if(col->object[0]->getPositionXY().x > col->object[1]->getPositionXY().x){
+			col->collisionNormal.x = 1;
+			col->collisionNormal.y = 0;
+		}else{
+			col->collisionNormal.x = -1;
+			col->collisionNormal.y = 0;
+		}
+    }else{
+        if(col->object[0]->getPositionXY().y > col->object[1]->getPositionXY().y){
+			col->collisionNormal.x = 0;
+			col->collisionNormal.y = 1;
+		}else{
+			col->collisionNormal.x = 0;
+			col->collisionNormal.y = -1;
+		}
+    }
 }
 
 bool Collision::isColliding(Bound* a, Bound* b) {
@@ -60,8 +87,10 @@ void Collision::resolve(float dt, CollisionData* col) {
 	if (correctObjects(col)) {
 
 		float impulse = Collision::resolveVelocity(dt, col);
+		//float impulse = Collision::resolveRestingContactVelocity(dt, col);
+
 		Collision::resolveFriction(dt, impulse, col);
-		//Collision::resolveRestingContactVelocity(dt);
+		
 		if (col->object[0]->getBound()->getBoundingType() == BoundingType::Oriented) {
 
 		}
@@ -96,8 +125,11 @@ void Collision::resolveInterpenetration(float dt, CollisionData* col) {
 	}
 
 	//below line was used before line below it (idk why but the line below it works better with oriented bounding boxes
-	//glm::vec2 movePerMass = col->collisionNormal * (-getSmallestComponent(&col->penetrationDepth) / totalInverseMass)
-	glm::vec2 movePerMass = col->collisionNormal * (glm::length(col->penetrationDepth) / totalInverseMass);
+	glm::vec2 movePerMass = col->collisionNormal * (-getSmallestComponent(&col->penetrationDepth) / totalInverseMass);
+	if(col->object[0]->getBound()->getBoundingType() == BoundingType::Oriented){
+		movePerMass = col->collisionNormal * (glm::length(col->penetrationDepth) / totalInverseMass);
+	}
+	
 
 	//affects the magnitude at which the interpenetration resolving affects the position
 	//of the objects
@@ -113,11 +145,11 @@ float Collision::getSmallestComponent(glm::vec2* vec) {
 	return (vec->x < vec->y) ? vec->x : vec->y;
 }
 
-void Collision::resolveRestingContactVelocity(float dt, CollisionData* col) {
+float Collision::resolveRestingContactVelocity(float dt, CollisionData* col) {
 	float closingVelocity = Collision::calculateClosingVelocity(col);
 
 	if (closingVelocity > 0) {
-		return;
+		return 0.0f;
 	}
 
 	float newClosingVelocity = -closingVelocity * col->restitution;
@@ -127,6 +159,7 @@ void Collision::resolveRestingContactVelocity(float dt, CollisionData* col) {
 		accCausedVelocity -= *(col->object[1]->getRigidbody2D()->getAcceleration());
 	}
 
+	
 	float accCausedClosingVelocity = glm::dot(accCausedVelocity, col->collisionNormal) * dt;
 
 	//remove built up acceleration from new closing velocity
@@ -146,7 +179,7 @@ void Collision::resolveRestingContactVelocity(float dt, CollisionData* col) {
 	}
 
 	if (totalInverseMass <= 0) {
-		return;
+		return 0.0f;
 	}
 
 	float impulse = deltaVelocity / totalInverseMass;
@@ -158,6 +191,8 @@ void Collision::resolveRestingContactVelocity(float dt, CollisionData* col) {
 		//bruh dead a
 		col->object[1]->getRigidbody2D()->setVelocity(*(col->object[1]->getRigidbody2D()->getVelocity()) + impulsePerMass * -col->object[1]->getRigidbody2D()->getInverseMass());
 	}
+
+	return impulse;
 }
 
 float Collision::resolveVelocity(float dt, CollisionData* col) {

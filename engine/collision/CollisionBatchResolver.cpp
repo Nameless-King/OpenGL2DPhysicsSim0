@@ -11,7 +11,6 @@ CollisionBatchResolver::~CollisionBatchResolver(){}
 void CollisionBatchResolver::resolveContacts(float dt){
     m_iterationsUsed = 0;
     if(!m_collisions.empty()){
-        //this is a comment
         m_iterations = m_collisions.size();
         while(m_iterationsUsed < m_iterations){
             //find the collision with the largest closing velocity
@@ -28,6 +27,8 @@ void CollisionBatchResolver::resolveContacts(float dt){
                     max = closingVelocity;
                     maxIndex = i;
                 }
+
+                
             }
 
                 //resolve collision of largest closing velocity

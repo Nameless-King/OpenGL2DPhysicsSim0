@@ -55,13 +55,14 @@ public:
 	static float calculateClosingVelocity(CollisionData* col); // COMPLETE
 	static float getSmallestComponent(glm::vec2* vec); //complete
 	static CollisionData calculateCollision(Bound* a, Bound* b); // COMPLETE
+	static void calculateAABBNormals(CollisionData* col);
 	static bool isColliding(Bound* a, Bound* b); // COMPLETE
 	static bool SATTest(OBB* a, OBB* b); // COMPLETE
 	static bool correctObjects(CollisionData* data); //complete
 	static void resolve(float dt, CollisionData* col); // COMPLETE
 	static void resolveInterpenetration(float dt, CollisionData* col); // COMPLETE
 	static void positionalCorrection(CollisionData* col);
-	static void resolveRestingContactVelocity(float dt, CollisionData* col); // COMPLETE
+	static float resolveRestingContactVelocity(float dt, CollisionData* col); // COMPLETE
 	static float resolveVelocity(float dt, CollisionData* col); // COMPLETE
 	static void resolveFriction(float dt, float impulse, CollisionData* col); // COMPLETE
 	static bool GJKTest(Object* a, Object* b, std::vector<glm::vec2>* simplexVertices);

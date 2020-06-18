@@ -49,8 +49,9 @@ void Physics2D::integrate(Object* obj, float dt){
 	//not needed, the resulting value will by much too low to make a difference
 	//objPos += dt*dt*0.5f*objRb->getAcceleration();
 
+	//TODO : makes things bad dis acceleration does
+	//objRb->setAcceleration(objAcl.x,objAcl.y);
 
-	
 	objRb->setVelocity(objVel.x,objVel.y);
 	obj->setPos(objPos.x,objPos.y);
 	

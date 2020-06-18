@@ -80,4 +80,9 @@ void SceneManager::setCurrentScene(int sceneIndex) {
 void SceneManager::destroy() {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
+
+	for(int i = 0;i<s_scenes.size();i++){
+		delete s_scenes[i];
+	}
+	s_scenes.clear();
 }

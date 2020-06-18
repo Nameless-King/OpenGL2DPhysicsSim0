@@ -29,6 +29,12 @@ add_executable(
 	./engine/io/GWindow.cpp
 	./engine/maths/EngineMath.cpp
 	./engine/physics/forces/ForceGravity.cpp
+	./engine/physics/forces/ForceSpring.cpp
+	./engine/physics/forces/ForceAnchoredSpring.cpp
+	./engine/physics/forces/ForceBungee.h
+	./engine/physics/forces/ForceBuoyancy.h
+	./engine/physics/forces/ForceDrag.h
+	./engine/physics/forces/ForceFakeSpring.h
 	./engine/physics/forces/ForceRegistry.cpp
 	./engine/physics/Physics2D.cpp
 	./engine/physics/Rigidbody2D.cpp

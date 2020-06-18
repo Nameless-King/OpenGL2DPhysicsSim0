@@ -20,23 +20,21 @@
 #include "./engine/scene/Scene.h"
 
 class SceneOBB : public Scene {
-    struct ObjectRegistration {
-        Object* object;
-        ObjectRegistration* next;
-    };
+    //Moved to Scene.h
+    // struct ObjectRegistration {
+    //     Object* object;
+    //     ObjectRegistration* next;
+    // };
 
 private:
     Shader* m_shader;
     Texture* m_texture;
-    ObjectRegistration* m_firstObject;
     Object* m_player;
     Object* m_test;
 
     CollisionBatchResolver* m_collisionResolver;
     unsigned int m_maxContacts;
     ForceGravity m_forceGravity;
-    unsigned int m_numCollisions;
-    unsigned int m_numObjects;
 
 public:
     SceneOBB();
@@ -49,11 +47,7 @@ public:
 
 private:
     void input(GWindow* window);
-    void addObject(Object* newObject);
-    void startFrame();
     void generateContacts();
-    void integrate(float dt);
     void runPhysics(float dt);
-    void testBoxCollision(Object* obj1, Object* obj2, CollisionData* col);
 
 };

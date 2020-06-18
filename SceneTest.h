@@ -19,23 +19,20 @@
 
 
 class SceneTest : public Scene{
-    struct ObjectRegistration{
-        Object* object;
-        ObjectRegistration* next;
-    };
+    //Moved to Scene.h
+    // struct ObjectRegistration {
+    //     Object* object;
+    //     ObjectRegistration* next;
+    // };
 
     private:
         Shader* m_shader;
         Texture* m_texture;
-        ObjectRegistration* m_firstObject;
         Object* m_player;
 
         CollisionBatchResolver* m_collisionResolver;
-        CollisionData m_tempContact;
         unsigned int m_maxContacts;
         ForceGravity m_forceGravity;
-        unsigned int m_numCollisions;
-        unsigned int m_numObjects;
         float m_playerSpeed;
 
     public:
@@ -49,11 +46,7 @@ class SceneTest : public Scene{
     
     private:
         void input(GWindow* window);
-        void addObject(Object* newObject);
-        void startFrame();
         void generateContacts();
-        void integrate(float dt);
         void runPhysics(float dt);
-        void testBoxCollision(Object* obj1, Object* obj2, CollisionData* col);
 
 };
