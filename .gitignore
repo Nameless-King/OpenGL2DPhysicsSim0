@@ -18,4 +18,4 @@ build1/*
 
 #exceptions
 !CMakeLists.txt
-!CMakeLists_build.txt
+!credit.txt

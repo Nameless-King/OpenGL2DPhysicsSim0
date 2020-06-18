@@ -1,0 +1,12 @@
+Johnny Huynh
+Separating Axis Theorem for Oriented Bounding Boxes
+https://www.jkh.me/files/tutorials/Separating%20Axis%20Theorem%20for%20Oriented%20Bounding%20Boxes.pdf
+
+Kenton Hamaluik
+"2D GJK Collision Detection"
+https://blog.hamaluik.ca/posts/building-a-collision-engine-part-1-2d-gjk-collision-detection/
+
+Kenton Mamluik
+"2D Penetration Vectors" 
+(Expanding Polytope Algorithm)
+https://blog.hamaluik.ca/posts/building-a-collision-engine-part-2-2d-penetration-vectors/
