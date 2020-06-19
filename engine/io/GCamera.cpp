@@ -39,3 +39,4 @@ glm::vec2 GCamera::getCameraPos(){
 float GCamera::getCameraZoom(){
     return m_zoom;
 }
+

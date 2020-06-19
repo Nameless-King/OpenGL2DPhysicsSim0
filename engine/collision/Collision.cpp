@@ -8,26 +8,75 @@ float Collision::calculateClosingVelocity(CollisionData* col) {
 	return glm::dot(relativeVelocity, col->collisionNormal);
 }
 
-CollisionData Collision::calculateCollision(Bound* a, Bound* b) {
+//a and b must be of same bounding type for method
+CollisionData Collision::calculateCollision(Object* a, Object* b) {
 	CollisionData data;
 
-	data.distance = *(b->getCenter()) - *(a->getCenter());
+	switch(a->getBound()->getBoundingType()){
+		case BoundingType::AxisAligned:
+		{
+			data.distance = *(b->getBound()->getCenter()) - *(a->getBound()->getCenter());
 
-	//TODO : is this fucking up everything
-	//TODO : but is it though?
-	data.distance.x = fabs(data.distance.x);
-	data.distance.y = fabs(data.distance.y);
+			//TODO : is this fucking up everything
+			//TODO : but is it though?
+			data.distance.x = fabs(data.distance.x);
+			data.distance.y = fabs(data.distance.y);
 
-	glm::vec2 joinedExtents = *(a->getHalfExtents()) + *(b->getHalfExtents());
+			glm::vec2 joinedExtents = *(a->getBound()->getHalfExtents()) + *(b->getBound()->getHalfExtents());
 
-	//TODO : original code takes smallest component
-	data.penetrationDepth = joinedExtents - data.distance;
+			//TODO : original code takes smallest component
+			data.penetrationDepth = joinedExtents - data.distance;
 
-	//TODO : above TODO if corrected will result in below simplification
-	//Collision::calculateAABBNormals(&data);
-	//data.collisionNormal =glm::normalize(data.penetrationDepth);// glm::normalize(*(b->getCenter()) - *(a->getCenter()));
+			data.object[0] = a;
+            data.object[1] = b;
 
+            data.restitution = 0.0f;
+
+            Collision::calculateAABBNormals(&data);
+		}
+			break;
+		case BoundingType::Circle:
+		//TODO : circle never implemented
+			break;
+		case BoundingType::Oriented:{
+			std::vector<glm::vec2> verts;
+
+			/* must check GJK even if SAT is true
+			 * if not then there will be sticking issues
+			 */
+			if(!Collision::GJKTest(a,b,&verts)){
+				data.object[0] = NULL;
+				data.object[1] = NULL;
+				return data;
+			}
+			data.penetrationDepth = Collision::EPATest(verts);
+
+			//prevents extreme case when point to face collision
+			//i shouldn't use == since float but only works because of it
+			if(data.penetrationDepth.x < 0.00001f && data.penetrationDepth.y == data.penetrationDepth.x){
+				data.object[0] = NULL;
+				data.object[1] = NULL;
+				return data;
+			}
+
+			data.distance = *(b->getBound()->getCenter()) - *(a->getBound()->getCenter());
+			//data.distance.x = fabs(data.distance.x);
+			//data.distance.y = fabs(data.distance.y);
+
+
+			data.collisionNormal = glm::normalize(data.penetrationDepth);
+
+			data.object[0] = a;
+			data.object[1] = b;
+			data.restitution = 0.0f;
+			
+		}
+			break;
+		default:
+			break;
+	}
 	return data;
+
 }
 
 void Collision::calculateAABBNormals(CollisionData* col){
@@ -58,6 +107,11 @@ void Collision::calculateAABBNormals(CollisionData* col){
 
 bool Collision::isColliding(Bound* a, Bound* b) {
 	bool isColliding = false;
+	
+	if(a == NULL && b == NULL){
+		return isColliding;
+	}
+	
 
 	glm::vec2 dist = *(b->getCenter()) - *(a->getCenter());
 	dist.x = fabs(dist.x);
@@ -609,12 +663,18 @@ glm::vec2 Collision::EPATest(std::vector<glm::vec2>& simplexVertices) {
 
 		if (fabs(distance - edge.distance) <= 0.000001) {
 			break;
+
 		}
 		else {
 			simplexVertices.insert(simplexVertices.begin() + edge.index, support);
 		}
 	}
+
 	return penetrationVector;
 }
 
 
+bool Collision::checkFlags(Object* a, Object* b){
+	return 
+		(!a->getRigidbody2D()->hasInfiniteMass() || !b->getRigidbody2D()->hasInfiniteMass());
+}

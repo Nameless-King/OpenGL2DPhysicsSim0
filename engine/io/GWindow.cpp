@@ -129,3 +129,18 @@ void GWindow::displayWindowStats(){
 	ImGui::Text("Application delta time (dt) %.3f",ImGui::GetIO().DeltaTime);
 	ImGui::End();
 }
+
+void GWindow::projectCoords(glm::vec2* coords){
+		coords->x -= getWidth() / 2.0f;
+        coords->y = getHeight() / 2.0f - coords->y;
+
+        coords->x /= getZoom() / 2.0f;
+        coords->y /= getZoom() / 2.0f;
+
+        int camX = getCamera()->getCameraPos().x;
+        int camY = getCamera()->getCameraPos().y;
+
+		coords->x += camX;
+		coords->y += camY;
+}
+

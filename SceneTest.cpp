@@ -5,7 +5,6 @@ SceneTest::SceneTest():
     m_shader(NULL),
     m_texture(NULL),
     m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 1.0f))),
-    m_collisionResolver(new CollisionBatchResolver(1)),
     m_playerSpeed(100.0f){
     }
 
@@ -15,7 +14,6 @@ SceneTest::SceneTest(Shader* shader, Texture* texture):
     m_texture(texture),
     m_maxContacts(0),
     m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * -10.0f))),
-    m_collisionResolver(new CollisionBatchResolver(1)),
     m_playerSpeed(100.0f){
 
         Object* player = new Object(
@@ -43,7 +41,6 @@ SceneTest::SceneTest(Shader* shader, Texture* texture):
     }
 
 SceneTest::~SceneTest(){
-    delete m_collisionResolver;
 }
 
 void SceneTest::render(GWindow* window){
@@ -64,6 +61,7 @@ void SceneTest::render(GWindow* window){
 }
 
 void SceneTest::update(GWindow* window){
+    startFrame();
     runPhysics(ImGui::GetIO().DeltaTime);
     input(window);
 }
@@ -83,9 +81,9 @@ void SceneTest::input(GWindow* window){
     glm::vec2* playerVel = m_player->getRigidbody2D()->getVelocity();
     float speed = m_playerSpeed;
 
-    if(GInput::isKeyDown(GLFW_KEY_UP) || GInput::isKeyReleased(GLFW_KEY_UP)){
+    if(GInput::isKeyDown(GLFW_KEY_UP)){
         playerVel->y = speed;
-    }else if(GInput::isKeyDown(GLFW_KEY_DOWN) || GInput::isKeyReleased(GLFW_KEY_DOWN)){
+    }else if(GInput::isKeyDown(GLFW_KEY_DOWN)){
         playerVel->y = -speed;
     }
 
@@ -99,17 +97,7 @@ void SceneTest::input(GWindow* window){
     if(GInput::isMouseButtonPressed(GLFW_MOUSE_BUTTON_1)){
         glm::vec2 mousePos = GInput::getMouseXY();
 
-        mousePos.x -= window->getWidth() / 2.0f;
-        mousePos.y = window->getHeight() / 2.0f - mousePos.y;
-
-        mousePos.x /= window->getZoom() / 2.0f;
-        mousePos.y /= window->getZoom() / 2.0f;
-
-        int camX = window->getCamera()->getCameraPos().x;
-        int camY = window->getCamera()->getCameraPos().y;
-
-        mousePos.x += camX;
-        mousePos.y += camY;
+        window->projectCoords(&mousePos);
 
         Object* newObject = new Object(
             glm::vec3(mousePos.x,mousePos.y,0.0f),
@@ -126,17 +114,7 @@ void SceneTest::input(GWindow* window){
     if(GInput::isMouseButtonPressed(GLFW_MOUSE_BUTTON_2)){
         glm::vec2 mousePos = GInput::getMouseXY();
 
-        mousePos.x -= window->getWidth() / 2.0f;
-        mousePos.y = window->getHeight() / 2.0f - mousePos.y;
-
-        mousePos.x /= window->getZoom() / 2.0f;
-        mousePos.y /= window->getZoom() / 2.0f;
-
-        int camX = window->getCamera()->getCameraPos().x;
-        int camY = window->getCamera()->getCameraPos().y;
-
-        mousePos.x += camX;
-        mousePos.y += camY;
+        window->projectCoords(&mousePos);
 
         Object* newObject = new Object(
             glm::vec3(mousePos.x,mousePos.y,0.0f),
@@ -156,17 +134,12 @@ void SceneTest::generateContacts(){
     while(hittee){
         ObjectRegistration* hitter = hittee->next;
         while(hitter){
-            if(!(hitter->object->getRigidbody2D()->hasInfiniteMass() && hittee->object->getRigidbody2D()->hasInfiniteMass())){
+            if(Collision::checkFlags(hittee->object,hitter->object)){
                 if(Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
-                    CollisionData generatedCol = Collision::calculateCollision(hittee->object->getBound(),hitter->object->getBound());
 
-                    generatedCol.object[0] = hittee->object;
-                    generatedCol.object[1] = hitter->object;
+                    CollisionData generatedCol = Collision::calculateCollision(hittee->object,hitter->object);
 
-                    generatedCol.restitution = 0.0f;
-
-                    Collision::calculateAABBNormals(&generatedCol);
-
+                    
                     Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
                     
                     m_collisionResolver->registerContact(generatedCol);
@@ -185,19 +158,12 @@ void SceneTest::runPhysics(float dt){
         m_forceGravity.updateForce(currentRegister->object,ImGui::GetIO().DeltaTime);
         currentRegister = currentRegister->next;
     }
+    
      integrate(ImGui::GetIO().DeltaTime);
    
-
-    for(int i = 0;i<1;i++)
-    {
-
-        generateContacts();
-
-        m_numCollisions = m_collisionResolver->numOfCollisions();
-        //m_collisionResolver->resolveContacts(ImGui::GetIO().DeltaTime);
-        m_collisionResolver->resetRegistry();
-    }
-
+    generateContacts();
+    m_numCollisions = m_collisionResolver->numOfCollisions();
+    //m_collisionResolver->resolveContacts(ImGui::GetIO().DeltaTime);
     
 }
 

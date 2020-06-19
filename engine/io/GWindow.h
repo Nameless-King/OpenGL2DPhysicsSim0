@@ -56,6 +56,7 @@ public:
 
 
 	void sizeChanged(bool hasChanged); // COMPLETE
+	void projectCoords(glm::vec2* coords); // COMPLETE
 };
 
 	

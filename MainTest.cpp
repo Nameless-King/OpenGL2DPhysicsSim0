@@ -71,11 +71,13 @@ int main(){
     std::cout << "Initial Error Code: " << glGetError() << std::endl;
 
     while(!gameWindow.windowShouldClose()){
+        //Gui initialization  and creation
         SceneManager::start();
         SceneManager::renderMenu();
         gameWindow.displayWindowStats();
         SceneManager::renderCurrentSceneGUI();
 
+        //start of frame
         GInput::update();
         gameWindow.pollEvents();
         input();

@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "../physics/Physics2D.h"
+#include "../collision/CollisionBatchResolver.h"
 #include "../io/GWindow.h"
 #include "../Object.h"
 
@@ -16,6 +17,7 @@ protected:
     unsigned int m_numObjects;
     unsigned int m_numCollisions;
     ObjectRegistration* m_firstObject;
+    CollisionBatchResolver* m_collisionResolver;
 
 
 public:

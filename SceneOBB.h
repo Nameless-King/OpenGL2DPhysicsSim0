@@ -32,7 +32,6 @@ private:
     Object* m_player;
     Object* m_test;
 
-    CollisionBatchResolver* m_collisionResolver;
     unsigned int m_maxContacts;
     ForceGravity m_forceGravity;
 

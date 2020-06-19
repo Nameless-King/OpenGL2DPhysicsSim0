@@ -54,7 +54,7 @@ class Collision {
 public:
 	static float calculateClosingVelocity(CollisionData* col); // COMPLETE
 	static float getSmallestComponent(glm::vec2* vec); //complete
-	static CollisionData calculateCollision(Bound* a, Bound* b); // COMPLETE
+	static CollisionData calculateCollision(Object* a, Object* b); // COMPLETE
 	static void calculateAABBNormals(CollisionData* col);
 	static bool isColliding(Bound* a, Bound* b); // COMPLETE
 	static bool SATTest(OBB* a, OBB* b); // COMPLETE
@@ -67,6 +67,8 @@ public:
 	static void resolveFriction(float dt, float impulse, CollisionData* col); // COMPLETE
 	static bool GJKTest(Object* a, Object* b, std::vector<glm::vec2>* simplexVertices);
 	static bool GJKTest2(Object* a, Object* b);
+
+	static bool checkFlags(Object* a, Object* b);
 
 
 	static glm::vec2 getSupport(Object* object, glm::vec2 direction); // TODO

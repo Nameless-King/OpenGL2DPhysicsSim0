@@ -4,23 +4,31 @@ Scene::Scene():
     m_title("Default Title"),
     m_numCollisions(0),
     m_numObjects(0),
-    m_firstObject(new ObjectRegistration()){}
+    m_firstObject(new ObjectRegistration()),
+    m_collisionResolver(new CollisionBatchResolver(1)){}
 
 Scene::Scene(const std::string& title)
     :m_title(title),
     m_numCollisions(0),
     m_numObjects(0),
-    m_firstObject(new ObjectRegistration()){}
+    m_firstObject(new ObjectRegistration()),
+    m_collisionResolver(new CollisionBatchResolver(1)){}
 
 Scene::~Scene(){
+    m_collisionResolver->resetRegistry();
+    delete m_collisionResolver;
+
     ObjectRegistration* currentRegistry = m_firstObject;
+    ObjectRegistration* temp = NULL;
     while(currentRegistry){
         if(currentRegistry->object){
             delete currentRegistry->object;
         }
+        temp = currentRegistry;
         currentRegistry = currentRegistry->next;
+        delete temp;
     }
-    delete m_firstObject;
+
 }
 
 void Scene::addObject(Object* newObject){
@@ -47,11 +55,12 @@ void Scene::integrate(float dt) {
 }
 
 void Scene::startFrame(){
-    ObjectRegistration* currentRegister = m_firstObject;
+    m_collisionResolver->resetRegistry();
 
+    ObjectRegistration* currentRegister = m_firstObject;
     while(currentRegister){
         currentRegister->object->getRigidbody2D()->zeroForce();
-        currentRegister->object->getRigidbody2D()->setAngularVelocity(0.0f);
+        //currentRegister->object->getRigidbody2D()->setAngularVelocity(0.0f);
         currentRegister = currentRegister->next;
     }
 }

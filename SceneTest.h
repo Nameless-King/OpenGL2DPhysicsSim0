@@ -19,18 +19,12 @@
 
 
 class SceneTest : public Scene{
-    //Moved to Scene.h
-    // struct ObjectRegistration {
-    //     Object* object;
-    //     ObjectRegistration* next;
-    // };
 
     private:
         Shader* m_shader;
         Texture* m_texture;
         Object* m_player;
 
-        CollisionBatchResolver* m_collisionResolver;
         unsigned int m_maxContacts;
         ForceGravity m_forceGravity;
         float m_playerSpeed;
