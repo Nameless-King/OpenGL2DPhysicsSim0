@@ -118,3 +118,18 @@ glm::vec2 EngineMath::tripleCrossProduct(glm::vec2 a,glm::vec2 b,glm::vec2 c){
 	*/
 }
 
+//not actually being used at the moment
+//same calc can be done with length of extents
+float EngineMath::calcFurthestPoint(const float* points, unsigned int numPoints, glm::vec2 point){
+	float length = INFINITY;
+
+	for(int i = 0;i<numPoints;i+=2){
+		glm::vec2 current(*(points+i),*(points+i+1));
+		float currentLength = glm::length(current);
+		if(currentLength < length){
+			length = currentLength;
+		}
+	}
+
+	return length;
+}

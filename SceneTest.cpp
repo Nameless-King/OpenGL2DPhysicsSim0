@@ -134,7 +134,7 @@ void SceneTest::generateContacts(){
     while(hittee){
         ObjectRegistration* hitter = hittee->next;
         while(hitter){
-            if(Collision::checkFlags(hittee->object,hitter->object)){
+            if(Collision::checkFlags(hittee->object,hitter->object) && Collision::boundingVolumeTest(hittee->object, hitter->object)){
                 if(Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
 
                     CollisionData generatedCol = Collision::calculateCollision(hittee->object,hitter->object);

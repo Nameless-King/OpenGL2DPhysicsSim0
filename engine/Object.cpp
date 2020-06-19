@@ -95,7 +95,7 @@ void Object::rotateDegrees(float degrees) {
 	m_transformationChanged = true;
 	m_rotation.z += degrees;
 	if (m_bound) {
-		m_bound->m_rotation += degrees;
+		m_bound->rotateDegrees(degrees);
 	}
 	if (m_rigidbody) {
 		m_rigidbody->setOrientation(m_rigidbody->getOrientation() + degrees);

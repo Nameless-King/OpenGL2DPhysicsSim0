@@ -352,16 +352,16 @@ bool Collision::SATTest(OBB* a, OBB* b) {
 	glm::vec2 t = b->getCopyCenterXY() - a->getCopyCenterXY();
 
 	//has to be negative rotations to line up with rendered object IDK why
-	glm::mat2 a_rotMat = EngineMath::rotationMatrix(-a->m_rotation);
-	glm::mat2 b_rotMat = EngineMath::rotationMatrix(-b->m_rotation);
+	glm::mat2 a_rotMat = EngineMath::rotationMatrix(-a->getRotation());
+	glm::mat2 b_rotMat = EngineMath::rotationMatrix(-b->getRotation());
 
-	glm::vec2 curL = glm::normalize(a_rotMat * a->m_localX);
-	float curE = a->m_halfExtents->x;
+	glm::vec2 curL = glm::normalize(a_rotMat * a->getLocalX());
+	float curE = a->getHalfExtents()->x;
 
-	float curW = b->m_halfExtents->x;
-	float curH = b->m_halfExtents->y;
-	glm::vec2 curX = b_rotMat * b->m_localX;
-	glm::vec2 curY = b_rotMat * b->m_localY;
+	float curW = b->getHalfExtents()->x;
+	float curH = b->getHalfExtents()->y;
+	glm::vec2 curX = b_rotMat * b->getLocalX();
+	glm::vec2 curY = b_rotMat * b->getLocalY();
 
 	bool colliding0 = fabs(glm::length(EngineMath::projectOnto(t, curL))) <
 		curE
@@ -372,8 +372,8 @@ bool Collision::SATTest(OBB* a, OBB* b) {
 		return 0;
 	}
 
-	curL = glm::normalize(a_rotMat * a->m_localY);
-	curE = a->m_halfExtents->y;
+	curL = glm::normalize(a_rotMat * a->getLocalY());
+	curE = a->getHalfExtents()->y;
 	bool colliding1 = fabs(glm::length(EngineMath::projectOnto(t, curL))) <
 		curE
 		+ fabs(glm::length(EngineMath::projectOnto(curW * curX, curL)))
@@ -383,12 +383,12 @@ bool Collision::SATTest(OBB* a, OBB* b) {
 		return 0;
 	}
 
-	curL = glm::normalize(b_rotMat * b->m_localX);
-	curE = b->m_halfExtents->x;
-	curX = a_rotMat * a->m_localX;
-	curY = a_rotMat * a->m_localY;
-	curW = a->m_halfExtents->x;
-	curH = a->m_halfExtents->y;
+	curL = glm::normalize(b_rotMat * b->getLocalX());
+	curE = b->getHalfExtents()->x;
+	curX = a_rotMat * a->getLocalX();
+	curY = a_rotMat * a->getLocalY();
+	curW = a->getHalfExtents()->x;
+	curH = a->getHalfExtents()->y;
 	bool colliding2 = fabs(glm::length(EngineMath::projectOnto(t, curL))) <
 		curE
 		+ fabs(glm::length(EngineMath::projectOnto(curW * curX, curL)))
@@ -398,8 +398,8 @@ bool Collision::SATTest(OBB* a, OBB* b) {
 		return 0;
 	}
 
-	curL = glm::normalize(b_rotMat * b->m_localY);
-	curE = b->m_halfExtents->y;
+	curL = glm::normalize(b_rotMat * b->getLocalY());
+	curE = b->getHalfExtents()->y;
 	bool colliding3 = fabs(glm::length(EngineMath::projectOnto(t, curL))) <
 		curE
 		+ fabs(glm::length(EngineMath::projectOnto(curW * curX, curL)))
@@ -677,4 +677,12 @@ glm::vec2 Collision::EPATest(std::vector<glm::vec2>& simplexVertices) {
 bool Collision::checkFlags(Object* a, Object* b){
 	return 
 		(!a->getRigidbody2D()->hasInfiniteMass() || !b->getRigidbody2D()->hasInfiniteMass());
+}
+
+bool Collision::boundingVolumeTest(Object* a, Object* b){
+	glm::vec2 distance = *(a->getBound()->getCenter()) - *(b->getBound()->getCenter());
+
+	float extentTotal = a->getBound()->getFurthestDistance() + b->getBound()->getFurthestDistance();
+
+	return glm::dot(distance,distance) <= extentTotal * extentTotal;
 }

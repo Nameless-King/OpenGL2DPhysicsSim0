@@ -69,6 +69,7 @@ public:
 	static bool GJKTest2(Object* a, Object* b);
 
 	static bool checkFlags(Object* a, Object* b);
+	static bool boundingVolumeTest(Object* a, Object* b);
 
 
 	static glm::vec2 getSupport(Object* object, glm::vec2 direction); // TODO

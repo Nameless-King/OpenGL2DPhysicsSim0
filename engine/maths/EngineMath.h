@@ -46,4 +46,5 @@ class EngineMath{
 		static float theta(const glm::vec3* a, const glm::vec3* b); // COMPLETE
 		static float calcRectInertia(float mass,float width, float height); //COMPLETE
 		static glm::vec2 tripleCrossProduct(glm::vec2 a, glm::vec2 b, glm::vec2 c);
+		static float calcFurthestPoint(const float* points, unsigned int numPoints, glm::vec2 point);
 };
