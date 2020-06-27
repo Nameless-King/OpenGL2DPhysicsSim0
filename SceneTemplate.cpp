@@ -1,16 +1,14 @@
 #include "./SceneRestingContact.h"
 
-SceneRestingContact::SceneRestingContact():
-	m_title("SceneRestingContact"),
+SceneTemplate::SceneTemplate():
+	Scene("SceneTemplate"),
 	m_shader(NULL),
 	m_texture(NULL),
-	m_player(NULL),
-	m_speed(1.0f){
+	m_player(NULL){
 }
 
-SceneRestingContact::SceneRestingContact(Shader* shader, Texture* texture, const float vertices[]):
-	m_title("SceneRestingContact"),
-	m_speed(1.0f),
+SceneTemplate::SceneTemplate(Shader* shader, Texture* texture):
+	Scene("SceneRestingContact"),
 	m_shader(shader),
 	m_texture(texture){
 	
@@ -20,31 +18,35 @@ SceneRestingContact::SceneRestingContact(Shader* shader, Texture* texture, const
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
 	
-	m_player->addVertices(vertices);
-	m_player->createHitbox(HitboxType::AxisAligned);
-	m_player->addRigidBody2D(new RigidBody2D(5.0f));
+	m_player->createBound(BoundingType::AxisAligned);
+	m_player->addRigidbody2D(new Rigidbody2D(5.0f));
+
+	addObject(m_player);
 }
 
 SceneRestingContact::~SceneRestingContact(){
-	delete m_player;
 }
 
-void SceneRestingContact::render(Window* window){
-	StaticRenderer::bind();
-	m_shader->use();
-	m_texture->bind();
-	m_shader->setUniformMat4f("u_projection",window->getProjectionMatrix());
-	m_shader->setUniformMat4f("u_view",window->getCameraController()->getViewMatrix());
-	
-	m_shader->setUniformMat4f("u_model",m_player->getModelMatrix());
-	StaticRenderer::renderObject();
-	
-	m_texture->unbind();
-	StaticRenderer::unbind();
+void SceneRestingContact::render(GWindow* window){
+	Renderer::bind();
+    m_shader->use();
+    m_texture->bind();
+    m_shader->setUniformMat4f("u_projection",window->getProjectionMatrix());
+    m_shader->setUniformMat4f("u_view",window->getCamera()->getViewMatrix());
+
+    ObjectRegistration* currentRegistry = m_firstObject;
+    while(currentRegistry){
+        m_shader->setUniformMat4f("u_model",currentRegistry->object->getModelMatrix());
+        Renderer::renderObject();
+        currentRegistry = currentRegistry->next;
+    }
+    m_texture->unbind();
+    Renderer::unbind();
 }
 
-void SceneRestingContact::update(Window* window){
-
+void SceneRestingContact::update(GWindow* window){
+	startFrame();
+	runPhysics(ImGui::GetIO().DeltaTime);
 	
 	input(window);
 }
@@ -54,24 +56,39 @@ void SceneRestingContact::renderGUI(){
 	ImGui::End();
 }
 
-void SceneRestingContact::input(Window* window){
+void SceneRestingContact::input(GWindow* window){
 	
 	
-	if(glfwGetKey(window->getWindow(),GLFW_KEY_W)){
+	if(GInput::isKeyDown(GLFW_KEY_UP)){
 		
-	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_S)){
+	}else if(GInput::isKeyDown(GLFW_KEY_DOWN)){
 		
 	}
 	
-	if(glfwGetKey(window->getWindow(),GLFW_KEY_D)){
+	if(GInput::isKeyDown(GLFW_KEY_RIGHT)){
 		
-	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_A)){
+	}else if(GInput::isKeyDown(GLFW_KEY_LEFT)){
 		
 	}
 	
 	
 }
 
-std::string SceneRestingContact::getSceneTitle() const {
-	return m_title;
+
+void SceneTest::runPhysics(float dt){
+
+	goto forceSkip;
+
+    //force generators
+    ObjectRegistration* currentRegister = m_firstObject;
+    while(currentRegister){
+        currentRegister = currentRegister->next;
+    }
+    
+	forceSkip:
+
+    integrate(ImGui::GetIO().DeltaTime);
+   
+    generateContacts();
+    //m_collisionResolver->resolveContacts(ImGui::GetIO().DeltaTime);
 }

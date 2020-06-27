@@ -31,16 +31,18 @@ add_executable(
 	./engine/physics/forces/ForceGravity.cpp
 	./engine/physics/forces/ForceSpring.cpp
 	./engine/physics/forces/ForceAnchoredSpring.cpp
-	./engine/physics/forces/ForceBungee.h
-	./engine/physics/forces/ForceBuoyancy.h
-	./engine/physics/forces/ForceDrag.h
-	./engine/physics/forces/ForceFakeSpring.h
+	./engine/physics/forces/ForceBungee.cpp
+	./engine/physics/forces/ForceBuoyancy.cpp
+	./engine/physics/forces/ForceFakeSpring.cpp
 	./engine/physics/forces/ForceRegistry.cpp
 	./engine/physics/Physics2D.cpp
 	./engine/physics/Rigidbody2D.cpp
 	./engine/scene/Scene.cpp
 	./engine/scene/SceneManager.cpp
 	./engine/Object.cpp
+	./SceneCollisions.cpp
+	./SceneSpring.cpp
+	./SceneForces.cpp
 	./SceneTest.cpp
 	./SceneOBB.cpp
 

@@ -2,7 +2,6 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <vector>
 
 #include "./Dependencies/glm/glm.hpp"
 
@@ -20,11 +19,6 @@
 #include "./engine/scene/Scene.h"
 
 class SceneOBB : public Scene {
-    //Moved to Scene.h
-    // struct ObjectRegistration {
-    //     Object* object;
-    //     ObjectRegistration* next;
-    // };
 
 private:
     Shader* m_shader;
@@ -46,7 +40,6 @@ public:
 
 private:
     void input(GWindow* window);
-    void generateContacts();
     void runPhysics(float dt);
 
 };

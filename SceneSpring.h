@@ -16,26 +16,34 @@
 #include "./engine/io/GInput.h"
 #include "./engine/physics/Physics2D.h"
 #include "./engine/physics/forces/ForceGravity.h"
+#include "./engine/physics/forces/ForceFakeSpring.h"
+#include "./engine/physics/forces/ForceSpring.h"
+#include "./engine/physics/forces/ForceBungee.h"
 #include "./engine/scene/Scene.h"
 
-class SceneForces : public Scene{
+
+class SceneSpring : public Scene{
 	private:
-		float m_force;
-		float m_gravityMultiplier;
+		float m_springConstant;
 		bool m_useGravity;
 		Shader* m_shader;
 		Texture* m_texture;
-		Object* m_player;
+		Object* m_staticObj;
+		Object* m_hangingObj;
+		ForceGravity m_forceGravity;
+		ForceSpring m_forceSpring;
+		ForceBungee m_forceBungee;
+		ForceFakeSpring m_forceFakeSpring;
+		int m_currentType;
 		
 	public:
-		SceneForces();
-		SceneForces(Shader* shader, Texture* texture);
-		~SceneForces();
-
+		SceneSpring();
+		SceneSpring(Shader* shader, Texture* texture);
+		~SceneSpring();
+		
 		void render(GWindow* window);
 		void update(GWindow* window);
 		void renderGUI();
-
 	private:
 		void input(GWindow* window);
 		void runPhysics(float dt, GWindow* window = NULL);

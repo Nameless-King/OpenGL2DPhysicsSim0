@@ -1,16 +1,18 @@
 #include "./SceneForces.h"
 
 SceneForces::SceneForces():
-	m_title("SceneForces"),
+	Scene("SceneForces"),
 	m_force(50.0f),
+	m_gravityMultiplier(1.0f),
 	m_useGravity(false),
 	m_shader(NULL),
 	m_texture(NULL),
 	m_player(NULL){
 }
 
-SceneForces::SceneForces(Shader* shader, Texture* texture, const float vertices[]):
-	m_title("SceneForces"),
+SceneForces::SceneForces(Shader* shader, Texture* texture):
+	Scene("SceneForces"),
+	m_gravityMultiplier(1.0f),
 	m_useGravity(false),
 	m_force(50.0f),
 	m_shader(shader),
@@ -21,83 +23,91 @@ SceneForces::SceneForces(Shader* shader, Texture* texture, const float vertices[
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
+	m_player->createBound(BoundingType::AxisAligned);
+	m_player->addRigidbody2D(new Rigidbody2D(5.0f));
+	addObject(m_player);
 	
-	m_player->addVertices(vertices);
-	m_player->createHitbox(HitboxType::Circle);
-	
-	RigidBody2D* rbPlayer = new RigidBody2D(5.0f);
-	rbPlayer->setDamping(1.0f);
-	
-	m_player->addRigidBody2D(rbPlayer);
 }
 
 SceneForces::~SceneForces(){
-	delete m_player;
 }
 
-std::string SceneForces::getSceneTitle() const{
-	return m_title;
-}
 
-void SceneForces::render(Window* window){
-	StaticRenderer::bind();
+void SceneForces::render(GWindow* window){
+	Renderer::bind();
 	
 	m_shader->use();
 	m_texture->bind();
 	
 	m_shader->setUniformMat4f("u_projection",window->getProjectionMatrix());
-	m_shader->setUniformMat4f("u_view",glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,0.0f,0.0f)));
+	m_shader->setUniformMat4f("u_view",window->getCamera()->getViewMatrix());
 	
-	m_shader->setUniformMat4f("u_model",m_player->getModelMatrix());
-	StaticRenderer::renderObject();
+	ObjectRegistration* currentRegistry = m_firstObject;
+	while(currentRegistry){
+		m_shader->setUniformMat4f("u_model", currentRegistry->object->getModelMatrix());
+		Renderer::renderObject();
+		currentRegistry = currentRegistry->next;
+	}
 	
 	m_texture->unbind();
-	
-	StaticRenderer::unbind();
+	Renderer::unbind();
 }
 
-void SceneForces::update(Window* window){
+void SceneForces::update(GWindow* window){
+	startFrame();
 	input(window);
-	if(m_useGravity){
-		Physics2D::gravitate(glm::vec2(0.0f,-1.0f),Physics2D::G * m_player->getRigidBody2D()->getMass(),m_player);
-	}
-	Physics2D::integrator3(m_player,ImGui::GetIO().DeltaTime);
+	runPhysics(ImGui::GetIO().DeltaTime,window);
+	
 }
 
 void SceneForces::renderGUI(){
-	float damping = m_player->getRigidBody2D()->getDamping();
-	float mass = m_player->getRigidBody2D()->getMass();
+	float mass = m_player->getRigidbody2D()->getMass();
 	bool useGravity = m_useGravity;
 	
 	ImGui::Begin(m_title.c_str());
-	if(ImGui::SliderFloat("damping",&damping,0.0f,1.0f)){
-		m_player->getRigidBody2D()->setDamping(damping);
-	}
 	ImGui::SliderFloat("force",&m_force,10.0f,150.0f);
 	if(ImGui::SliderFloat("mass",&mass,1.0f,50.0f)){
-		m_player->getRigidBody2D()->setMass(mass);
+		m_player->getRigidbody2D()->setMass(mass);
 	}
+	ImGui::SliderFloat("Gravity Multiplier",&m_gravityMultiplier,1.0f,20.0f);
 	if(ImGui::Checkbox("Use Gravity",&useGravity)){
 		m_useGravity = useGravity;
 	}
 	ImGui::End();
 }
 
-void SceneForces::input(Window* window){
+void SceneForces::input(GWindow* window){
 	glm::vec2 force(0.0f,0.0f);
 	
-	if(glfwGetKey(window->getWindow(),GLFW_KEY_W)){
+	if(GInput::isKeyDown(GLFW_KEY_UP)){
 		force.y = m_force;
-	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_S)){
+	}else if(GInput::isKeyDown(GLFW_KEY_DOWN)){
 		force.y = -m_force;
 	}
 	
-	if(glfwGetKey(window->getWindow(),GLFW_KEY_D)){
+	if(GInput::isKeyDown(GLFW_KEY_RIGHT)){
 		force.x = m_force;
-	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_A)){
+	}else if(GInput::isKeyDown(GLFW_KEY_LEFT)){
 		force.x = -m_force;
 	}
 	
-	m_player->getRigidBody2D()->addForce(force);
+	m_player->getRigidbody2D()->addForce(force);
 
+}
+
+void SceneForces::runPhysics(float dt,GWindow* window){
+	glm::vec2 mousePos = GInput::getMouseXY();
+	window->projectCoords(&mousePos);
+
+	ObjectRegistration* current = m_firstObject;
+	while(current){
+		if(m_useGravity){
+			Physics2D::gravitate(mousePos,m_gravityMultiplier * m_force,current->object);
+		}
+		current = current->next;
+	}
+
+	integrate(ImGui::GetIO().DeltaTime);
+
+	generateContacts();
 }

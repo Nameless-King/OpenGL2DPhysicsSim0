@@ -40,7 +40,6 @@ class SceneTest : public Scene{
     
     private:
         void input(GWindow* window);
-        void generateContacts();
         void runPhysics(float dt);
 
 };

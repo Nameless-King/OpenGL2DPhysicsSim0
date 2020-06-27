@@ -6,8 +6,8 @@ SceneOBB::SceneOBB() :
     m_texture(NULL),
     m_forceGravity(ForceGravity(glm::vec2(0.0f, Physics2D::G * 0.0f))),
     m_maxContacts(0),
-    m_player(0),
-    m_test(0) {
+    m_player(NULL),
+    m_test(NULL) {
 }
 
 SceneOBB::SceneOBB(Shader* shader, Texture* texture) :
@@ -37,15 +37,14 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture) :
     addObject(testBlock);
     m_test = testBlock;
 
-    //testBlock = new Object(
-    //    glm::vec3(0.0f,-50.0f,0.0f),
-    //    glm::vec3(0.0f,0.0f,0.0f),
-    //    glm::vec3(2.0f,1.0f,1.0f)
-    //);
-    //testBlock->createBound(BoundingType::Oriented);
-    //testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
-    //addObject(testBlock);
-
+    testBlock = new Object(
+        glm::vec3(0.0f,-50.0f,0.0f),
+        glm::vec3(0.0f,0.0f,0.0f),
+        glm::vec3(2.0f,1.0f,1.0f)
+    );
+    testBlock->createBound(BoundingType::Oriented);
+    testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
+    addObject(testBlock);
 
 }
 
@@ -116,31 +115,6 @@ void SceneOBB::input(GWindow* window) {
 }
 
 
-
-void SceneOBB::generateContacts() {
-    ObjectRegistration* hittee = m_firstObject;
-    while (hittee) {
-        ObjectRegistration* hitter = hittee->next;
-        while (hitter) {
-            if (Collision::checkFlags(hittee->object,hitter->object) && Collision::boundingVolumeTest(hittee->object,hitter->object)) {
-               
-                if (Collision::isColliding(hittee->object->getBound(), hitter->object->getBound())) {
-                        CollisionData generatedCol = Collision::calculateCollision(hittee->object, hitter->object);
-
-                        Collision::resolve(ImGui::GetIO().DeltaTime, &generatedCol);
-
-                        m_collisionResolver->registerContact(generatedCol);
-                
-                }
-            }
-            hitter = hitter->next;
-        }
-        hittee = hittee->next;
-    }
-}
-
-
-
 void SceneOBB::runPhysics(float dt) {
     //force generators
     ObjectRegistration* currentRegister = m_firstObject;
@@ -152,7 +126,5 @@ void SceneOBB::runPhysics(float dt) {
     integrate(ImGui::GetIO().DeltaTime);
 
     generateContacts();
-    m_numCollisions = m_collisionResolver->numOfCollisions();
     //m_collisionResolver->resolveContacts(ImGui::GetIO().DeltaTime);
-
 }

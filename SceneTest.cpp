@@ -129,28 +129,6 @@ void SceneTest::input(GWindow* window){
     }
 }
 
-void SceneTest::generateContacts(){
-    ObjectRegistration* hittee = m_firstObject;
-    while(hittee){
-        ObjectRegistration* hitter = hittee->next;
-        while(hitter){
-            if(Collision::checkFlags(hittee->object,hitter->object) && Collision::boundingVolumeTest(hittee->object, hitter->object)){
-                if(Collision::isColliding(hittee->object->getBound(),hitter->object->getBound())){
-
-                    CollisionData generatedCol = Collision::calculateCollision(hittee->object,hitter->object);
-
-                    
-                    Collision::resolve(ImGui::GetIO().DeltaTime,&generatedCol);
-                    
-                    m_collisionResolver->registerContact(generatedCol);
-                }
-            }
-            hitter = hitter->next;
-        }
-        hittee = hittee->next;
-    }
-}
-
 void SceneTest::runPhysics(float dt){
     //force generators
     ObjectRegistration* currentRegister = m_firstObject;
@@ -159,11 +137,9 @@ void SceneTest::runPhysics(float dt){
         currentRegister = currentRegister->next;
     }
     
-     integrate(ImGui::GetIO().DeltaTime);
+    integrate(ImGui::GetIO().DeltaTime);
    
     generateContacts();
-    m_numCollisions = m_collisionResolver->numOfCollisions();
     //m_collisionResolver->resolveContacts(ImGui::GetIO().DeltaTime);
-    
 }
 

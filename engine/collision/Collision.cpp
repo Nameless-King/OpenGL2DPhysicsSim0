@@ -23,8 +23,6 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 			data.distance.y = fabs(data.distance.y);
 
 			glm::vec2 joinedExtents = *(a->getBound()->getHalfExtents()) + *(b->getBound()->getHalfExtents());
-
-			//TODO : original code takes smallest component
 			data.penetrationDepth = joinedExtents - data.distance;
 
 			data.object[0] = a;
@@ -36,7 +34,26 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 		}
 			break;
 		case BoundingType::Circle:
-		//TODO : circle never implemented
+		{
+			glm::vec2 joinedExtents = *(a->getBound()->getHalfExtents()) + *(b->getBound()->getHalfExtents());
+
+			data.distance = *(b->getBound()->getCenter()) - *(a->getBound()->getCenter());
+
+			data.collisionNormal = -data.distance / (glm::length(data.distance));
+
+			data.distance.x = fabs(data.distance.x);
+			data.distance.y = fabs(data.distance.y);
+
+			data.penetrationDepth = joinedExtents - data.distance;
+
+			
+			data.object[0] = a;
+			data.object[1] = b;
+
+			data.restitution = 1.0f;
+
+		}
+
 			break;
 		case BoundingType::Oriented:{
 			std::vector<glm::vec2> verts;
@@ -145,9 +162,6 @@ void Collision::resolve(float dt, CollisionData* col) {
 
 		Collision::resolveFriction(dt, impulse, col);
 		
-		if (col->object[0]->getBound()->getBoundingType() == BoundingType::Oriented) {
-
-		}
 		//Collision::positionalCorrection(col);//exact same as resolveInterpenetration
 		Collision::resolveInterpenetration(dt, col);
 	}
@@ -162,7 +176,10 @@ void Collision::positionalCorrection(CollisionData* col) {
 		totalInverseMass += col->object[1]->getRigidbody2D()->getInverseMass();
 	}
 
-	glm::vec2 correction = (std::max(Collision::getSmallestComponent(&col->penetrationDepth) - slope, 0.0f) / totalInverseMass) * percent * col->collisionNormal;
+
+
+	//glm::vec2 correction = (std::max(Collision::getSmallestComponent(&col->penetrationDepth) - slope, 0.0f) / totalInverseMass) * percent * col->collisionNormal;
+	glm::vec2 correction = (std::max(glm::length(col->penetrationDepth) - slope,0.0f) / totalInverseMass) * percent * col->collisionNormal;
 
 	col->object[0]->setPos(col->object[0]->getPositionXY() + col->object[0]->getRigidbody2D()->getInverseMass() * correction);
 	if (col->object[1]) {
@@ -178,12 +195,20 @@ void Collision::resolveInterpenetration(float dt, CollisionData* col) {
 		totalInverseMass += col->object[1]->getRigidbody2D()->getInverseMass();
 	}
 
-	//below line was used before line below it (idk why but the line below it works better with oriented bounding boxes
-	glm::vec2 movePerMass = col->collisionNormal * (-getSmallestComponent(&col->penetrationDepth) / totalInverseMass);
-	if(col->object[0]->getBound()->getBoundingType() == BoundingType::Oriented){
-		movePerMass = col->collisionNormal * (glm::length(col->penetrationDepth) / totalInverseMass);
+
+	float penetration = glm::length(col->penetrationDepth);
+	if (col->object[0]->getBound()->getBoundingType() == BoundingType::Circle) {
+		penetration =  col->object[0]->getBound()->getHalfExtents()->x * 2.0f - glm::length(col->distance);
 	}
-	
+	//below line was used before line below it (idk why but the line below it works better with oriented bounding boxes
+	glm::vec2 movePerMass = col->collisionNormal * (-penetration / totalInverseMass);
+	if(col->object[0]->getBound()->getBoundingType() == BoundingType::AxisAligned){
+		movePerMass = col->collisionNormal * (-getSmallestComponent(&col->penetrationDepth) / totalInverseMass);
+	}
+	if(col->object[0]->getBound()->getBoundingType() == BoundingType::Oriented){// || col->object[0]->getBound()->getBoundingType() == BoundingType::Circle){
+		movePerMass = col->collisionNormal * (penetration / totalInverseMass);
+	}
+
 
 	//affects the magnitude at which the interpenetration resolving affects the position
 	//of the objects
@@ -251,7 +276,6 @@ float Collision::resolveRestingContactVelocity(float dt, CollisionData* col) {
 
 float Collision::resolveVelocity(float dt, CollisionData* col) {
 	float closingVelocity = Collision::calculateClosingVelocity(col);
-
 	if (closingVelocity > 0) {
 		return 0;
 	}

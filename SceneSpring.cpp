@@ -1,7 +1,7 @@
-#include "./SceneForceGenerator.h"
+#include "./SceneSpring.h"
 
-SceneForceGenerator::SceneForceGenerator():
-	m_title("SceneForceGenerator"),
+SceneSpring::SceneSpring():
+	Scene("SceneSpring"),
 	m_springConstant(2.0f),
 	m_useGravity(false),
 	m_shader(NULL),
@@ -10,13 +10,12 @@ SceneForceGenerator::SceneForceGenerator():
 	m_hangingObj(NULL),
 	m_forceSpring(ForceSpring()),
 	m_forceGravity(ForceGravity(glm::vec2(0.0f,-10.0f))),
-	m_forceDrag(ForceDrag(1.0f,1.0f)),
 	m_forceBungee(ForceBungee()),
 	m_forceFakeSpring(ForceFakeSpring()),
 	m_currentType(0){}
 	
-SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const float vertices[]):
-	m_title("SceneForceGenerator"),
+SceneSpring::SceneSpring(Shader* shader, Texture* texture):
+	Scene("SceneSpring"),
 	m_springConstant(2.0f),
 	m_useGravity(false),
 	m_shader(shader),
@@ -29,36 +28,24 @@ SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
+	m_staticObj->createBound(BoundingType::Circle);
+	m_staticObj->addRigidbody2D(new Rigidbody2D(1.0f));
 	
-	m_staticObj->addVertices(vertices);
-	m_staticObj->createHitbox(HitboxType::Circle);
-	
-	RigidBody2D* rbStatic = new RigidBody2D(5.0f);
-	rbStatic->setDamping(1.0f);
-	
-	m_staticObj->addRigidBody2D(rbStatic);
 	
 	m_hangingObj = new Object(
 		glm::vec3(0.0f,-10.0f,0.0f),
 		glm::vec3(0.0f,0.0f,0.0f),
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
-	
-	m_hangingObj->addVertices(vertices);
-	m_hangingObj->createHitbox(HitboxType::Circle);
-	
-	RigidBody2D* rbHanging = new RigidBody2D(5.0f);
-	rbHanging->setDamping(0.5f);
-	
-	m_hangingObj->addRigidBody2D(rbHanging);
+	m_hangingObj->createBound(BoundingType::Circle);
+	m_hangingObj->addRigidbody2D(new Rigidbody2D(1.0f));
+
+	addObject(m_staticObj);
+	addObject(m_hangingObj);
 
 	float kConstant = 100.0f;
 	float equilibrium = 100.0f;
 	m_forceSpring = ForceSpring(m_staticObj,kConstant,equilibrium);
-
-	float k1 = 0.05f;
-	float k2 = 0;
-	m_forceDrag = ForceDrag(k1,k2);
 
 	float bkc = 100.0f;
 	float be = 100.0f;
@@ -67,65 +54,41 @@ SceneForceGenerator::SceneForceGenerator(Shader* shader, Texture* texture, const
 	m_forceFakeSpring = ForceFakeSpring(m_staticObj,50.0f,0.05f);
 };
 
-SceneForceGenerator::~SceneForceGenerator(){
-	delete m_staticObj;
-	delete m_hangingObj;
-}
+SceneSpring::~SceneSpring(){}
 
-std::string SceneForceGenerator::getSceneTitle() const{
-	return m_title;
-}
 
-void SceneForceGenerator::render(Window* window){
-	StaticRenderer::bind();
+void SceneSpring::render(GWindow* window){
+	Renderer::bind();
 	
 	m_shader->use();
 	m_texture->bind();
 	
 	m_shader->setUniformMat4f("u_projection",window->getProjectionMatrix());
-	m_shader->setUniformMat4f("u_view",glm::mat4(1.0f));
+	m_shader->setUniformMat4f("u_view",window->getCamera()->getViewMatrix());
 	
-	m_shader->setUniformMat4f("u_model",m_staticObj->getModelMatrix());
-	StaticRenderer::renderObject();
-	
-	m_shader->setUniformMat4f("u_model",m_hangingObj->getModelMatrix());
-	StaticRenderer::renderObject();
+	ObjectRegistration* currentRegistry = m_firstObject;
+	while(currentRegistry){
+
+		m_shader->setUniformMat4f("u_model",currentRegistry->object->getModelMatrix());
+		Renderer::renderObject();
+
+		currentRegistry = currentRegistry->next;
+	}
 	
 	m_texture->unbind();
 	
-	StaticRenderer::unbind();
+	Renderer::unbind();
 }
 
-void SceneForceGenerator::update(Window* window){
+void SceneSpring::update(GWindow* window){
+	startFrame();
+	runPhysics(ImGui::GetIO().DeltaTime);
 	input(window);
-	
-	m_forceGravity.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
-	switch(m_currentType){
-		case 0:
-			m_forceSpring.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
-			break;
-		case 1:
-			m_forceBungee.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
-			break;
-		case 2:
-			m_forceFakeSpring.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
-			break;
-		default:
-			break;
-	}
-	m_forceDrag.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
-
-	Physics2D::integrator3(m_hangingObj,ImGui::GetIO().DeltaTime);
-
-	
-
 
 }
 
-void SceneForceGenerator::renderGUI(){
+void SceneSpring::renderGUI(){
 	float gravity = m_forceGravity.getGravity().y;
-	float k1 = m_forceDrag.getK1();
-	float k2 = m_forceDrag.getK2();
 	float equilibrium = m_forceSpring.getEquilibrium();
 	float springConstant = m_forceSpring.getSpringConstant();
 	float bungeeEquilibrium = m_forceBungee.getEquilibrium();
@@ -137,12 +100,6 @@ void SceneForceGenerator::renderGUI(){
 	ImGui::Begin(m_title.c_str());
 	if(ImGui::DragFloat("Gravity", &gravity, 0.1f)){
 		m_forceGravity.setGravity(0.0f,gravity);
-	}
-	if(ImGui::DragFloat("Drag constant 1 (k1)",&k1,0.001f)){
-		m_forceDrag.setK1(k1);
-	}
-	if(ImGui::DragFloat("Drag constant 2 (k2)",&k2,0.001f)){
-		m_forceDrag.setK2(k2);
 	}
 
 	switch(m_currentType){
@@ -189,23 +146,45 @@ void SceneForceGenerator::renderGUI(){
 	ImGui::End();
 }
 	
-void SceneForceGenerator::input(Window* window){
+void SceneSpring::input(GWindow* window){
 	float px = m_staticObj->getPositionXYZ().x;
 	float py = m_staticObj->getPositionXYZ().y;
 	float speed = 5.0f;
 
-	if(glfwGetKey(window->getWindow(),GLFW_KEY_UP)){
+	if(GInput::isKeyDown(GLFW_KEY_UP)){
 		py += speed;
-	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_DOWN)){
+	}else if(GInput::isKeyDown(GLFW_KEY_DOWN)){
 		py -= speed;
 	}
 
-	if(glfwGetKey(window->getWindow(),GLFW_KEY_RIGHT)){
+	if(GInput::isKeyDown(GLFW_KEY_RIGHT)){
 		px += speed;
-	}else if(glfwGetKey(window->getWindow(),GLFW_KEY_LEFT)){
+	}else if(GInput::isKeyDown(GLFW_KEY_LEFT)){
 		px -= speed;
 	}
 
 	m_staticObj->setPos(px,py);
 
+}
+
+void SceneSpring::runPhysics(float dt, GWindow* window){
+
+	m_forceGravity.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
+	switch(m_currentType){
+		case 0:
+			m_forceSpring.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
+			break;
+		case 1:
+			m_forceBungee.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
+			break;
+		case 2:
+			m_forceFakeSpring.updateForce(m_hangingObj,ImGui::GetIO().DeltaTime);
+			break;
+		default:
+			break;
+	}
+
+	integrate(ImGui::GetIO().DeltaTime);
+
+	generateContacts();
 }

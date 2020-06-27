@@ -15,6 +15,9 @@
 #include "./engine/graphics/Texture.h"
 #include "./engine/graphics/Renderer.h"
 
+#include "./SceneCollisions.h"
+#include "./SceneSpring.h"
+#include "./SceneForces.h"
 #include "./SceneTest.h"
 #include "./SceneOBB.h"
 
@@ -53,20 +56,27 @@ int main(){
     Shader shader("./shaders/shaderQuad.vs","./shaders/shaderQuad.fs");
     
     Texture textureWhite("./textures/white.png");
+    Texture textureCircle("./textures/circle.png");
 
     Renderer::init();
 
     GInput::setContext(gameWindow.getWindow());
 
-    SceneTest scene0(&shader, &textureWhite);
-    SceneOBB scene1(&shader, &textureWhite);
+    SceneCollisions scene0(&shader, &textureCircle);
+    SceneSpring scene1(&shader, &textureCircle);
+    SceneForces scene2(&shader, &textureWhite);
+    SceneTest scene3(&shader, &textureWhite);
+    SceneOBB scene4(&shader, &textureWhite);
 
     SceneManager::registerScene(&scene0);
     SceneManager::registerScene(&scene1);
+    SceneManager::registerScene(&scene2);
+    SceneManager::registerScene(&scene3);
+    SceneManager::registerScene(&scene4);
 
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
-    SceneManager::setCurrentScene(0);
+    SceneManager::setCurrentScene(-1);
 
     std::cout << "Initial Error Code: " << glGetError() << std::endl;
 
@@ -143,11 +153,12 @@ void cameraInput(GWindow* window){
         px -= camSpeed;
     }
 
+    int maxZoom = 12.0f;
     if(GInput::isKeyDown(GLFW_KEY_E)){
-        if(dz < 12.0f){
+        if(dz < maxZoom){
             dz += zoomSpeed;
         }else{
-            dz = 12.0f;
+            dz = maxZoom;
         }
     }else if (GInput::isKeyDown(GLFW_KEY_Q)){
         if(dz > 2.0f){

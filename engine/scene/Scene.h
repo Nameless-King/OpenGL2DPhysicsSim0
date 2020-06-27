@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "../physics/Physics2D.h"
+#include "../collision/Collision.h"
 #include "../collision/CollisionBatchResolver.h"
 #include "../io/GWindow.h"
 #include "../Object.h"
@@ -35,5 +36,6 @@ protected:
     void addObject(Object* newObject);
     void integrate(float dt);
     void startFrame();
+    void generateContacts();
     
 };

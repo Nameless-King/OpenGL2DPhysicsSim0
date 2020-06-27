@@ -31,6 +31,10 @@ Scene::~Scene(){
 
 }
 
+std::string Scene::getSceneTitle() const {
+    return m_title;
+}
+
 void Scene::addObject(Object* newObject){
     if(!m_firstObject->object){
         m_firstObject->object = newObject;
@@ -56,15 +60,35 @@ void Scene::integrate(float dt) {
 
 void Scene::startFrame(){
     m_collisionResolver->resetRegistry();
-
+    return;
     ObjectRegistration* currentRegister = m_firstObject;
     while(currentRegister){
-        currentRegister->object->getRigidbody2D()->zeroForce();
+        //zeroing force is done in Physics 2d integrate
+        //currentRegister->object->getRigidbody2D()->zeroForce();
         //currentRegister->object->getRigidbody2D()->setAngularVelocity(0.0f);
         currentRegister = currentRegister->next;
     }
 }
 
-std::string Scene::getSceneTitle() const {
-    return m_title;
+void Scene::generateContacts(){
+    ObjectRegistration* hittee = m_firstObject;
+    while (hittee) {
+        ObjectRegistration* hitter = hittee->next;
+        while (hitter) {
+            if (Collision::checkFlags(hittee->object,hitter->object) && Collision::boundingVolumeTest(hittee->object,hitter->object)) {
+               
+                if (Collision::isColliding(hittee->object->getBound(), hitter->object->getBound())) {
+                        CollisionData generatedCol = Collision::calculateCollision(hittee->object, hitter->object);
+
+                        Collision::resolve(ImGui::GetIO().DeltaTime, &generatedCol);
+
+                        m_collisionResolver->registerContact(generatedCol);
+                
+                }
+            }
+            hitter = hitter->next;
+        }
+        hittee = hittee->next;
+    }
+    m_numCollisions = m_collisionResolver->numOfCollisions();
 }
