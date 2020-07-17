@@ -16,7 +16,7 @@
 enum class BasicRenderMode{
 	BRM_DISABLED = 0,
 	BRM_DOT = 1,
-	BRM_LINE = 2
+	BRM_LINES = 2
 };
 
 class Renderer{
@@ -31,6 +31,8 @@ private:
 	static const float s_vertices[];
 	static const float s_uvCoords[];
 	static const unsigned int s_indices[];
+
+	static const int s_renderMode[];
 
 	static BasicRenderMode s_BRMCurrentMode;
 	static std::vector<float> s_BRMVertices;

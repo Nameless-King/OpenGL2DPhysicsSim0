@@ -30,7 +30,11 @@ const unsigned int Renderer::s_indices[] = {
 	2,3,0
 };
 
-
+const int Renderer::s_renderMode[] = {
+	-1,
+	GL_POINTS,
+	GL_LINES
+};
 
 VAO* Renderer::s_vao;
 VBO* Renderer::s_vbo0;
@@ -113,7 +117,7 @@ void Renderer::basicRenderEnableCache(){
 
 void Renderer::basicRenderEnd(){
 
-	Shader* currentShader = s_BRMShaders[(int)s_BRMCurrentMode];
+	Shader* currentShader = s_BRMShaders[1];
 	//s_BRMVertexSplit = (int)s_BRMCurrentMode;
 
 	unsigned int numVertices = s_BRMVertices.size() / 2;
@@ -156,8 +160,8 @@ void Renderer::basicRenderEnd(){
 	currentShader->use();
 
 	currentVAO->bind();
-
-	glDrawArrays(GL_POINTS,0,numVertices);
+	
+	glDrawArrays(s_renderMode[(int)s_BRMCurrentMode],0,numVertices);
 
 	currentVAO->unbind();
 
