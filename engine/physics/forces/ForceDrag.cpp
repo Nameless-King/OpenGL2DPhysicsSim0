@@ -5,7 +5,7 @@ ForceDrag::ForceDrag():m_k1(1.0f),m_k2(1.0f){}
 ForceDrag::ForceDrag(float k1,float k2):m_k1(k1),m_k2(k2){}
 
 void ForceDrag::updateForce(Object* obj, float dt){
-	RigidBody2D* objRB = obj->getRigidbody2D();
+	Rigidbody2D* objRB = obj->getRigidbody2D();
 	glm::vec2 force;
 	objRB->getVelocity(force);
 

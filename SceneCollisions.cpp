@@ -1,6 +1,7 @@
 #include "./SceneCollisions.h"
 
 static BoundingType type = BoundingType::Circle;
+static float scale = 0.5f;
 
 SceneCollisions::SceneCollisions():
     Scene("SceneCollisions"),
@@ -16,13 +17,13 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture):
     m_shader(shader),
     m_texture(texture),
     m_useGravity(false),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,-5.0f * Physics2D::G)))
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,-1.0f * Physics2D::G)))
 {
 
     m_player = new Object(
         glm::vec3(0.0f,0.0f,0.0f),
         glm::vec3(0.0f,0.0f,0.0f),
-        glm::vec3(1.0f,1.0f,1.0f)
+        glm::vec3(scale,scale,scale)
     );
     m_player->createBound(type);
     m_player->addRigidbody2D(new Rigidbody2D(5.0f));
@@ -31,7 +32,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture):
 
     const int winWidth = 800;
     const int winHeight = 600;
-    const int numBalls = 200;
+    const int numBalls = 1000;
     for(int i = 0;i<numBalls;i++){
         int randX = -(winWidth/2) + (std::rand() % (winWidth + 1));
         int randY = -(winHeight/2) + (std::rand() % (winHeight + 1));
@@ -39,7 +40,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture):
         Object* temp = new Object(
             glm::vec3(randX,randY,0.0f),
             glm::vec3(0.0f,0.0f,0.0f),
-            glm::vec3(1.0f,1.0f,1.0f)
+            glm::vec3(scale,scale,scale)
         );
         temp->createBound(type);
         temp->addRigidbody2D(new Rigidbody2D(1.0f));

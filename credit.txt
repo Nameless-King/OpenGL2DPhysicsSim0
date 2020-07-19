@@ -10,3 +10,12 @@ Kenton Mamluik
 "2D Penetration Vectors" 
 (Expanding Polytope Algorithm)
 https://blog.hamaluik.ca/posts/building-a-collision-engine-part-2-2d-penetration-vectors/
+
+Ian Millington
+"Game Physics Engine Development (The Morgan Kaufmann Series in Interactive 3D Technology)"
+https://www.amazon.com/gp/product/B07CSWDPVS/ref=dbs_a_def_rwt_hsch_vapi_tkin_p1_i1
+
+Joey de Vries
+"Learn OpenGL"
+https://learnopengl.com/
+

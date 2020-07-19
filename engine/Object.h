@@ -41,6 +41,8 @@ public:
 	void setRot(float xRot, float yRot, float zRot);
 	void setScl(float xScl, float yScl, float zScl);
 
+	void setScl(float scl);
+
 	void addRigidbody2D(Rigidbody2D* rb);
 	void createBound(BoundingType type);
 

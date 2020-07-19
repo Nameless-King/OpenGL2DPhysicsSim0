@@ -16,7 +16,8 @@
 enum class BasicRenderMode{
 	BRM_DISABLED = 0,
 	BRM_DOT = 1,
-	BRM_LINES = 2
+	BRM_LINES = 2,
+	BRM_LINE_LOOP = 3
 };
 
 class Renderer{

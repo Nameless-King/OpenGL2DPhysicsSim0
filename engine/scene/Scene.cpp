@@ -4,14 +4,14 @@ Scene::Scene():
     m_title("Default Title"),
     m_numCollisions(0),
     m_numObjects(0),
-    m_firstObject(new ObjectRegistration()),
+    m_firstObject(NULL),
     m_collisionResolver(new CollisionBatchResolver(1)){}
 
 Scene::Scene(const std::string& title)
     :m_title(title),
     m_numCollisions(0),
     m_numObjects(0),
-    m_firstObject(new ObjectRegistration()),
+    m_firstObject(NULL),
     m_collisionResolver(new CollisionBatchResolver(1)){}
 
 Scene::~Scene(){
@@ -36,7 +36,8 @@ std::string Scene::getSceneTitle() const {
 }
 
 void Scene::addObject(Object* newObject){
-    if(!m_firstObject->object){
+    if(!m_firstObject){
+        m_firstObject = new ObjectRegistration();
         m_firstObject->object = newObject;
     }else{
         ObjectRegistration* lastRegister = new ObjectRegistration();
@@ -60,14 +61,6 @@ void Scene::integrate(float dt) {
 
 void Scene::startFrame(){
     m_collisionResolver->resetRegistry();
-    return;
-    ObjectRegistration* currentRegister = m_firstObject;
-    while(currentRegister){
-        //zeroing force is done in Physics 2d integrate
-        //currentRegister->object->getRigidbody2D()->zeroForce();
-        //currentRegister->object->getRigidbody2D()->setAngularVelocity(0.0f);
-        currentRegister = currentRegister->next;
-    }
 }
 
 void Scene::generateContacts(){

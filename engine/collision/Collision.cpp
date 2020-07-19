@@ -28,7 +28,7 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 			data.object[0] = a;
             data.object[1] = b;
 
-            data.restitution = 0.0f;
+            data.restitution = 0.5f;
 
             Collision::calculateAABBNormals(&data);
 		}
@@ -658,7 +658,6 @@ Edge Collision::findClosestEdge(std::vector<glm::vec2> polytopeVertices, Rotatin
 }
 
 glm::vec2 Collision::EPATest(std::vector<glm::vec2>& simplexVertices) {
-
 	RotatingDirection rotDir;
 	float e0 = (simplexVertices[1].x - simplexVertices[0].x) * (simplexVertices[1].y + simplexVertices[0].y);
 	float e1 = (simplexVertices[2].x - simplexVertices[1].x) * (simplexVertices[2].y + simplexVertices[1].y);
@@ -699,14 +698,22 @@ glm::vec2 Collision::EPATest(std::vector<glm::vec2>& simplexVertices) {
 
 
 bool Collision::checkFlags(Object* a, Object* b){
-	return 
-		(!a->getRigidbody2D()->hasInfiniteMass() || !b->getRigidbody2D()->hasInfiniteMass());
+	return (!a->getRigidbody2D()->hasInfiniteMass() || !b->getRigidbody2D()->hasInfiniteMass());
 }
 
 bool Collision::boundingVolumeTest(Object* a, Object* b){
-	glm::vec2 distance = *(a->getBound()->getCenter()) - *(b->getBound()->getCenter());
+	//precondition is that objects are of same boundingtype
+	bool boundsColliding = true;
 
-	float extentTotal = a->getBound()->getFurthestDistance() + b->getBound()->getFurthestDistance();
+	BoundingType aType = a->getBound()->getBoundingType();
 
-	return glm::dot(distance,distance) <= extentTotal * extentTotal;
+	if(aType != BoundingType::Circle && aType != BoundingType::AxisAligned){
+		glm::vec2 distance = *(a->getBound()->getCenter()) - *(b->getBound()->getCenter());
+
+		float extentTotal = a->getBound()->getFurthestDistance() + b->getBound()->getFurthestDistance();
+
+		boundsColliding = glm::dot(distance, distance) <= extentTotal * extentTotal;
+	}
+
+	return boundsColliding;
 }

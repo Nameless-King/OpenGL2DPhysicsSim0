@@ -18,6 +18,7 @@ public:
 	static void start();
 	static void registerScene(Scene* scene);
 	static void renderMenu();
+	static void render();
 	static void finalize();
 	static void updateCurrentScene(GWindow* window);
 	static void renderCurrentSceneGUI();

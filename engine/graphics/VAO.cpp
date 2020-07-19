@@ -23,7 +23,7 @@ void VAO::addFloatBuffer(const VBO *vbo){
 		vbo->getSize(),
 		vbo->getDataType(),
 		vbo->getNormalize(),
-		sizeof(float)*vbo->getSize(),
+		0*sizeof(float)/* everywhere I look it's zero*/*vbo->getSize(),
 		(void*)0);
 	
 	

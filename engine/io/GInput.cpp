@@ -54,7 +54,7 @@ float GInput::getMouseX() {
 
 float GInput::getMouseY() {
 	double mouseY = 0;
-	glfwGetCursorPos(s_window, &mouseY, NULL);
+	glfwGetCursorPos(s_window, NULL, &mouseY);
 	return (float)mouseY;
 }
 

@@ -18,6 +18,7 @@ public:
 	GLuint m_vertex;
 	GLuint m_fragment;
 
+	Shader();
 	Shader(const char* vertexPath, const char* fragmentPath);
 	~Shader();
 

@@ -1,7 +1,7 @@
 #excluded directories
 Dependencies/*
 objectFiles/
-build/CMakeFiles/
+build/
 oldCompile/
 compilePy/*
 build/*

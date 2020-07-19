@@ -20,6 +20,7 @@
 #include "./SceneForces.h"
 #include "./SceneTest.h"
 #include "./SceneOBB.h"
+#include "./SceneQuadTreeDemo.h"
 
 void input();
 void cameraInput(GWindow* window);
@@ -33,9 +34,10 @@ int zoom = 1.0f;
 GWindow gameWindow(WIDTH, HEIGHT, "Game");
 
 int main(){
-
+    std::cout << "Program Start" << std::endl;
+    
     gameWindow.setFramebufferSizeCallback(framebuffer_size_callback);
-    gameWindow.setClearColor(glm::vec4(0.0f,1.0f,0.0f,1.0f));
+    gameWindow.setClearColor(glm::vec4(0.0f,0.0f,0.0f,1.0f));
 
     if(glewInit() != GLEW_OK){
         std::cout << "Error glewInit" << std::endl;
@@ -57,6 +59,7 @@ int main(){
     
     Texture textureWhite("./textures/white.png");
     Texture textureCircle("./textures/circle.png");
+    Texture textureRectangle("./textures/rectangle.png");
 
     Renderer::init();
 
@@ -67,25 +70,61 @@ int main(){
     SceneForces scene2(&shader, &textureWhite);
     SceneTest scene3(&shader, &textureWhite);
     SceneOBB scene4(&shader, &textureWhite);
+    SceneQuadTreeDemo scene5;
 
     SceneManager::registerScene(&scene0);
     SceneManager::registerScene(&scene1);
     SceneManager::registerScene(&scene2);
     SceneManager::registerScene(&scene3);
     SceneManager::registerScene(&scene4);
+    SceneManager::registerScene(&scene5);
 
     glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+    glPointSize(2.0f);
 
     SceneManager::setCurrentScene(-1);
 
     std::cout << "Initial Error Code: " << glGetError() << std::endl;
 
     while(!gameWindow.windowShouldClose()){
-        //Gui initialization  and creation
-        SceneManager::start();
-        SceneManager::renderMenu();
-        gameWindow.displayWindowStats();
-        SceneManager::renderCurrentSceneGUI();
+        /*
+                                 .i;;;;i.                                  
+                               iYcviii;vXY:                                
+                             .YXi       .i1c.                              
+                            .YC.     .    in7.                             
+                           .vc.   ......   ;1c.                            
+                           i7,   ..        .;1;                            
+                          i7,   .. ...      .Y1i                           
+                         ,7v     .6MMM@;     .YX,                          
+                        .7;.   ..IMMMMMM1     :t7.                         
+                       .;Y.     ;$MMMMMM9.     :tc.                        
+                       vY.   .. .nMMM@MMU.      ;1v.                       
+                      i7i   ...  .#MM@M@C. .....:71i                       
+                     it:   ....   $MMM@9;.,i;;;i,;tti                      
+                    :t7.  .....   0MMMWv.,iii:::,,;St.                     
+                   .nC.   .....   IMMMQ..,::::::,.,czX.                    
+                  .ct:   ....... .ZMMMI..,:::::::,,:76Y.                   
+                  c2:   ......,i..Y$M@t..:::::::,,..inZY                   
+                 vov   ......:ii..c$MBc..,,,,,,,,,,..iI9i                  
+                i9Y   ......iii:..7@MA,..,,,,,,,,,....;AA.                 
+               iIS.  ......:ii::..;@MI....,............;Ez.                
+              .I9.  ......:i::::...8M1..................C0z.               
+             .z9;  ......:i::::,.. .i:...................zWX.              
+             vbv  ......,i::::,,.      ................. :AQY              
+            c6Y.  .,...,::::,,..:t0@@QY. ................ :8bi             
+           :6S. ..,,...,:::,,,..EMMMMMMI. ............... .;bZ,            
+          :6o,  .,,,,..:::,,,..i#MMMMMM#v.................  YW2.           
+         .n8i ..,,,,,,,::,,,,.. tMMMMM@C................... .1Wn           
+         7Uc. .:::,,,,,::,,,,..   i1t;,..................... .UEi          
+         7C...::::::::::::,,,,..        ....................  vSi.         
+         ;1;...,,::::::,.........       ..................    Yz:          
+          v97,.........                                     .voC.          
+           izAotX7777777777777777777777777777777777777777Y7n92:            
+             .;CoIIIIIUAA666666699999ZZZZZZZZZZZZZZZZZZZZ6ov.              
+ 
+         * ADJUSTING THE ORDER OF OPERATIONS BELOW RESULTS IN IMGUI FPS DROP
+         * WITH USER INTERACTION WITH WINDOW
+         */
 
         //start of frame
         GInput::update();
@@ -93,16 +132,28 @@ int main(){
         input();
         cameraInput(&gameWindow);
 
+        //update scene logic, collision, physics, etc.
         SceneManager::updateCurrentScene(&gameWindow);
-       
+
+        //Clear screen and buffers
         gameWindow.clear();
+
+        //imgui start new frame
+        SceneManager::start();
+
+        //render opengl
         SceneManager::renderCurrentScene(&gameWindow);
 
+        //render scene guis
+        SceneManager::renderMenu();
+        gameWindow.displayWindowStats();
+        SceneManager::renderCurrentSceneGUI();
+
+        //render imgui onto screen
+        SceneManager::render();
         SceneManager::finalize();
 
         gameWindow.swapBuffers();
-
-        
     }
     Renderer::destroy();
     SceneManager::destroy();

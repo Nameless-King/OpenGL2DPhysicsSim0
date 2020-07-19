@@ -126,6 +126,10 @@ void Object::setScl(float xScl, float yScl, float zScl) {
 	m_scale = glm::vec3(xScl, yScl, zScl);
 }
 
+void Object::setScl(float scl){
+	m_scale = glm::vec3(scl,scl,scl);
+}
+
 void Object::addRigidbody2D(Rigidbody2D* rb) {
 	m_rigidbody = rb;
 }

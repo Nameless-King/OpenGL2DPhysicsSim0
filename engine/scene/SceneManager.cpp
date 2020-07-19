@@ -5,12 +5,14 @@ static int s_currentScene = -1;
 
 void SceneManager::init(GLFWwindow* window, bool installCallbacks) {
 	IMGUI_CHECKVERSION();
-	ImGuiContext* context = ImGui::CreateContext();
-	ImGui::SetCurrentContext(context);
+	ImGui::CreateContext();
+	//ImGuiContext* context = ImGui::CreateContext();
+	//ImGui::SetCurrentContext(context);
+
+	ImGui::StyleColorsDark();
+	ImGui_ImplOpenGL3_Init("#version 330 core");
 
 	ImGui_ImplGlfw_InitForOpenGL(window, installCallbacks);
-	ImGui_ImplOpenGL3_Init("#version 330 core");
-	ImGui::StyleColorsDark();
 }
 
 void SceneManager::start() {
@@ -38,8 +40,11 @@ void SceneManager::registerScene(Scene* scene) {
 
 }
 
-void SceneManager::finalize() {
+void SceneManager::render(){
 	ImGui::Render();
+}
+
+void SceneManager::finalize() {
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
@@ -80,5 +85,6 @@ void SceneManager::setCurrentScene(int sceneIndex) {
 void SceneManager::destroy() {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 	s_scenes.clear();
 }
