@@ -32,6 +32,16 @@ void GCamera::setCameraZoom(float zoom){
     m_zoom = zoom;
 }
 
+void GCamera::addCameraPosOffset(float px, float py){
+    m_cameraPos.x += px;
+    m_cameraPos.y += py;
+}
+
+void GCamera::addCameraZoomOffset(float zoom){
+    std::cout << m_zoom << " " << zoom << " " << m_zoom + zoom << std::endl;
+    m_zoom += zoom;
+}
+
 glm::vec2 GCamera::getCameraPos(){
     return m_cameraPos;
 }

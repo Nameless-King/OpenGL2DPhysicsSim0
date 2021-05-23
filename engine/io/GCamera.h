@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include "../../Dependencies/glm/glm.hpp"
 #include "../../Dependencies/glm/gtc/matrix_transform.hpp"
 
@@ -17,6 +19,8 @@ public:
 	void setCameraPos(float px, float py);
 	void setCameraPos(glm::vec2 pos);
 	void setCameraZoom(float zoom);
+	void addCameraPosOffset(float px, float py);
+	void addCameraZoomOffset(float zoom);
 	glm::vec2 getCameraPos();
 	float getCameraZoom();
 };
