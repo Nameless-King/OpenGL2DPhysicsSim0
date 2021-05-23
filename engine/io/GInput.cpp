@@ -94,6 +94,8 @@ void GInput::update() {
 	for (int i = 0; i <= GLFW_MOUSE_BUTTON_LAST; i++) {
 		s_mouseButtons[i] = isMouseButtonDown(i);
 	}
+
+	glfwPollEvents();
 }
 
 void GInput::setWheelX(float offset) {

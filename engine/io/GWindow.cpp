@@ -80,8 +80,8 @@ void GWindow::clear(){
 	glClearColor(m_clearColor.x,m_clearColor.y,m_clearColor.z,m_clearColor.w);
 }
 
-int GWindow::windowShouldClose(){
-	return glfwWindowShouldClose(m_window);
+int GWindow::isRunning(){
+	return !glfwWindowShouldClose(m_window);
 }
 
 void GWindow::closeWindow(){
@@ -100,10 +100,6 @@ void GWindow::resize(int width, int height){
 
 void GWindow::sizeChanged(bool hasChanged){
 	m_sizeChanged = hasChanged;
-}
-
-void GWindow::pollEvents(){
-	glfwPollEvents();
 }
 
 void GWindow::displayWindowStats(){

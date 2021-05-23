@@ -45,12 +45,11 @@ public:
 	void setZoom(float zoom); // COMPLETE
 	
 	void clear(); // COMPLETE
-	int windowShouldClose(); // COMPLETE
+	int isRunning(); // COMPLETE
 	void closeWindow(); // COMPLETE
 	void swapBuffers(); // COMPLETE
 	
 	void resize(int width, int height); // COMPLETE
-	void pollEvents(); // COMPLETE
 
 	void displayWindowStats(); // COMPLETE
 
