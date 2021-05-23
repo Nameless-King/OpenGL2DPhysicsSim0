@@ -51,7 +51,13 @@ std::vector<Shader*> Renderer::s_BRMShaders;
 std::unordered_map<std::string, VAO*> Renderer::s_BRMCache;
 bool Renderer::s_BRMCacheEnabled = false;
 
-void Renderer::init() {
+bool Renderer::init() {
+
+	if(glewInit() != GLEW_OK){
+        std::cout << "Error glewInit" << std::endl;
+        return false;
+    }
+
 	s_vao = new VAO();
 
 	s_vbo0 = new VBO(s_vertices, sizeof(s_vertices), GL_FLOAT, GL_ARRAY_BUFFER, GL_STATIC_DRAW, 2, GL_FALSE);
@@ -68,6 +74,7 @@ void Renderer::init() {
 	s_BRMShaders.push_back(NULL);
 	s_BRMShaders.push_back(new Shader("./shaders/shaderPoint.vs", "./shaders/shaderPoint.fs"));
 
+	return true;
 }
 
 const float* Renderer::getVertices() {

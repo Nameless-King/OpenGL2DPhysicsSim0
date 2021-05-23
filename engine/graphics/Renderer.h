@@ -6,7 +6,6 @@
 #include <vector>
 #include <unordered_map>
 
-
 #include "./VAO.h"
 #include "./VBO.h"
 #include "./IBO.h"
@@ -50,7 +49,7 @@ public:
 	static const float* getUVCoords(); // COMPLETE
 	static const unsigned int* getIndices(); // COMPLETE
 	
-	static void init(); // COMPLETE
+	static bool init(); // COMPLETE
 	static void bind(); // COMPLETE
 	static void renderObject(); // COMPLETE
 	static void unbind(); // COMPLETE
