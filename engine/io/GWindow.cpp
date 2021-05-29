@@ -140,3 +140,6 @@ void GWindow::projectCoords(glm::vec2* coords){
 		coords->y += camY;
 }
 
+void GWindow::setStartFrameTime(long long int time){
+	m_startFrameTime = time;
+}

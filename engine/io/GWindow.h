@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <string>
+#include <chrono>
 
 
 #include "../../Dependencies/glm/glm.hpp"
@@ -20,6 +21,7 @@ class GWindow{
 private:
 	int m_width;
 	int m_height;
+	long long int m_startFrameTime;
 	float m_zoom;
 	bool m_sizeChanged;
 	const std::string m_title;
@@ -36,6 +38,7 @@ public:
 	inline const int getWidth() {return m_width;} // COMPLETE
 	inline GLFWwindow* getWindow() {return m_window;} // COMPLETE
 	inline const float getZoom() {return m_zoom;} // COMPLETE
+	inline const long long int getStartFrameTime() const {return m_startFrameTime;}
 	
 	GCamera* getCamera(); // COMPLETE
 	glm::mat4 getProjectionMatrix(); // COMPLETE
@@ -44,6 +47,7 @@ public:
 	void setFramebufferSizeCallback(void(*callback)(GLFWwindow*,int,int)); // COMPLETE
 	void setZoom(float zoom); // COMPLETE
 	
+	void setStartFrameTime(long long int time);
 	void clear(); // COMPLETE
 	int isRunning(); // COMPLETE
 	void closeWindow(); // COMPLETE
