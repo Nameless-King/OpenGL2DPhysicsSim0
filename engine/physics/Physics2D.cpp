@@ -1,7 +1,7 @@
 #include "./Physics2D.h"
 
 const static glm::vec2 gravity(0.0f,-10.0f);
-const float Physics2D::G = 100.0f;
+const float Physics2D::G = 10.0f;
 
 glm::vec2 Physics2D::getGravity(){
 	return gravity;
@@ -24,8 +24,10 @@ void Physics2D::integrate(Object* obj, float dt){
 	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
 	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
 	glm::vec2 objAcl(objRb->getAcceleration()->x,objRb->getAcceleration()->y);
-	
-	objAcl += objRb->getInverseMass() * objSigmaForce;
+
+	//was '+=' but in conjunction with setAcceleration it
+	// causes the object to increase velocity exponentially
+	objAcl = objRb->getInverseMass() * objSigmaForce;
 	
 	//update velocity
 	objVel += dt*objAcl;
@@ -50,7 +52,7 @@ void Physics2D::integrate(Object* obj, float dt){
 	//objPos += dt*dt*0.5f*objRb->getAcceleration();
 
 	//TODO : makes things bad dis acceleration does
-	//objRb->setAcceleration(objAcl.x,objAcl.y);
+	objRb->setAcceleration(objAcl.x,objAcl.y);
 
 	objRb->setVelocity(objVel.x,objVel.y);
 	obj->setPos(objPos.x,objPos.y);
