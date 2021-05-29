@@ -60,23 +60,31 @@ void Scene::integrate(float dt) {
 }
 
 void Scene::startFrame(){
-    m_collisionResolver->resetRegistry();
+}
+
+void Scene::update(GWindow* window){
+    startFrame();
 }
 
 void Scene::generateContacts(){
+
     ObjectRegistration* hittee = m_firstObject;
     while (hittee) {
         ObjectRegistration* hitter = hittee->next;
         while (hitter) {
-            if (Collision::checkFlags(hittee->object,hitter->object) && Collision::boundingVolumeTest(hittee->object,hitter->object)) {
+            // the if || used to be && (only using AABB at moment so no need for optimizations)
+            if (Collision::checkFlags(hittee->object,hitter->object) || Collision::boundingVolumeTest(hittee->object,hitter->object)) {
                
                 if (Collision::isColliding(hittee->object->getBound(), hitter->object->getBound())) {
                         CollisionData generatedCol = Collision::calculateCollision(hittee->object, hitter->object);
 
+                        
+
+
                         Collision::resolve(ImGui::GetIO().DeltaTime, &generatedCol);
 
                         m_collisionResolver->registerContact(generatedCol);
-                
+
                 }
             }
             hitter = hitter->next;

@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 
 #include <iostream>
+#include <chrono>
 #include "../physics/Physics2D.h"
 #include "../collision/Collision.h"
 #include "../collision/CollisionBatchResolver.h"
@@ -17,6 +18,7 @@ protected:
     };
     unsigned int m_numObjects;
     unsigned int m_numCollisions;
+    long long int m_accumulatedTime = 0;
     ObjectRegistration* m_firstObject;
     CollisionBatchResolver* m_collisionResolver;
 
@@ -27,7 +29,7 @@ public:
     Scene(const std::string& title);
     ~Scene();
     virtual void render(GWindow* window) = 0;
-    virtual void update(GWindow* window) = 0;
+    virtual void update(GWindow* window);
     virtual void renderGUI() = 0;
     std::string getSceneTitle() const; 
     
