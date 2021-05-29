@@ -5,6 +5,7 @@
 #include "../Object.h"
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 struct CollisionData {
 	CollisionData() :
@@ -70,6 +71,7 @@ public:
 
 	static bool checkFlags(Object* a, Object* b);
 	static bool boundingVolumeTest(Object* a, Object* b);
+
 
 
 	static glm::vec2 getSupport(Object* object, glm::vec2 direction); // TODO

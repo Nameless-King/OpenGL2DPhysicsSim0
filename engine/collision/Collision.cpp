@@ -12,6 +12,98 @@ float Collision::calculateClosingVelocity(CollisionData* col) {
 CollisionData Collision::calculateCollision(Object* a, Object* b) {
 	CollisionData data;
 
+	
+	if(a->getBound()->getBoundingType() == BoundingType::AxisAligned && b->getBound()->getBoundingType() == BoundingType::Circle || a->getBound()->getBoundingType() == BoundingType::Circle && b->getBound()->getBoundingType() == BoundingType::AxisAligned){
+		Object* circleObject;
+		Object* aabbObject;
+		if(a->getBound()->getBoundingType() == BoundingType::AxisAligned){
+			aabbObject = a;
+			circleObject = b;
+						
+		}else{
+			circleObject = a;
+			aabbObject = b;
+		}
+		data.object[0] = aabbObject;
+		data.object[1] = circleObject;
+
+		data.restitution = 0.0f;
+
+		data.distance = *(data.object[1]->getBound()->getCenter()) - *(data.object[0]->getBound()->getCenter());
+		data.distance.x = fabs(data.distance.x);
+		data.distance.y = fabs(data.distance.y);
+
+		glm::vec2 closest = data.distance;
+
+		float aabbHalfExtentX = aabbObject->getBound()->getHalfExtents()->x;
+		float aabbHalfExtentY = aabbObject->getBound()->getHalfExtents()->y;
+
+		closest.x = std::clamp(closest.x, -aabbHalfExtentX,aabbHalfExtentX);
+		closest.y = std::clamp(closest.y, -aabbHalfExtentY,aabbHalfExtentY);
+
+		bool inside = false;
+
+		if(data.distance == closest){
+			inside = true;
+
+			if(fabs(data.distance.x) > fabs(data.distance.y)){
+				if(closest.x > 0){
+					closest.x = aabbHalfExtentX;
+				}else{
+					closest.x = -aabbHalfExtentX;
+				}
+			}else{
+				if(closest.y > 0){
+					closest.y = aabbHalfExtentY;
+				}else{
+					closest.y = -aabbHalfExtentY;
+				}
+			}
+		}
+
+		glm::vec2 normal = data.distance - closest;
+		float d = glm::length(normal) * glm::length(normal);
+		float r = circleObject->getBound()->getHalfExtents()->x;
+
+		if(d > (r * r) && !inside){
+			/*
+			Execution should never reach inside the
+			if since it would mean the collision detection
+			detected a collision but the collision
+			resolution did not
+			*/
+			std::cout << "A COLLISION OCCURED BUT IT DIDN'T ???\n!!! FATAL !!!" << std::endl;
+			data.object[0] = NULL;
+			data.object[1] = NULL;
+			return data;
+		}
+		
+		d = glm::length(normal);
+
+		float tmpFloat = std::sqrt(std::pow(r-d,2.0f) / 2);
+
+		if(inside){
+			data.collisionNormal = normal / d;
+			data.penetrationDepth = glm::vec2(tmpFloat,tmpFloat);
+		}else{
+			data.collisionNormal = normal / d;
+			data.penetrationDepth = glm::vec2(tmpFloat,tmpFloat);
+		}
+
+		Collision::calculateAABBNormals(&data);
+
+		// std::cout << "----COLLISION DATA----" << std::endl;
+		// std::cout << data.object[0] << " " << data.object[1] << std::endl;
+		// std::cout << "Distance: " << data.distance.x << " " << data.distance.y << std::endl;
+		// std::cout << "Normal: " << data.collisionNormal.x << " " << data.collisionNormal.y << std::endl;
+		// std::cout << "Penetration: " << glm::length(data.penetrationDepth) << std::endl;
+		
+		data.object[0] = a;
+		data.object[1] = b;
+
+		return data;
+	}
+
 	switch(a->getBound()->getBoundingType()){
 		case BoundingType::AxisAligned:
 		{
@@ -24,6 +116,7 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 
 			glm::vec2 joinedExtents = *(a->getBound()->getHalfExtents()) + *(b->getBound()->getHalfExtents());
 			data.penetrationDepth = joinedExtents - data.distance;
+
 
 			data.object[0] = a;
             data.object[1] = b;
@@ -38,19 +131,26 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 			glm::vec2 joinedExtents = *(a->getBound()->getHalfExtents()) + *(b->getBound()->getHalfExtents());
 
 			data.distance = *(b->getBound()->getCenter()) - *(a->getBound()->getCenter());
+			
 
+			//something with needing different normals with infinite and finite mass 
+			//circles (this doesn't make sense I just want it to work)
+			if(!a->getRigidbody2D()->hasInfiniteMass() && !b->getRigidbody2D()->hasInfiniteMass()){
 			data.collisionNormal = -data.distance / (glm::length(data.distance));
+			} else{
+				data.collisionNormal = data.distance / glm::length(data.distance);
+			}
 
 			data.distance.x = fabs(data.distance.x);
 			data.distance.y = fabs(data.distance.y);
 
 			data.penetrationDepth = joinedExtents - data.distance;
-
 			
 			data.object[0] = a;
 			data.object[1] = b;
 
-			data.restitution = 1.0f;
+			data.restitution = 0.5f;
+
 
 		}
 
@@ -150,19 +250,79 @@ bool Collision::isColliding(Bound* a, Bound* b) {
 			OBB testB = (OBB)*b;
 			isColliding = Collision::SATTest(&testA, &testB);
 		}
+	}else if( a->getBoundingType() == BoundingType::Circle && b->getBoundingType() == BoundingType::AxisAligned || a->getBoundingType() == BoundingType::AxisAligned && b->getBoundingType() == BoundingType::Circle){
+		Bound* circleBound;
+		Bound* aabbBound;
+		if(a->getBoundingType() == BoundingType::Circle){
+		circleBound = a;
+		aabbBound = b;
+		}else{
+			circleBound = b;
+			aabbBound = a;
+		}
+
+		// glm::vec2 distance = circleBound->getCopyCenterXY() - aabbBound->getCopyCenterXY();
+		// glm::vec2 clamped = glm::clamp(distance, -*(aabbBound->getHalfExtents()),*(aabbBound->getHalfExtents()));
+		// glm::vec2 closest = circleBound->getCopyCenterXY() + clamped;
+		// distance = closest - circleBound->getCopyCenterXY();
+		// isColliding = glm::length(distance) < circleBound->getHalfExtents()->x;
+		glm::vec2 distance = *(circleBound->getCenter()) - *(aabbBound->getCenter());
+		distance.x = fabs(distance.x);
+		distance.y = fabs(distance.y);
+
+		glm::vec2 closest = distance;
+
+		float aabbHalfExtentX = aabbBound->getHalfExtents()->x;
+		float aabbHalfExtentY = aabbBound->getHalfExtents()->y;
+
+		closest.x = std::clamp(closest.x, -aabbHalfExtentX,aabbHalfExtentX);
+		closest.y = std::clamp(closest.y, -aabbHalfExtentY,aabbHalfExtentY);
+
+		bool inside = false;
+
+		if(distance == closest){
+			inside = true;
+
+			if(fabs(distance.x) > fabs(distance.y)){
+				if(closest.x > 0){
+					closest.x = aabbHalfExtentX;
+				}else{
+					closest.x = -aabbHalfExtentX;
+				}
+			}else{
+				if(closest.y > 0){
+					closest.y = aabbHalfExtentY;
+				}else{
+					closest.y = -aabbHalfExtentY;
+				}
+			}
+		}
+
+		glm::vec2 normal = distance - closest;
+		float d = glm::length(normal) * glm::length(normal);
+		float r = circleBound->getHalfExtents()->x;
+
+		if(d > (r * r) && !inside){
+			inside = false;
+		}else{
+			inside = true;
+		}
+
+		isColliding = inside;
 	}
+
 	return isColliding;
 }
 
 void Collision::resolve(float dt, CollisionData* col) {
 	if (correctObjects(col)) {
-
 		float impulse = Collision::resolveVelocity(dt, col);
+		//no for now there not broken or anything 
 		//float impulse = Collision::resolveRestingContactVelocity(dt, col);
 
 		Collision::resolveFriction(dt, impulse, col);
 		
-		//Collision::positionalCorrection(col);//exact same as resolveInterpenetration
+		//no for now there not broken or anything Collision::positionalCorrection(col);//exact same as resolveInterpenetration
 		Collision::resolveInterpenetration(dt, col);
 	}
 }
@@ -197,22 +357,26 @@ void Collision::resolveInterpenetration(float dt, CollisionData* col) {
 
 
 	float penetration = glm::length(col->penetrationDepth);
-	if (col->object[0]->getBound()->getBoundingType() == BoundingType::Circle) {
+	//Below is 'false &&' since if block of code interferes with aabb vs circle
+	if (false && col->object[0]->getBound()->getBoundingType() == BoundingType::Circle) {
 		penetration =  col->object[0]->getBound()->getHalfExtents()->x * 2.0f - glm::length(col->distance);
 	}
 	//below line was used before line below it (idk why but the line below it works better with oriented bounding boxes
 	glm::vec2 movePerMass = col->collisionNormal * (-penetration / totalInverseMass);
 	if(col->object[0]->getBound()->getBoundingType() == BoundingType::AxisAligned){
 		movePerMass = col->collisionNormal * (-getSmallestComponent(&col->penetrationDepth) / totalInverseMass);
-	}
-	if(col->object[0]->getBound()->getBoundingType() == BoundingType::Oriented){// || col->object[0]->getBound()->getBoundingType() == BoundingType::Circle){
+	}else if(col->object[0]->getBound()->getBoundingType() == BoundingType::Circle){
+		movePerMass = col->collisionNormal * (-glm::length(col->penetrationDepth) / totalInverseMass);
+	}else if(col->object[0]->getBound()->getBoundingType() == BoundingType::Oriented){// || col->object[0]->getBound()->getBoundingType() == BoundingType::Circle){
 		movePerMass = col->collisionNormal * (penetration / totalInverseMass);
 	}
 
 
 	//affects the magnitude at which the interpenetration resolving affects the position
 	//of the objects
-	float percent = 1.0f; //TODO : try and get rid of this
+	float percent = 1.0f; 
+	//TODO : try and get rid of this (percent)
+	//TODO : actually it looks important maybe don't get rid of it (percent)
 
 	col->object[0]->setPos(col->object[0]->getPositionXY() + percent * -movePerMass * col->object[0]->getRigidbody2D()->getInverseMass());
 	if (col->object[1]) {
@@ -224,9 +388,12 @@ float Collision::getSmallestComponent(glm::vec2* vec) {
 	return (vec->x < vec->y) ? vec->x : vec->y;
 }
 
+
 float Collision::resolveRestingContactVelocity(float dt, CollisionData* col) {
+	
 	float closingVelocity = Collision::calculateClosingVelocity(col);
 
+	//separating collision (going in opposite directions)
 	if (closingVelocity > 0) {
 		return 0.0f;
 	}
@@ -244,7 +411,7 @@ float Collision::resolveRestingContactVelocity(float dt, CollisionData* col) {
 	//remove built up acceleration from new closing velocity
 	if (accCausedClosingVelocity < 0) {
 		newClosingVelocity += col->restitution * accCausedClosingVelocity;
-
+		
 		if (newClosingVelocity < 0) {
 			newClosingVelocity = 0;
 		}
@@ -265,6 +432,7 @@ float Collision::resolveRestingContactVelocity(float dt, CollisionData* col) {
 
 	glm::vec2 impulsePerMass = col->collisionNormal * impulse;
 
+
 	col->object[0]->getRigidbody2D()->setVelocity(*(col->object[0]->getRigidbody2D()->getVelocity()) + impulsePerMass * col->object[0]->getRigidbody2D()->getInverseMass());
 	if (col->object[1]) {
 		//bruh dead a
@@ -273,6 +441,7 @@ float Collision::resolveRestingContactVelocity(float dt, CollisionData* col) {
 
 	return impulse;
 }
+
 
 float Collision::resolveVelocity(float dt, CollisionData* col) {
 	float closingVelocity = Collision::calculateClosingVelocity(col);
@@ -292,6 +461,7 @@ float Collision::resolveVelocity(float dt, CollisionData* col) {
 		return 0;
 	}
 
+
 	float impulse = deltaVelocity / totalInverseMass;
 
 	glm::vec2 impulsePerMass = col->collisionNormal * impulse;
@@ -303,6 +473,8 @@ float Collision::resolveVelocity(float dt, CollisionData* col) {
 
 	return impulse;
 }
+
+
 
 void Collision::resolveFriction(float dt, float impulse, CollisionData* col) {
 	glm::vec2 relativeVelocity = *(col->object[0]->getRigidbody2D()->getVelocity());
@@ -332,7 +504,7 @@ void Collision::resolveFriction(float dt, float impulse, CollisionData* col) {
 
 
 	//TODO : if this method works find out how to make this changable
-	float frictionCoefficient = 0.5f;
+	float frictionCoefficient = 1.0f;
 
 	glm::vec2 frictionImpulseVector;
 	if (fabs(frictionImpulse) < impulse * frictionCoefficient) {
@@ -717,3 +889,5 @@ bool Collision::boundingVolumeTest(Object* a, Object* b){
 
 	return boundsColliding;
 }
+
+
