@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Dependencies/glm/glm.hpp"
+#include "./GPhysicsFlags.h"
 
 
 class Rigidbody2D{
@@ -8,6 +9,7 @@ class Rigidbody2D{
 		glm::vec2* m_sigmaForce;
 		glm::vec2* m_velocity;
 		glm::vec2* m_acceleration;
+		glm::vec2* m_accelerationLastFrame;
 		float m_damping; //0 to stop, 1 to never, 0.995 ok
 		float m_mass;
 
@@ -15,6 +17,8 @@ class Rigidbody2D{
 		float m_orientation; // radians
 		float m_angularVelocity;
 		float m_torque;
+
+		GPF_Type GPF_Rigidbody;
 	
 	public:
 		Rigidbody2D();
@@ -25,6 +29,10 @@ class Rigidbody2D{
 		void addForce(float fx,float fy);
 		void addForce(glm::vec2 force);
 
+		void addGPF(GPF_Type flag);
+		void removeGPF(GPF_Type flag);
+		bool checkGPF(GPF_Type flag);
+
 		void zeroForce();
 		
 		void setForce(float fx,float fy);
@@ -34,6 +42,7 @@ class Rigidbody2D{
 		void setAngularVelocity(float vel);
 		void setTorque(float tor);
 		void setAcceleration(float ax, float ay);
+		void setAccelerationLastFrame(float ax, float ay);
 		void setVelocity(float vx, float vy);
 		void setVelocity(glm::vec2 vel);
 
@@ -46,6 +55,7 @@ class Rigidbody2D{
 
 		inline glm::vec2* getVelocity()  {return m_velocity;}
 		inline glm::vec2* getAcceleration()  {return m_acceleration;}
+		inline glm::vec2* getAccelerationLastFrame() {return m_accelerationLastFrame;}
 		inline glm::vec2* getSigmaForce()  {return m_sigmaForce;}
 
 		void getVelocity(glm::vec2& vel);
