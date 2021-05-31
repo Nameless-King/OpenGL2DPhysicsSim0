@@ -67,7 +67,7 @@ void Scene::update(GWindow* window){
 }
 
 void Scene::generateContacts(){
-
+    m_collisionResolver->resetRegistry();
     ObjectRegistration* hittee = m_firstObject;
     while (hittee) {
         ObjectRegistration* hitter = hittee->next;
@@ -77,9 +77,6 @@ void Scene::generateContacts(){
                
                 if (Collision::isColliding(hittee->object->getBound(), hitter->object->getBound())) {
                         CollisionData generatedCol = Collision::calculateCollision(hittee->object, hitter->object);
-
-                        
-
 
                         Collision::resolve(ImGui::GetIO().DeltaTime, &generatedCol);
 

@@ -26,7 +26,7 @@ void ForceGravity::updateForce(Object* obj,float dt){
 			break;
 		case GravityType::Point:
 			{
-			std::cout << m_point.x << " " << m_point.y << std::endl;
+			//std::cout << m_point.x << " " << m_point.y << std::endl;
 			glm::vec2 direction = glm::vec2(0.0f) - obj->getPositionXY();
 			direction = glm::normalize(direction) * m_magnitude;
 			obj->getRigidbody2D()->addForce(direction);
