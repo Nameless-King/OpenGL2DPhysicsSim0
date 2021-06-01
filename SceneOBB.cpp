@@ -4,7 +4,7 @@ SceneOBB::SceneOBB() :
     Scene("SceneOBB"),
     m_shader(NULL),
     m_texture(NULL),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f, Physics2D::G * 0.0f))),
+    m_forceGravity(ForceGravity(glm::vec2(0.0f, Physics2D::G * -1.0f))),
     m_maxContacts(0),
     m_player(NULL),
     m_test(NULL) {
@@ -15,7 +15,7 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture) :
     m_shader(shader),
     m_texture(texture),
     m_maxContacts(0),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f, Physics2D::G * 0.0f))){
+    m_forceGravity(ForceGravity(glm::vec2(0.0f, Physics2D::G * -1.0f))){
 
     Object* player = new Object(
         glm::vec3(0.0f, 10.0f, 0.0f),
@@ -78,6 +78,7 @@ void SceneOBB::renderGUI() {
     ImGui::Begin(getSceneTitle().c_str());
     ImGui::Text("Number of collision: %d", m_numCollisions);
     ImGui::Text("Number of objects: %d", m_numObjects);
+    ImGui::Checkbox("Use Gravity",&m_useGravity);
     ImGui::End();
 }
 
@@ -119,7 +120,9 @@ void SceneOBB::runPhysics(float dt) {
     //force generators
     ObjectRegistration* currentRegister = m_firstObject;
     while (currentRegister) {
-        m_forceGravity.updateForce(currentRegister->object, ImGui::GetIO().DeltaTime);
+        if(m_useGravity){
+            m_forceGravity.updateForce(currentRegister->object, ImGui::GetIO().DeltaTime);
+        }
         currentRegister = currentRegister->next;
     }
 

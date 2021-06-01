@@ -23,6 +23,7 @@ class SceneTest : public Scene{
     private:
         Shader* m_shader;
         Texture* m_texture;
+        Texture* m_texture1;
         Object* m_player;
 
         unsigned int m_maxContacts;
@@ -31,7 +32,7 @@ class SceneTest : public Scene{
 
     public:
         SceneTest();
-        SceneTest(Shader* shader, Texture* texture);
+        SceneTest(Shader* shader, Texture* texture, Texture* texture1);
         ~SceneTest();
 
         void render(GWindow* window);

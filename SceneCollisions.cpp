@@ -32,7 +32,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture):
 
     const int winWidth = 800;
     const int winHeight = 600;
-    const int numBalls = 1000;
+    const int numBalls = 100;
     for(int i = 0;i<numBalls;i++){
         int randX = -(winWidth/2) + (std::rand() % (winWidth + 1));
         int randY = -(winHeight/2) + (std::rand() % (winHeight + 1));
@@ -48,8 +48,8 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture):
         addObject(temp);
     }
 
-    
-
+    m_forceGravity.setGravityType(GravityType::Point);
+    m_forceGravity.setPoint(glm::vec2(0.0f,0.0f),10.0f);
 
 }
 
@@ -161,12 +161,13 @@ void SceneCollisions::checkBounds(){
 void SceneCollisions::runPhysics(float dt, GWindow* window){
     ObjectRegistration* currentRegistry = m_firstObject;
     while(currentRegistry){
-        if(currentRegistry->object != m_player && m_useGravity){
-            Physics2D::gravitate(glm::vec2(0.0f,0.0f),100.0f,currentRegistry->object);
+        if(m_useGravity){
+            m_forceGravity.updateForce(currentRegistry->object,dt);
+            //Physics2D::gravitate(glm::vec2(0.0f,0.0f),100.0f,currentRegistry->object);
         }
         currentRegistry = currentRegistry->next;
     }
-    
+
     integrate(ImGui::GetIO().DeltaTime);
 
     generateContacts();

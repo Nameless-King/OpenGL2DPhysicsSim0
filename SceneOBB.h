@@ -28,6 +28,7 @@ private:
 
     unsigned int m_maxContacts;
     ForceGravity m_forceGravity;
+    bool m_useGravity;
 
 public:
     SceneOBB();

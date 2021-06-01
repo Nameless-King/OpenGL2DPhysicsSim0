@@ -4,17 +4,19 @@ SceneTest::SceneTest():
     Scene("SceneTest"),
     m_shader(NULL),
     m_texture(NULL),
+    m_texture1(NULL),
     m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 1.0f))),
-    m_playerSpeed(100.0f){
+    m_playerSpeed(10.0f){
     }
 
-SceneTest::SceneTest(Shader* shader, Texture* texture):
+SceneTest::SceneTest(Shader* shader, Texture* texture, Texture* texture1):
     Scene("SceneTest"),
     m_shader(shader),
     m_texture(texture),
+    m_texture1(texture1),
     m_maxContacts(0),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * -10.0f))),
-    m_playerSpeed(100.0f){
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * -1.0f))),
+    m_playerSpeed(10.0f){
 
         Object* player = new Object(
             glm::vec3(0.0f,10.0f,0.0f),
@@ -44,6 +46,7 @@ SceneTest::~SceneTest(){
 }
 
 void SceneTest::render(GWindow* window){
+    Texture* currentTexture;
     Renderer::bind();
     m_shader->use();
     m_texture->bind();
@@ -52,17 +55,40 @@ void SceneTest::render(GWindow* window){
 
     ObjectRegistration* currentRegistry = m_firstObject;
     while(currentRegistry){
+        if(currentRegistry->object->getBound()->getBoundingType() == BoundingType::Circle){
+            currentTexture = m_texture1;
+            
+        }else{
+            currentTexture = m_texture;
+        }
+        currentTexture->bind();
         m_shader->setUniformMat4f("u_model",currentRegistry->object->getModelMatrix());
         Renderer::renderObject();
+        currentTexture->unbind();        
+
         currentRegistry = currentRegistry->next;
     }
     m_texture->unbind();
     Renderer::unbind();
 }
 
+
 void SceneTest::update(GWindow* window){
-    startFrame();
-    runPhysics(ImGui::GetIO().DeltaTime);
+    Scene::update(window);
+    
+    /*
+        The accumulator allows consistent physics across varied computing speeds
+    */
+    long long int currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    m_accumulatedTime += currentTime - window->getStartFrameTime();
+    window->setStartFrameTime(currentTime);
+    float dt_current = ImGui::GetIO().DeltaTime;
+    while(m_accumulatedTime > dt_current){
+        runPhysics(ImGui::GetIO().DeltaTime);
+        m_accumulatedTime -= dt_current;
+    }
+    
+    
     input(window);
 }
 
@@ -71,7 +97,7 @@ void SceneTest::renderGUI(){
     ImGui::Text("Number of collision: %d",m_numCollisions);
     ImGui::Text("Number of objects: %d",m_numObjects);
     int playerSpeed = (int)m_playerSpeed;
-    if(ImGui::SliderInt("Player Speed",&playerSpeed,1,200)){
+    if(ImGui::SliderInt("Player Speed",&playerSpeed,1,100)){
 		m_playerSpeed = (float)playerSpeed;
 	}
     ImGui::End();
@@ -121,11 +147,27 @@ void SceneTest::input(GWindow* window){
             glm::vec3(0.0f,0.0f,0.0f),
             glm::vec3(1.0f,1.0f,1.0f)
         );
-        newObject->createBound(BoundingType::AxisAligned);
+        newObject->createBound(BoundingType::Circle);
         newObject->addRigidbody2D(new Rigidbody2D(1.0f));
 
         addObject(newObject);
 
+    }
+
+    if(GInput::isKeyPressed(GLFW_KEY_C)){
+        glm::vec2 mousePos = GInput::getMouseXY();
+
+        window->projectCoords(&mousePos);
+
+        Object* newObject = new Object(
+            glm::vec3(mousePos.x,mousePos.y,0.0f),
+            glm::vec3(0.0f,0.0f,0.0f),
+            glm::vec3(1.0f,1.0f,1.0f)
+        );
+        newObject->createBound(BoundingType::Circle);
+        newObject->addRigidbody2D(new Rigidbody2D(-1.0f));
+        
+        addObject(newObject);
     }
 }
 
@@ -141,5 +183,6 @@ void SceneTest::runPhysics(float dt){
    
     generateContacts();
     //m_collisionResolver->resolveContacts(ImGui::GetIO().DeltaTime);
+
 }
 
