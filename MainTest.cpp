@@ -39,8 +39,7 @@ int main(){
     gameWindow.setFramebufferSizeCallback(framebuffer_size_callback);
     gameWindow.setClearColor(glm::vec4(0.0f,0.0f,0.0f,1.0f));
 
-    if(glewInit() != GLEW_OK){
-        std::cout << "Error glewInit" << std::endl;
+    if(!Renderer::init()){
         return EXIT_FAILURE;
     }
 
@@ -61,20 +60,19 @@ int main(){
     Texture textureCircle("./textures/circle.png");
     Texture textureRectangle("./textures/rectangle.png");
 
-    Renderer::init();
 
     GInput::setContext(gameWindow.getWindow());
 
     SceneCollisions scene0(&shader, &textureCircle);
-    SceneSpring scene1(&shader, &textureCircle);
-    SceneForces scene2(&shader, &textureWhite);
-    SceneTest scene3(&shader, &textureWhite);
-    SceneOBB scene4(&shader, &textureWhite);
+    //SceneSpring scene1(&shader, &textureCircle);
+    //SceneForces scene2(&shader, &textureRectangle);
+    SceneTest scene3(&shader, &textureRectangle, &textureCircle);
+    SceneOBB scene4(&shader, &textureRectangle);
     SceneQuadTreeDemo scene5;
 
     SceneManager::registerScene(&scene0);
-    SceneManager::registerScene(&scene1);
-    SceneManager::registerScene(&scene2);
+    //SceneManager::registerScene(&scene1);
+    //SceneManager::registerScene(&scene2);
     SceneManager::registerScene(&scene3);
     SceneManager::registerScene(&scene4);
     SceneManager::registerScene(&scene5);
@@ -84,9 +82,10 @@ int main(){
 
     SceneManager::setCurrentScene(-1);
 
-    std::cout << "Initial Error Code: " << glGetError() << std::endl;
+    gameWindow.setStartFrameTime(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
 
-    while(!gameWindow.windowShouldClose()){
+    std::cout << "Initial Error Code: " << glGetError() << std::endl;
+    while(gameWindow.isRunning()){
         /*
                                  .i;;;;i.                                  
                                iYcviii;vXY:                                
@@ -128,7 +127,6 @@ int main(){
 
         //start of frame
         GInput::update();
-        gameWindow.pollEvents();
         input();
         cameraInput(&gameWindow);
 
@@ -186,10 +184,8 @@ void cameraInput(GWindow* window){
     float camSpeed = 2.0f;
     float zoomSpeed = 0.1f;
 
-    glm::vec2 camPos = window->getCamera()->getCameraPos();
-
-    float px = camPos.x;
-    float py = camPos.y;
+    float px = 0.0f;
+    float py = 0.0f;
     float dz = window->getCamera()->getCameraZoom();
 
     if(GInput::isKeyDown(GLFW_KEY_W)){
@@ -219,6 +215,6 @@ void cameraInput(GWindow* window){
         }
     }
 
-    window->getCamera()->setCameraPos(px,py);
+    window->getCamera()->addCameraPosOffset(px,py);
     window->getCamera()->setCameraZoom(dz);
 }
