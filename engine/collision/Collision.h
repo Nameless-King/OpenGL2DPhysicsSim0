@@ -11,7 +11,7 @@ struct CollisionData {
 	CollisionData() :
 		restitution(0.0f),
 		collisionNormal(glm::vec2(0.0f, 0.0f)),
-		penetrationDepth(glm::vec2(0.0f, 0.0f)),
+		penetrationDepth(0.0f),
 		distance(glm::vec2(0.0f, 0.0f)) {
 		object[0] = NULL;
 		object[1] = NULL;
@@ -20,7 +20,7 @@ struct CollisionData {
 	CollisionData(const CollisionData& data) :
 		restitution(data.restitution),
 		collisionNormal(glm::vec2(data.collisionNormal)),
-		penetrationDepth(glm::vec2(data.penetrationDepth)),
+		penetrationDepth(data.penetrationDepth),
 		distance(glm::vec2(data.distance)) {
 		object[0] = data.object[0];
 		object[1] = data.object[1];
@@ -29,7 +29,8 @@ struct CollisionData {
 	Object* object[2];
 	float restitution;
 	glm::vec2 collisionNormal;
-	glm::vec2 penetrationDepth;
+	//glm::vec2 penetrationDepth;
+	float penetrationDepth;
 	glm::vec2 distance;
 };
 

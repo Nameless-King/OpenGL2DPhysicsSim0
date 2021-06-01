@@ -80,14 +80,14 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 		
 		d = glm::length(normal);
 
-		float tmpFloat = std::sqrt(std::pow(r-d,2.0f) / 2);
+		//float tmpFloat = std::sqrt(std::pow(r-d,2.0f) / 2);
 
 		if(inside){
 			data.collisionNormal = normal / d;
-			data.penetrationDepth = glm::vec2(tmpFloat,tmpFloat);
+			data.penetrationDepth = r-d;// glm::vec2(tmpFloat,tmpFloat);
 		}else{
 			data.collisionNormal = normal / d;
-			data.penetrationDepth = glm::vec2(tmpFloat,tmpFloat);
+			data.penetrationDepth = r-d;//glm::vec2(tmpFloat,tmpFloat);
 		}
 
 		Collision::calculateAABBNormals(&data);
@@ -115,7 +115,9 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 			data.distance.y = fabs(data.distance.y);
 
 			glm::vec2 joinedExtents = *(a->getBound()->getHalfExtents()) + *(b->getBound()->getHalfExtents());
-			data.penetrationDepth = joinedExtents - data.distance;
+
+			glm::vec2 penetrationVector = joinedExtents - data.distance;
+			data.penetrationDepth = ((penetrationVector.x > penetrationVector.y) ? penetrationVector.y : penetrationVector.x);
 
 
 			data.object[0] = a;
@@ -141,10 +143,12 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 				data.collisionNormal = data.distance / glm::length(data.distance);
 			}
 
+			//data.collisionNormal = -data.distance / glm::length(data.distance);
+
 			data.distance.x = fabs(data.distance.x);
 			data.distance.y = fabs(data.distance.y);
 
-			data.penetrationDepth = joinedExtents - data.distance;
+			data.penetrationDepth = glm::length(joinedExtents - data.distance);
 			
 			data.object[0] = a;
 			data.object[1] = b;
@@ -166,11 +170,14 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 				data.object[1] = NULL;
 				return data;
 			}
-			data.penetrationDepth = Collision::EPATest(verts);
+
+			glm::vec2 penetrationVector = Collision::EPATest(verts);
+			data.penetrationDepth = -glm::length(penetrationVector);
+			//data.penetrationDepth = ((penetrationVector.x > penetrationVector.y) ? penetrationVector.y : penetrationVector.x);
 
 			//prevents extreme case when point to face collision
 			//i shouldn't use == since float but only works because of it
-			if(data.penetrationDepth.x < 0.00001f && data.penetrationDepth.y == data.penetrationDepth.x){
+			if(penetrationVector.x < 0.00001f && penetrationVector.y == penetrationVector.x){
 				data.object[0] = NULL;
 				data.object[1] = NULL;
 				return data;
@@ -181,7 +188,7 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 			//data.distance.y = fabs(data.distance.y);
 
 
-			data.collisionNormal = glm::normalize(data.penetrationDepth);
+			data.collisionNormal = glm::normalize(penetrationVector);
 
 			data.object[0] = a;
 			data.object[1] = b;
@@ -339,7 +346,7 @@ void Collision::positionalCorrection(CollisionData* col) {
 
 
 	//glm::vec2 correction = (std::max(Collision::getSmallestComponent(&col->penetrationDepth) - slope, 0.0f) / totalInverseMass) * percent * col->collisionNormal;
-	glm::vec2 correction = (std::max(glm::length(col->penetrationDepth) - slope,0.0f) / totalInverseMass) * percent * col->collisionNormal;
+	glm::vec2 correction = (std::max(col->penetrationDepth - slope,0.0f) / totalInverseMass) * percent * col->collisionNormal;
 
 	col->object[0]->setPos(col->object[0]->getPositionXY() + col->object[0]->getRigidbody2D()->getInverseMass() * correction);
 	if (col->object[1]) {
@@ -356,21 +363,19 @@ void Collision::resolveInterpenetration(float dt, CollisionData* col) {
 	}
 
 
-	float penetration = glm::length(col->penetrationDepth);
+	float penetration = col->penetrationDepth;
 	//Below is 'false &&' since if block of code interferes with aabb vs circle
 	if (false && col->object[0]->getBound()->getBoundingType() == BoundingType::Circle) {
 		penetration =  col->object[0]->getBound()->getHalfExtents()->x * 2.0f - glm::length(col->distance);
 	}
 	//below line was used before line below it (idk why but the line below it works better with oriented bounding boxes
 	glm::vec2 movePerMass = col->collisionNormal * (-penetration / totalInverseMass);
-	if(col->object[0]->getBound()->getBoundingType() == BoundingType::AxisAligned){
-		movePerMass = col->collisionNormal * (-getSmallestComponent(&col->penetrationDepth) / totalInverseMass);
-	}else if(col->object[0]->getBound()->getBoundingType() == BoundingType::Circle){
-		movePerMass = col->collisionNormal * (-glm::length(col->penetrationDepth) / totalInverseMass);
+	if(col->object[0]->getBound()->getBoundingType() == BoundingType::AxisAligned || col->object[0]->getBound()->getBoundingType() == BoundingType::Circle){
+		movePerMass = col->collisionNormal * (-col->penetrationDepth / totalInverseMass);
 	}else if(col->object[0]->getBound()->getBoundingType() == BoundingType::Oriented){// || col->object[0]->getBound()->getBoundingType() == BoundingType::Circle){
 		movePerMass = col->collisionNormal * (penetration / totalInverseMass);
 	}
-
+	movePerMass = col->collisionNormal * (-col->penetrationDepth / totalInverseMass);
 
 	//affects the magnitude at which the interpenetration resolving affects the position
 	//of the objects
