@@ -8,7 +8,6 @@ float Collision::calculateClosingVelocity(CollisionData* col) {
 	return glm::dot(relativeVelocity, col->collisionNormal);
 }
 
-//a and b must be of same bounding type for method
 CollisionData Collision::calculateCollision(Object* a, Object* b) {
 	CollisionData data;
 
@@ -80,23 +79,16 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 		
 		d = glm::length(normal);
 
-		//float tmpFloat = std::sqrt(std::pow(r-d,2.0f) / 2);
 
 		if(inside){
 			data.collisionNormal = normal / d;
-			data.penetrationDepth = r-d;// glm::vec2(tmpFloat,tmpFloat);
+			data.penetrationDepth = r-d;
 		}else{
 			data.collisionNormal = normal / d;
-			data.penetrationDepth = r-d;//glm::vec2(tmpFloat,tmpFloat);
+			data.penetrationDepth = r-d;
 		}
 
 		Collision::calculateAABBNormals(&data);
-
-		// std::cout << "----COLLISION DATA----" << std::endl;
-		// std::cout << data.object[0] << " " << data.object[1] << std::endl;
-		// std::cout << "Distance: " << data.distance.x << " " << data.distance.y << std::endl;
-		// std::cout << "Normal: " << data.collisionNormal.x << " " << data.collisionNormal.y << std::endl;
-		// std::cout << "Penetration: " << glm::length(data.penetrationDepth) << std::endl;
 		
 		data.object[0] = a;
 		data.object[1] = b;
@@ -109,8 +101,6 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 		{
 			data.distance = *(b->getBound()->getCenter()) - *(a->getBound()->getCenter());
 
-			//TODO : is this fucking up everything
-			//TODO : but is it though?
 			data.distance.x = fabs(data.distance.x);
 			data.distance.y = fabs(data.distance.y);
 
@@ -148,7 +138,7 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 			data.distance.x = fabs(data.distance.x);
 			data.distance.y = fabs(data.distance.y);
 
-			data.penetrationDepth = glm::length(joinedExtents - data.distance);
+			data.penetrationDepth = a->getBound()->getHalfExtents()->x * 2.0f - glm::length(data.distance);
 			
 			data.object[0] = a;
 			data.object[1] = b;
@@ -364,18 +354,20 @@ void Collision::resolveInterpenetration(float dt, CollisionData* col) {
 
 
 	float penetration = col->penetrationDepth;
+	//[7-20-21 16:34] 'if(false && ...' doesn't seem to impact behavior
 	//Below is 'false &&' since if block of code interferes with aabb vs circle
-	if (false && col->object[0]->getBound()->getBoundingType() == BoundingType::Circle) {
+	if (col->object[0]->getBound()->getBoundingType() == BoundingType::Circle && (col->object[1] && col->object[1]->getBound()->getBoundingType() == BoundingType::Circle)) {
 		penetration =  col->object[0]->getBound()->getHalfExtents()->x * 2.0f - glm::length(col->distance);
 	}
-	//below line was used before line below it (idk why but the line below it works better with oriented bounding boxes
+	
+	
 	glm::vec2 movePerMass = col->collisionNormal * (-penetration / totalInverseMass);
-	if(col->object[0]->getBound()->getBoundingType() == BoundingType::AxisAligned || col->object[0]->getBound()->getBoundingType() == BoundingType::Circle){
-		movePerMass = col->collisionNormal * (-col->penetrationDepth / totalInverseMass);
-	}else if(col->object[0]->getBound()->getBoundingType() == BoundingType::Oriented){// || col->object[0]->getBound()->getBoundingType() == BoundingType::Circle){
-		movePerMass = col->collisionNormal * (penetration / totalInverseMass);
-	}
-	movePerMass = col->collisionNormal * (-col->penetrationDepth / totalInverseMass);
+	// if(col->object[0]->getBound()->getBoundingType() == BoundingType::AxisAligned || col->object[0]->getBound()->getBoundingType() == BoundingType::Circle){
+	// 	movePerMass = col->collisionNormal * (-col->penetrationDepth / totalInverseMass);
+	// }else if(col->object[0]->getBound()->getBoundingType() == BoundingType::Oriented){// || col->object[0]->getBound()->getBoundingType() == BoundingType::Circle){
+	// 	movePerMass = col->collisionNormal * (penetration / totalInverseMass);
+	// }
+	//movePerMass = col->collisionNormal * (-penetration / totalInverseMass);
 
 	//affects the magnitude at which the interpenetration resolving affects the position
 	//of the objects
