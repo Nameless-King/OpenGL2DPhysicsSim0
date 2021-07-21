@@ -5,7 +5,7 @@ SceneTest::SceneTest():
     m_shader(NULL),
     m_texture(NULL),
     m_texture1(NULL),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * 1.0f))),
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * -1.0f))),
     m_playerSpeed(10.0f){
     }
 
@@ -15,7 +15,7 @@ SceneTest::SceneTest(Shader* shader, Texture* texture, Texture* texture1):
     m_texture(texture),
     m_texture1(texture1),
     m_maxContacts(0),
-    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * -1.0f))),
+    m_forceGravity(ForceGravity(glm::vec2(0.0f,Physics2D::G * -0.1f))),
     m_playerSpeed(10.0f){
 
         Object* player = new Object(
@@ -147,7 +147,7 @@ void SceneTest::input(GWindow* window){
             glm::vec3(0.0f,0.0f,0.0f),
             glm::vec3(1.0f,1.0f,1.0f)
         );
-        newObject->createBound(BoundingType::Circle);
+        newObject->createBound(BoundingType::AxisAligned);
         newObject->addRigidbody2D(new Rigidbody2D(1.0f));
 
         addObject(newObject);
@@ -165,8 +165,25 @@ void SceneTest::input(GWindow* window){
             glm::vec3(1.0f,1.0f,1.0f)
         );
         newObject->createBound(BoundingType::Circle);
-        newObject->addRigidbody2D(new Rigidbody2D(-1.0f));
+        newObject->addRigidbody2D(new Rigidbody2D(1.0f));
         
+        addObject(newObject);
+    }
+
+
+    if(GInput::isKeyPressed(GLFW_KEY_R)){
+        glm::vec2 mousePos = GInput::getMouseXY();
+
+        window->projectCoords(&mousePos);
+
+        Object* newObject = new Object(
+            glm::vec3(mousePos.x, mousePos.y,0.0f),
+            glm::vec3(0.0f,0.0f,0.0f),
+            glm::vec3(1.0f,1.0f,1.0f)
+        );
+        newObject->createBound(BoundingType::Circle);
+        newObject->addRigidbody2D(new Rigidbody2D(-1.0f));
+
         addObject(newObject);
     }
 }

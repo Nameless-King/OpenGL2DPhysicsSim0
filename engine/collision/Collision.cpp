@@ -15,7 +15,10 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 	if(a->getBound()->getBoundingType() == BoundingType::AxisAligned && b->getBound()->getBoundingType() == BoundingType::Circle || a->getBound()->getBoundingType() == BoundingType::Circle && b->getBound()->getBoundingType() == BoundingType::AxisAligned){
 		Object* circleObject;
 		Object* aabbObject;
-		if(a->getBound()->getBoundingType() == BoundingType::AxisAligned){
+
+		//[7-21-21 16:39]: in the below if-else 'if(true || a->', the if block works best
+		//	the else block causes finite mass circles to glitch into finite mass squares
+		if(true || a->getBound()->getBoundingType() == BoundingType::AxisAligned){
 			aabbObject = a;
 			circleObject = b;
 						
@@ -93,6 +96,10 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 		data.object[0] = a;
 		data.object[1] = b;
 
+		if(a->getBound()->getBoundingType() == BoundingType::Circle && b->getBound()->getBoundingType() == BoundingType::AxisAligned){
+			std::cout << "Circle vs Axis Aligned" << std::endl;
+		}
+
 		return data;
 	}
 
@@ -125,15 +132,12 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 			data.distance = *(b->getBound()->getCenter()) - *(a->getBound()->getCenter());
 			
 
-			//something with needing different normals with infinite and finite mass 
-			//circles (this doesn't make sense I just want it to work)
 			if(!a->getRigidbody2D()->hasInfiniteMass() && !b->getRigidbody2D()->hasInfiniteMass()){
 			data.collisionNormal = -data.distance / (glm::length(data.distance));
 			} else{
 				data.collisionNormal = data.distance / glm::length(data.distance);
 			}
 
-			//data.collisionNormal = -data.distance / glm::length(data.distance);
 
 			data.distance.x = fabs(data.distance.x);
 			data.distance.y = fabs(data.distance.y);
@@ -174,9 +178,6 @@ CollisionData Collision::calculateCollision(Object* a, Object* b) {
 			}
 
 			data.distance = *(b->getBound()->getCenter()) - *(a->getBound()->getCenter());
-			//data.distance.x = fabs(data.distance.x);
-			//data.distance.y = fabs(data.distance.y);
-
 
 			data.collisionNormal = glm::normalize(penetrationVector);
 
