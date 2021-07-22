@@ -95,9 +95,6 @@ void Object::rotateDegrees(float degrees) {
 	m_transformationChanged = true;
 	//m_bound holds pointer to m_rotation
 	m_rotation += degrees;
-	if (m_rigidbody) {
-		m_rigidbody->setOrientation(m_rigidbody->getOrientation() + degrees);
-	}
 }
 
 void Object::setPos(float xPos, float yPos, float zPos) {
@@ -129,8 +126,8 @@ void Object::setScl(float scl){
 	m_scale = glm::vec3(scl,scl,scl);
 }
 
-void Object::addRigidbody2D(Rigidbody2D* rb) {
-	m_rigidbody = rb;
+void Object::addRigidbody2D(float mass) {
+	m_rigidbody = new Rigidbody2D(&m_rotation,mass);
 }
 
 void Object::createBound(BoundingType type) {

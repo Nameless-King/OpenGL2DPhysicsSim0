@@ -19,7 +19,7 @@ SceneTemplate::SceneTemplate(Shader* shader, Texture* texture):
 	);
 	
 	m_player->createBound(BoundingType::AxisAligned);
-	m_player->addRigidbody2D(new Rigidbody2D(5.0f));
+	m_player->addRigidbody2D(5.0f);
 
 	addObject(m_player);
 }

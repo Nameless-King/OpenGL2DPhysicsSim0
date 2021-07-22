@@ -24,7 +24,7 @@ SceneForces::SceneForces(Shader* shader, Texture* texture):
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
 	m_player->createBound(BoundingType::AxisAligned);
-	m_player->addRigidbody2D(new Rigidbody2D(5.0f));
+	m_player->addRigidbody2D(5.0f);
 	addObject(m_player);
 	
 }

@@ -29,7 +29,7 @@ SceneSpring::SceneSpring(Shader* shader, Texture* texture):
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
 	m_staticObj->createBound(BoundingType::Circle);
-	m_staticObj->addRigidbody2D(new Rigidbody2D(1.0f));
+	m_staticObj->addRigidbody2D(1.0f);
 	
 	
 	m_hangingObj = new Object(
@@ -38,7 +38,7 @@ SceneSpring::SceneSpring(Shader* shader, Texture* texture):
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
 	m_hangingObj->createBound(BoundingType::Circle);
-	m_hangingObj->addRigidbody2D(new Rigidbody2D(1.0f));
+	m_hangingObj->addRigidbody2D(1.0f);
 
 	addObject(m_staticObj);
 	addObject(m_hangingObj);

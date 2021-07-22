@@ -7,7 +7,7 @@ Rigidbody2D::Rigidbody2D():
 	m_velocity(new glm::vec2(0.0f,0.0f)),
 	m_acceleration(new glm::vec2(0.0f,0.0f)),
 	m_accelerationLastFrame(new glm::vec2(0.0f,0.0f)),
-	m_orientation(0.0f),
+	m_rotation(NULL),
 	m_angularVelocity(0.0f),
 	m_torque(0.0f)
 {}
@@ -19,19 +19,19 @@ Rigidbody2D::Rigidbody2D(const Rigidbody2D& rb):
 	m_velocity(new glm::vec2(*rb.m_velocity)),
 	m_acceleration(new glm::vec2(*rb.m_acceleration)),
 	m_accelerationLastFrame(new glm::vec2(*rb.m_accelerationLastFrame)),
-	m_orientation(0.0f),
-	m_angularVelocity(0.0f),
-	m_torque(0.0f)
+	m_rotation(rb.m_rotation),
+	m_angularVelocity(rb.m_angularVelocity),
+	m_torque(rb.m_torque)
 {}
 
-Rigidbody2D::Rigidbody2D(float mass):
+Rigidbody2D::Rigidbody2D(float *rotation, float mass):
 	m_mass(mass),
 	m_damping(0.0f),
 	m_sigmaForce(new glm::vec2(0.0f,0.0f)),
 	m_velocity(new glm::vec2(0.0f,0.0f)),
 	m_acceleration(new glm::vec2(0.0f,0.0f)),
 	m_accelerationLastFrame(new glm::vec2(0.0f,0.0f)),
-	m_orientation(0.0f),
+	m_rotation(rotation),
 	m_angularVelocity(0.0f),
 	m_torque(0.0f)
 {}
@@ -68,10 +68,6 @@ void Rigidbody2D::setMass(float mass){
 
 void Rigidbody2D::setDamping(float damping){
 	m_damping = damping;
-}
-
-void Rigidbody2D::setOrientation(float rot){
-	m_orientation = rot;
 }
 
 void Rigidbody2D::setAngularVelocity(float vel){

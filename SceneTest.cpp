@@ -25,7 +25,7 @@ SceneTest::SceneTest(Shader* shader, Texture* texture, Texture* texture1):
         );
         //player->addVertices(vertices);
         player->createBound(BoundingType::AxisAligned);
-        player->addRigidbody2D(new Rigidbody2D(1.0f));
+        player->addRigidbody2D(1.0f);
 
 
         addObject(player);
@@ -37,7 +37,7 @@ SceneTest::SceneTest(Shader* shader, Texture* texture, Texture* texture1):
             glm::vec3(30.0f,1.0f,1.0f)
         );
         floor->createBound(BoundingType::AxisAligned);
-        floor->addRigidbody2D(new Rigidbody2D(-1.0f));
+        floor->addRigidbody2D(-1.0f);
 
         addObject(floor);
     }
@@ -131,7 +131,7 @@ void SceneTest::input(GWindow* window){
             glm::vec3(1.0f,1.0f,1.0f)
         );
         newObject->createBound(BoundingType::AxisAligned);
-        newObject->addRigidbody2D(new Rigidbody2D(-1.0f));
+        newObject->addRigidbody2D(-1.0f);
 
         addObject(newObject);
     }
@@ -148,7 +148,7 @@ void SceneTest::input(GWindow* window){
             glm::vec3(1.0f,1.0f,1.0f)
         );
         newObject->createBound(BoundingType::AxisAligned);
-        newObject->addRigidbody2D(new Rigidbody2D(1.0f));
+        newObject->addRigidbody2D(1.0f);
 
         addObject(newObject);
 
@@ -165,7 +165,7 @@ void SceneTest::input(GWindow* window){
             glm::vec3(1.0f,1.0f,1.0f)
         );
         newObject->createBound(BoundingType::Circle);
-        newObject->addRigidbody2D(new Rigidbody2D(1.0f));
+        newObject->addRigidbody2D(1.0f);
         
         addObject(newObject);
     }
@@ -182,7 +182,7 @@ void SceneTest::input(GWindow* window){
             glm::vec3(1.0f,1.0f,1.0f)
         );
         newObject->createBound(BoundingType::Circle);
-        newObject->addRigidbody2D(new Rigidbody2D(-1.0f));
+        newObject->addRigidbody2D(-1.0f);
 
         addObject(newObject);
     }

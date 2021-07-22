@@ -26,7 +26,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture):
         glm::vec3(scale,scale,scale)
     );
     m_player->createBound(type);
-    m_player->addRigidbody2D(new Rigidbody2D(5.0f));
+    m_player->addRigidbody2D(5.0f);
 
     addObject(m_player);
 
@@ -43,7 +43,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture):
             glm::vec3(scale,scale,scale)
         );
         temp->createBound(type);
-        temp->addRigidbody2D(new Rigidbody2D(1.0f));
+        temp->addRigidbody2D(1.0f);
 
         addObject(temp);
     }

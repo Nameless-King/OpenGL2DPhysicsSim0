@@ -43,7 +43,7 @@ public:
 
 	void setScl(float scl);
 
-	void addRigidbody2D(Rigidbody2D* rb);
+	void addRigidbody2D(float mass);
 	void createBound(BoundingType type);
 
 

@@ -14,7 +14,7 @@ class Rigidbody2D{
 		float m_mass;
 
 		//angular components
-		float m_orientation; // angle
+		float* m_rotation; // angle
 		float m_angularVelocity;
 		float m_torque;
 
@@ -23,7 +23,7 @@ class Rigidbody2D{
 	public:
 		Rigidbody2D();
 		Rigidbody2D(const Rigidbody2D& rb);
-		Rigidbody2D(float mass);
+		Rigidbody2D(float* rotation, float mass);
 		~Rigidbody2D();
 
 		void addForce(float fx,float fy);
@@ -38,7 +38,6 @@ class Rigidbody2D{
 		void setForce(float fx,float fy);
 		void setMass(float mass);
 		void setDamping(float damping);
-		void setOrientation(float rot);
 		void setAngularVelocity(float vel);
 		void setTorque(float tor);
 		void setAcceleration(float ax, float ay);
@@ -49,7 +48,7 @@ class Rigidbody2D{
 		inline float getMass() {return m_mass;}
 		inline float getInverseMass() {return 1.0f/m_mass;}
 		inline float getDamping() { return m_damping;}
-		inline float getOrientation() {return m_orientation;}
+		inline float getRotation() {return *m_rotation;}
 		inline float getAngularVelocity() {return m_angularVelocity;}
 		inline float getTorque() {return m_torque;}
 
