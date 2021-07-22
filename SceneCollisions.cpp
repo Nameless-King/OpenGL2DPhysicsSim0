@@ -22,7 +22,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture):
 
     m_player = new Object(
         glm::vec3(0.0f,0.0f,0.0f),
-        glm::vec3(0.0f,0.0f,0.0f),
+        0.0f,
         glm::vec3(scale,scale,scale)
     );
     m_player->createBound(type);
@@ -39,7 +39,7 @@ SceneCollisions::SceneCollisions(Shader* shader, Texture* texture):
        
         Object* temp = new Object(
             glm::vec3(randX,randY,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
+            0.0f,
             glm::vec3(scale,scale,scale)
         );
         temp->createBound(type);

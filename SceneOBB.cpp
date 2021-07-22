@@ -19,7 +19,7 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture) :
 
     Object* player = new Object(
         glm::vec3(0.0f, 10.0f, 0.0f),
-        glm::vec3(0.0f, 0.0f, 0.0f),
+        0.0f,
         glm::vec3(1.0f, 1.0f, 1.0f)
     );
     player->createBound(BoundingType::Oriented);
@@ -29,7 +29,7 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture) :
 
     Object* testBlock0 = new Object(
         glm::vec3(0.0f, -10.0f, 0.0f),
-        glm::vec3(0.0f, 0.0f, 0.0f),
+        0.0f,
         glm::vec3(1.0f, 1.0f, 1.0f)
     );
     testBlock0->createBound(BoundingType::Oriented);
@@ -39,7 +39,7 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture) :
 
     Object* testBlock1 = new Object(
         glm::vec3(0.0f,30.0f,0.0f),
-        glm::vec3(0.0f,0.0f,0.0f),
+        0.0f,
         glm::vec3(1.0f,1.0f,1.0f)
     );
     testBlock1->createBound(BoundingType::Oriented);
@@ -48,7 +48,7 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture) :
 
     Object* testBlock2 = new Object(
         glm::vec3(0.0f,-50.0f,0.0f),
-        glm::vec3(0.0f,0.0f,0.0f),
+        0.0f,
         glm::vec3(2.0f,1.0f,1.0f)
     );
     testBlock2->createBound(BoundingType::Oriented);

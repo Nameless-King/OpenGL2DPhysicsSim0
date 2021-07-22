@@ -20,7 +20,7 @@ SceneTest::SceneTest(Shader* shader, Texture* texture, Texture* texture1):
 
         Object* player = new Object(
             glm::vec3(0.0f,10.0f,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
+            0.0f,
             glm::vec3(1.0f,1.0f,1.0f)
         );
         //player->addVertices(vertices);
@@ -33,7 +33,7 @@ SceneTest::SceneTest(Shader* shader, Texture* texture, Texture* texture1):
 
         Object* floor = new Object(
             glm::vec3(0.0f,0.0f,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
+            0.0f,
             glm::vec3(30.0f,1.0f,1.0f)
         );
         floor->createBound(BoundingType::AxisAligned);
@@ -127,7 +127,7 @@ void SceneTest::input(GWindow* window){
 
         Object* newObject = new Object(
             glm::vec3(mousePos.x,mousePos.y,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
+            0.0f,
             glm::vec3(1.0f,1.0f,1.0f)
         );
         newObject->createBound(BoundingType::AxisAligned);
@@ -144,7 +144,7 @@ void SceneTest::input(GWindow* window){
 
         Object* newObject = new Object(
             glm::vec3(mousePos.x,mousePos.y,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
+            0.0f,
             glm::vec3(1.0f,1.0f,1.0f)
         );
         newObject->createBound(BoundingType::AxisAligned);
@@ -161,7 +161,7 @@ void SceneTest::input(GWindow* window){
 
         Object* newObject = new Object(
             glm::vec3(mousePos.x,mousePos.y,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
+            0.0f,
             glm::vec3(1.0f,1.0f,1.0f)
         );
         newObject->createBound(BoundingType::Circle);
@@ -178,7 +178,7 @@ void SceneTest::input(GWindow* window){
 
         Object* newObject = new Object(
             glm::vec3(mousePos.x, mousePos.y,0.0f),
-            glm::vec3(0.0f,0.0f,0.0f),
+            0.0f,
             glm::vec3(1.0f,1.0f,1.0f)
         );
         newObject->createBound(BoundingType::Circle);

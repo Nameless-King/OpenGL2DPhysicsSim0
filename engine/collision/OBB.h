@@ -9,8 +9,8 @@ public:
 		Bound()
 	{}
 	
-	OBB(glm::vec3* center, glm::vec3* scale, const float* pvertices):
-		Bound(center,scale,pvertices,BoundingType::Oriented)
+	OBB(glm::vec3* center, float* rotation, glm::vec3* scale, const float* pvertices):
+		Bound(center,rotation,scale,pvertices,BoundingType::Oriented)
 	{}
 
 	OBB(const OBB& bound):

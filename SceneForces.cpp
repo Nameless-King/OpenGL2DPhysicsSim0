@@ -20,7 +20,7 @@ SceneForces::SceneForces(Shader* shader, Texture* texture):
 	
 	m_player = new Object(
 		glm::vec3(0.0f,0.0f,0.0f),
-		glm::vec3(0.0f,0.0f,0.0f),
+		0.0f,
 		glm::vec3(1.0f,1.0f,1.0f)
 	);
 	m_player->createBound(BoundingType::AxisAligned);

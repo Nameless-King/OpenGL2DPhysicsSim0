@@ -5,18 +5,18 @@ Bound::Bound():
 	m_halfExtents(NULL),
 	m_center(NULL),
 	m_scale(NULL),
-	m_rotation(0.0f),
+	m_rotation(nullptr),
 	m_localX(glm::vec2(1.0f,0.0f)),
 	m_localY(glm::vec2(0.0f,1.0f)),
 	m_furthestDistance(-1)
 {}
 
-Bound::Bound(glm::vec3* center, glm::vec3* scale, const float* pvertices, BoundingType type):
+Bound::Bound(glm::vec3* center, float* rotation, glm::vec3* scale, const float* pvertices, BoundingType type):
 	m_type(type),
 	m_center(center),
 	m_scale(scale),
 	m_halfExtents(EngineMath::calcHalfExtents(pvertices,scale)),
-	m_rotation(0.0f),
+	m_rotation(rotation),
 	m_localX(glm::vec2(1.0f,0.0f)),
 	m_localY(glm::vec2(0.0f,1.0f)),
 	m_furthestDistance(glm::length(*(m_halfExtents)))
@@ -64,6 +64,3 @@ void Bound::setHalfExtents(glm::vec2* halfExtents)  {
 	m_halfExtents = halfExtents;
 }
 
-void Bound::rotateDegrees(float offset){
-	m_rotation += offset;
-}
