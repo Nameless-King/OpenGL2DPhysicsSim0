@@ -27,24 +27,33 @@ SceneOBB::SceneOBB(Shader* shader, Texture* texture) :
     addObject(player);
     m_player = player;
 
-    Object* testBlock = new Object(
+    Object* testBlock0 = new Object(
         glm::vec3(0.0f, -10.0f, 0.0f),
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(1.0f, 1.0f, 1.0f)
     );
-    testBlock->createBound(BoundingType::Oriented);
-    testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
-    addObject(testBlock);
-    m_test = testBlock;
+    testBlock0->createBound(BoundingType::Oriented);
+    testBlock0->addRigidbody2D(new Rigidbody2D(-1.0f));
+    addObject(testBlock0);
+    m_test = testBlock0;
 
-    testBlock = new Object(
+    Object* testBlock1 = new Object(
+        glm::vec3(0.0f,30.0f,0.0f),
+        glm::vec3(0.0f,0.0f,0.0f),
+        glm::vec3(1.0f,1.0f,1.0f)
+    );
+    testBlock1->createBound(BoundingType::Oriented);
+    testBlock1->addRigidbody2D(new Rigidbody2D(1.0f));
+    addObject(testBlock1);
+
+    Object* testBlock2 = new Object(
         glm::vec3(0.0f,-50.0f,0.0f),
         glm::vec3(0.0f,0.0f,0.0f),
         glm::vec3(2.0f,1.0f,1.0f)
     );
-    testBlock->createBound(BoundingType::Oriented);
-    testBlock->addRigidbody2D(new Rigidbody2D(-1.0f));
-    addObject(testBlock);
+    testBlock2->createBound(BoundingType::Oriented);
+    testBlock2->addRigidbody2D(new Rigidbody2D(-1.0f));
+    addObject(testBlock2);
 
 }
 

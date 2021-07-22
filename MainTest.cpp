@@ -37,7 +37,7 @@ int main(){
     std::cout << "Program Start" << std::endl;
     
     gameWindow.setFramebufferSizeCallback(framebuffer_size_callback);
-    gameWindow.setClearColor(glm::vec4(0.0f,0.0f,0.0f,1.0f));
+    gameWindow.setClearColor(glm::vec4(0.0f,1.0f,0.0f,1.0f));
 
     if(!Renderer::init()){
         return EXIT_FAILURE;
