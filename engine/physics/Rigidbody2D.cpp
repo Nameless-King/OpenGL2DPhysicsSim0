@@ -2,36 +2,42 @@
 
 Rigidbody2D::Rigidbody2D():
 	m_mass(1.0f),
+	m_density(1.0f),
 	m_damping(0.0f),
 	m_sigmaForce(new glm::vec2(0.0f,0.0f)),
 	m_velocity(new glm::vec2(0.0f,0.0f)),
 	m_acceleration(new glm::vec2(0.0f,0.0f)),
 	m_accelerationLastFrame(new glm::vec2(0.0f,0.0f)),
 	m_rotation(NULL),
+	m_position(NULL),
 	m_angularVelocity(0.0f),
 	m_torque(0.0f)
 {}
 
 Rigidbody2D::Rigidbody2D(const Rigidbody2D& rb):
 	m_mass(rb.m_mass),
+	m_density(rb.m_density),
 	m_damping(rb.m_damping),
 	m_sigmaForce(new glm::vec2(*rb.m_sigmaForce)),
 	m_velocity(new glm::vec2(*rb.m_velocity)),
 	m_acceleration(new glm::vec2(*rb.m_acceleration)),
 	m_accelerationLastFrame(new glm::vec2(*rb.m_accelerationLastFrame)),
 	m_rotation(rb.m_rotation),
+	m_position(rb.m_position),
 	m_angularVelocity(rb.m_angularVelocity),
 	m_torque(rb.m_torque)
 {}
 
-Rigidbody2D::Rigidbody2D(float *rotation, float mass):
+Rigidbody2D::Rigidbody2D(glm::vec2* position, float *rotation, float mass, glm::vec2 scale):
 	m_mass(mass),
+	m_density(mass / (scale.x * scale.y)),
 	m_damping(0.0f),
 	m_sigmaForce(new glm::vec2(0.0f,0.0f)),
 	m_velocity(new glm::vec2(0.0f,0.0f)),
 	m_acceleration(new glm::vec2(0.0f,0.0f)),
 	m_accelerationLastFrame(new glm::vec2(0.0f,0.0f)),
 	m_rotation(rotation),
+	m_position(position),
 	m_angularVelocity(0.0f),
 	m_torque(0.0f)
 {}

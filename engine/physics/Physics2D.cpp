@@ -9,7 +9,7 @@ glm::vec2 Physics2D::getGravity(){
 
 void Physics2D::gravitate(glm::vec2 dir, float mag, Object* obj){
 	
-	glm::vec2 ray = dir-obj->getPositionXY();
+	glm::vec2 ray = dir-obj->getPosition();
 	ray = glm::normalize(ray);
 	glm::vec2 force = ray * mag;
 	obj->getRigidbody2D()->addForce(force);
@@ -19,7 +19,7 @@ void Physics2D::gravitate(glm::vec2 dir, float mag, Object* obj){
 //Take not that the higher acceleration becomes to more unstable the physics
 void Physics2D::integrate(Object* obj, float dt){
 	//refer to updatePos for more comments
-	glm::vec2 objPos(obj->getPositionXYZ().x,obj->getPositionXYZ().y);
+	glm::vec2 objPos(obj->getPosition().x,obj->getPosition().y);
 	Rigidbody2D* objRb = obj->getRigidbody2D();
 	glm::vec2 objVel(objRb->getVelocity()->x,objRb->getVelocity()->y);
 	glm::vec2 objSigmaForce(objRb->getSigmaForce()->x,objRb->getSigmaForce()->y);
@@ -55,7 +55,7 @@ void Physics2D::integrate(Object* obj, float dt){
 	objRb->setAcceleration(objAcl.x,objAcl.y);
 
 	objRb->setVelocity(objVel.x,objVel.y);
-	obj->setPos(objPos.x,objPos.y);
+	obj->setPosition(objPos.x,objPos.y);
 	
 	objRb->zeroForce();
 }

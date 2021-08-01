@@ -8,8 +8,8 @@ ForceBungee::ForceBungee(Object* other, float springConstant, float equilibrium)
     m_equilibrium(equilibrium){}
 
 void ForceBungee::updateForce(Object* object, float dt){
-    glm::vec2 force = object->getPositionXY();
-    force -= m_other->getPositionXY();
+    glm::vec2 force = object->getPosition();
+    force -= m_other->getPosition();
 
     float magnitude = glm::length(force);
     if(magnitude <= m_equilibrium) {

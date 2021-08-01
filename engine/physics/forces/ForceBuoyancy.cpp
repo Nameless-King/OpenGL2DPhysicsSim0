@@ -14,7 +14,7 @@ ForceBuoyancy::ForceBuoyancy(float maxDepth, float volume, float waterHeight, fl
 
 void ForceBuoyancy::updateForce(Object* object, float dt){
     //calc the submersion depth
-    float depth = object->getPositionXYZ().y;
+    float depth = object->getPosition().y;
 
     //check if object is out of water
     if(depth >= m_waterHeight + m_maxDepth){

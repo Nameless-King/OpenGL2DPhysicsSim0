@@ -22,24 +22,17 @@
 #include "./engine/scene/Scene.h"
 
 
-class SceneSpring : public Scene{
+class SceneBoundTest : public Scene{
 	private:
-		float m_springConstant;
-		bool m_useGravity;
 		Shader* m_shader;
 		Texture* m_texture;
-		Object* m_staticObj;
-		Object* m_hangingObj;
-		ForceGravity m_forceGravity;
-		ForceSpring m_forceSpring;
-		ForceBungee m_forceBungee;
-		ForceFakeSpring m_forceFakeSpring;
-		int m_currentType;
-		
+		Object* m_object;
+
+
 	public:
-		SceneSpring();
-		SceneSpring(Shader* shader, Texture* texture);
-		~SceneSpring();
+		SceneBoundTest();
+		SceneBoundTest(Shader* shader, Texture* texture);
+		~SceneBoundTest();
 		
 		void render(GWindow* window);
 		void update(GWindow* window);

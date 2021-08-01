@@ -6,12 +6,14 @@
 
 class Rigidbody2D{
 	private:
+		glm::vec2* m_position;
 		glm::vec2* m_sigmaForce;
 		glm::vec2* m_velocity;
 		glm::vec2* m_acceleration;
 		glm::vec2* m_accelerationLastFrame;
 		float m_damping; //0 to stop, 1 to never, 0.995 ok
 		float m_mass;
+		float m_density;
 
 		//angular components
 		float* m_rotation; // angle
@@ -23,7 +25,7 @@ class Rigidbody2D{
 	public:
 		Rigidbody2D();
 		Rigidbody2D(const Rigidbody2D& rb);
-		Rigidbody2D(float* rotation, float mass);
+		Rigidbody2D(glm::vec2* position, float* rotation, float mass, glm::vec2 scale);
 		~Rigidbody2D();
 
 		void addForce(float fx,float fy);
@@ -46,6 +48,7 @@ class Rigidbody2D{
 		void setVelocity(glm::vec2 vel);
 
 		inline float getMass() {return m_mass;}
+		inline float getDensity() {return m_density;}
 		inline float getInverseMass() {return 1.0f/m_mass;}
 		inline float getDamping() { return m_damping;}
 		inline float getRotation() {return *m_rotation;}
@@ -56,6 +59,9 @@ class Rigidbody2D{
 		inline glm::vec2* getAcceleration()  {return m_acceleration;}
 		inline glm::vec2* getAccelerationLastFrame() {return m_accelerationLastFrame;}
 		inline glm::vec2* getSigmaForce()  {return m_sigmaForce;}
+
+		inline glm::vec2* getPosition()	{return m_position;}
+
 
 		void getVelocity(glm::vec2& vel);
 

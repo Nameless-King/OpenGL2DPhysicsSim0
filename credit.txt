@@ -19,3 +19,9 @@ Joey de Vries
 "Learn OpenGL"
 https://learnopengl.com/
 
+Dirk Gregorius
+"Physics for Game Programmers: The Separating Axis Test between Convex Polyhedra"
+https://gdcvault.com/play/1017646/Physics-for-Game-Programmers-The
+
+
+

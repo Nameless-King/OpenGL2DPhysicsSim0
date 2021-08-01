@@ -16,7 +16,7 @@
 #include "./engine/graphics/Renderer.h"
 
 #include "./SceneCollisions.h"
-#include "./SceneSpring.h"
+#include "./SceneBoundTest.h"
 #include "./SceneForces.h"
 #include "./SceneTest.h"
 #include "./SceneOBB.h"
@@ -28,7 +28,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userparam);
 
 const int WIDTH = 800;
-const int HEIGHT = 600;
+const int HEIGHT = 800;
 int zoom = 1.0f;
     
 GWindow gameWindow(WIDTH, HEIGHT, "Game");
@@ -37,7 +37,7 @@ int main(){
     std::cout << "Program Start" << std::endl;
     
     gameWindow.setFramebufferSizeCallback(framebuffer_size_callback);
-    gameWindow.setClearColor(glm::vec4(0.0f,1.0f,0.0f,1.0f));
+    gameWindow.setClearColor(glm::vec4(0.25f,0.25f,0.5f,1.0f));
 
     if(!Renderer::init()){
         return EXIT_FAILURE;
@@ -64,14 +64,14 @@ int main(){
     GInput::setContext(gameWindow.getWindow());
 
     SceneCollisions scene0(&shader, &textureCircle);
-    //SceneSpring scene1(&shader, &textureCircle);
+    SceneBoundTest scene1(&shader, &textureRectangle);
     //SceneForces scene2(&shader, &textureRectangle);
     SceneTest scene3(&shader, &textureRectangle, &textureCircle);
     SceneOBB scene4(&shader, &textureRectangle);
     SceneQuadTreeDemo scene5;
 
     SceneManager::registerScene(&scene0);
-    //SceneManager::registerScene(&scene1);
+    SceneManager::registerScene(&scene1);
     //SceneManager::registerScene(&scene2);
     SceneManager::registerScene(&scene3);
     SceneManager::registerScene(&scene4);

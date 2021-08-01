@@ -4,14 +4,14 @@ ForceGravity::ForceGravity():
 m_gravity(glm::vec2(0.0f,1.0f)),
 m_type(GravityType::Direction),
 m_point(glm::vec2(0.0f,0.0f)),
-m_magnitude(10.0f)
+m_magnitude(1.0f)
 {}
 
 ForceGravity::ForceGravity(const glm::vec2& gravity):
 m_gravity(gravity),
 m_type(GravityType::Direction),
 m_point(glm::vec2(0.0f,0.0f)),
-m_magnitude(10.0f){}
+m_magnitude(1.0f){}
 
 void ForceGravity::updateForce(Object* obj,float dt){
 	if(obj->getRigidbody2D()->hasInfiniteMass()){
@@ -27,7 +27,7 @@ void ForceGravity::updateForce(Object* obj,float dt){
 		case GravityType::Point:
 			{
 			//std::cout << m_point.x << " " << m_point.y << std::endl;
-			glm::vec2 direction = glm::vec2(0.0f) - obj->getPositionXY();
+			glm::vec2 direction = glm::vec2(0.0f) - obj->getPosition();
 			direction = glm::normalize(direction) * m_magnitude;
 			obj->getRigidbody2D()->addForce(direction);
 			}

@@ -18,8 +18,8 @@ void ForceFakeSpring::updateForce(Object* object, float dt){
         return;
     }
     //get relative position of object to other
-    glm::vec2 position = object->getPositionXY();
-    position -= m_other->getPositionXY();
+    glm::vec2 position = object->getPosition();
+    position -= m_other->getPosition();
 
     //calc constants and check if in bounds
     float gamma = 0.5f * sqrt(4*m_springConstant-m_damping*m_damping);

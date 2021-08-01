@@ -46,15 +46,15 @@ void SceneQuadTreeDemo::checkBounds() {
     ObjectRegistration* currentRegistry = m_firstObject;
     while (currentRegistry) {
         Object* currentObject = currentRegistry->object;
-        glm::vec2 pos = currentObject->getPositionXY();
+        glm::vec2 pos = currentObject->getPosition();
         glm::vec2 vel = *(currentObject->getRigidbody2D()->getVelocity());
         if (pos.y < -300 || pos.y > 300) {
             currentObject->getRigidbody2D()->setVelocity(glm::vec2(vel.x, -vel.y));
-            currentObject->setPos(pos.x, pos.y - pos.y / 100.0f);
+            currentObject->setPosition(pos.x, pos.y - pos.y / 100.0f);
         }
         if (pos.x < -400 || pos.x > 400) {
             currentObject->getRigidbody2D()->setVelocity(glm::vec2(-vel.x, vel.y));
-            currentObject->setPos(pos.x - pos.x / 100.0f, pos.y);
+            currentObject->setPosition(pos.x - pos.x / 100.0f, pos.y);
         }
 
         currentRegistry = currentRegistry->next;

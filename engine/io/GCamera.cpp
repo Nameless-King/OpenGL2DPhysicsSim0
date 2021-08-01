@@ -38,7 +38,6 @@ void GCamera::addCameraPosOffset(float px, float py){
 }
 
 void GCamera::addCameraZoomOffset(float zoom){
-    std::cout << m_zoom << " " << zoom << " " << m_zoom + zoom << std::endl;
     m_zoom += zoom;
 }
 

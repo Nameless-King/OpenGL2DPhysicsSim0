@@ -6,6 +6,6 @@ class AABB:public Bound{
 public:
 	AABB() :Bound() {}
 	AABB(const AABB& bound):Bound(bound){}
-	AABB(glm::vec3* center, float* rotation, glm::vec3* scale, const float* pvertices):Bound(center,rotation,scale,pvertices,BoundingType::AxisAligned){}
+	AABB(glm::vec2* center, float* rotation, glm::vec2* scale, const float* pvertices, int vertexCount):Bound(center,rotation,scale,pvertices,vertexCount,BoundingType::AxisAligned){}
 	
 };

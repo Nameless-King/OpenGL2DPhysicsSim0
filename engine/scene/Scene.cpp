@@ -54,7 +54,9 @@ void Scene::addObject(Object* newObject){
 void Scene::integrate(float dt) {
     ObjectRegistration* currentRegister = m_firstObject;
     while (currentRegister) {
-        Physics2D::integrate(currentRegister->object, dt);
+        if(currentRegister->object->getRigidbody2D()){
+            Physics2D::integrate(currentRegister->object, dt);
+        }
         currentRegister = currentRegister->next;
     }
 }

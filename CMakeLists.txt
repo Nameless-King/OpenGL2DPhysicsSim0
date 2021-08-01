@@ -41,7 +41,7 @@ add_executable(
 	./engine/scene/SceneManager.cpp
 	./engine/Object.cpp
 	./SceneCollisions.cpp
-	./SceneSpring.cpp
+	./SceneBoundTest.cpp
 	./SceneForces.cpp
 	./SceneTest.cpp
 	./SceneOBB.cpp

@@ -1,6 +1,6 @@
 #include "./Object.h"
 Object::Object() :
-	m_position(glm::vec3(0.0f, 0.0f, 0.0f)),
+	m_position(glm::vec2(0.0f, 0.0f)),
 	m_rotation(0.0f),
 	m_scale(glm::vec3(1.0f, 1.0f, 1.0f)),
 	m_localVertices(Renderer::getVertices()),
@@ -16,7 +16,7 @@ Object::Object() :
 }
 
 
-Object::Object(glm::vec3 position, float rotation, glm::vec3 scale) :
+Object::Object(glm::vec2 position, float rotation, glm::vec2 scale) :
 	m_position(position),
 	m_rotation(rotation),
 	m_scale(scale),
@@ -37,9 +37,9 @@ Object::Object(glm::vec3 position, float rotation, glm::vec3 scale) :
 }
 
 Object::Object(const Object& object) :
-	m_position(glm::vec3(object.m_position)),
+	m_position(glm::vec2(object.m_position)),
 	m_rotation(object.m_rotation),
-	m_scale(glm::vec3(object.m_scale)),
+	m_scale(glm::vec2(object.m_scale)),
 	m_localVertices(Renderer::getVertices()),
 	m_numVertices(4),
 	m_globalVertices(new float[m_numVertices * 2]),
@@ -83,11 +83,11 @@ Object::~Object() {
 glm::mat4 Object::getModelMatrix() {
 	glm::mat4 model = glm::mat4(1.0f);
 
-	model = glm::translate(model, m_position);
+	model = glm::translate(model, glm::vec3(m_position.x,m_position.y,0.0f));
 	model = glm::rotate(model, 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 	model = glm::rotate(model, 0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(m_rotation), glm::vec3(0.0f, 0.0f, 1.0f));
-	model = glm::scale(model, m_scale);
+	model = glm::scale(model, glm::vec3(m_scale.x, m_scale.y,1.0f));
 	return model;
 }
 
@@ -97,17 +97,12 @@ void Object::rotateDegrees(float degrees) {
 	m_rotation += degrees;
 }
 
-void Object::setPos(float xPos, float yPos, float zPos) {
+void Object::setPosition(float xPos, float yPos) {
 	m_transformationChanged = true;
-	m_position = glm::vec3(xPos, yPos, zPos);
+	m_position = glm::vec2(xPos, yPos);
 }
 
-void Object::setPos(float xPos, float yPos) {
-	m_transformationChanged = true;
-	m_position = glm::vec3(xPos, yPos, m_position.z);
-}
-
-void Object::setPos(glm::vec2 pos) {
+void Object::setPosition(glm::vec2 pos) {
 	m_transformationChanged = true;
 	m_position.x = pos.x;
 	m_position.y = pos.y;
@@ -115,32 +110,20 @@ void Object::setPos(glm::vec2 pos) {
 
 void Object::setRotation(float rot) {
 	//m_bound holds pointer to m_rotation
+	m_transformationChanged = true;
 	m_rotation = rot;
 }
 
-void Object::setScl(float xScl, float yScl, float zScl) {
-	m_scale = glm::vec3(xScl, yScl, zScl);
-}
-
-void Object::setScl(float scl){
-	m_scale = glm::vec3(scl,scl,scl);
-}
-
 void Object::addRigidbody2D(float mass) {
-	m_rigidbody = new Rigidbody2D(&m_rotation,mass);
+	m_rigidbody = new Rigidbody2D(&m_position, &m_rotation,mass,getScale());
 }
 
 void Object::createBound(BoundingType type) {
-	m_bound = new Bound(&m_position, &m_rotation, &m_scale, Renderer::getVertices(), type);
+	m_bound = new Bound(&m_position, &m_rotation, &m_scale, m_globalVertices,4, type);
 }
 
-
-glm::vec2 Object::getPositionXY() {
+glm::vec2 Object::getPosition(){
 	return glm::vec2(m_position.x, m_position.y);
-}
-
-glm::vec2 Object::getScaleXY() {
-	return glm::vec2(m_scale.x, m_scale.y);
 }
 
 int Object::getNumVertices() {
@@ -150,12 +133,12 @@ int Object::getNumVertices() {
 const float* Object::getGlobalVertices() {
 	if (m_transformationChanged) {
 		updateGlobalVertices();
-		m_transformationChanged = false;
 	}
 	return m_globalVertices;
 }
 
 void Object::updateGlobalVertices() {
+	m_transformationChanged = false;
 	glm::mat4 modelMatrix = getModelMatrix();
 	for (int i = 0; i < m_numVertices * 2; i += 2) {
 		glm::vec4 pos(*(m_localVertices + i), *(m_localVertices + i + 1), 0.0f, 1.0f);
